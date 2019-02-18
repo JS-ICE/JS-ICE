@@ -1,5 +1,5 @@
 // functions for JS-ICE
-//A. Salij 12.7.18 (salij1@stolaf.edu) 
+//A. Salij 2.18.18 (salij1@stolaf.edu) 
 
 //converts the point data type in jmol into arrays of the 3 coordinates, indexed x,y,z 
 function pointToArray(pointt){
@@ -68,6 +68,7 @@ function readSymmetryVectors() {
 
 	return symopVectorArray
 }
+
  
 
 // returns the points given after performing a symmetry operation a chosen number of times (one point per operation)
@@ -170,7 +171,22 @@ function bindToSphereConstraint(sphereCenterPoint,sphereRadius,selectedPoint,err
 		return constrainedPoint 
 	}
 }
-
+// provides an array of the symops that do not change the position of a given point
+//needs testing  
+function findInvariantSymOps(pointt,n) {
+	symopArray = readSymmetryVectors()
+	invariantSymopsArray = []
+	allowableError = .001 // arbitrary
+	invariantSymopsCounter = 0 
+	for (var i  = 1; i<= n; i++) {
+		output = symop(i,pointt)
+		if (distance(pointt,output)<= allowableError){
+			invariantSymopsCounter = invariantSymopsCounter+1
+			invariantSymopsArray[invariantSymopsCounter] = symopArray[i]
+		}
+	}
+	
+}	
 //needs testing 
 function drawVector(vectorID,vectorStart,vectorEnd){
 	vectorIDString = ""+vectorID+""
@@ -178,6 +194,8 @@ function drawVector(vectorID,vectorStart,vectorEnd){
 	vectorEndString = ""+vectorEnd+""
 	draw @vectorIDString @vectorstartString @vectorEndString
 }
+
+
 
 
 //Unused
