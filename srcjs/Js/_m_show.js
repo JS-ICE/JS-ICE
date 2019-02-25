@@ -133,8 +133,8 @@ function createShowGrp() {
 	// strShow += "&nbsp;by atom &nbsp;"
 	// + createSelect2('colourbyAtomList', 'atomSelectedColor(value)', '', 1)
 	// + "\n";
-//	strShow += createCheck("byselection", "by picking &nbsp;",
-//		'setPicking(this)', 0, 0, "set picking");
+	strShow += createButton("byselection", "by picking &nbsp;",
+	'runJmolScriptWait("select {};set picking select atom; selectionhalos on")', '');
 //
 //	strShow += createCheck("bydistance", "within a sphere (&#197); &nbsp;",
 //			'setDistanceHide(this)', 0, 0, "");

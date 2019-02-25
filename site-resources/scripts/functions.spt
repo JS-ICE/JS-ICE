@@ -184,9 +184,12 @@ function findInvariantSymOps(pointt,n) {
 			invariantSymopsCounter = invariantSymopsCounter+1
 			invariantSymopsArray[invariantSymopsCounter] = symopArray[i]
 		}
-	}
-	
+	}	
 }	
+
+function 
+
+
 //needs testing 
 function drawVector(vectorID,vectorStart,vectorEnd){
 	vectorIDString = ""+vectorID+""

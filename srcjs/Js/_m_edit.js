@@ -305,9 +305,8 @@ function createEditGrp() {
 	// + createSelect2('deltebyAtomList',
 	// 'atomSelectedDelete(value) + atomSelectedHide(value) ', '',
 	// 1) + "\n";
-	//strEdit += createCheck("byselection", "by picking &nbsp;",
-	//		'setPickingDelete(this) + setPickingHide(this)', 0, 0, "");
-//	;
+	strEdit += createButton("byselection", "by picking &nbsp;",
+	'runJmolScriptWait("select {};set picking select atom; selectionhalos on")', '');
 //	strEdit += createCheck("bydistance", "within a sphere (&#197); &nbsp;",
 //			'setDistanceHide(this)', 0, 0, "");
 	strEdit += "</td></tr><tr><td colspan='2'>\n"
