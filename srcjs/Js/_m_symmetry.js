@@ -16,9 +16,15 @@ function enterSymmetry() {
 	getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
 	var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'doActivateAllSymmetry()', 0); 
 	getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
+	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.operationList); //currently copy of all symops--to update 
+	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect; 
 }	
 
 function exitSymmetry() {
+}
+
+function updateSymInvariants(){
+
 }
 
 //this appends new atoms by chosen symop
@@ -46,6 +52,8 @@ function setSymElement(elementName){
 function setSymop(symop){
 	_file.symmetry.chosenSymop = symop;
 }
+
+
 
 //figures out from file data all of the symmetry operations as Jones faithful representations 
 function createSymopSet(){
@@ -156,7 +164,10 @@ function createSymmetryGrp() {
 			+ "<option value=0.4>40%</option>"
 			+ "<option value=0.6>60%</option>"
 			+ "<option value=1.0>100%</option>" + "</select>";
-			
+	
+	strSymmetry += "<tr><td>\n";		
+	strSymmetry += "<div id='symInvariantsDiv'></div>";
+	strSymmetry += "</td></tr>\n";		
 	strSymmetry += "</form>\n";
 	return strSymmetry
 }
