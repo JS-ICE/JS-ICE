@@ -196,10 +196,47 @@ function setSymopClickBinding(){
 }
 
 function storeScreenXY(_X,_Y){
-	x = _X
-	y = _Y
-	print [x,y] 
+	var x = _X
+	var y = _Y
 	return [x,y]
+}
+
+//needs handling for multiple matches--TODO
+function moveToSXYMatch(_X,_Y){
+	//print "starting program"
+	var sxyzArray = {*}.sxyz.all
+	var x = _X
+	var y = _Y
+	//print "click:"+_X
+	var error = 100 //arbitrary 
+	var sx = x
+	var sy = y 
+	nAtoms = {*}.size 
+	for (var i = 1; i<nAtoms+1; i++){
+		print "i:"+i
+		currentPoint = sxyzArray[i]
+		currentPointArray = pointToArray(currentPoint)
+		ax = currentPointArray[1]
+		//print "ax:"+ax
+		ay = currentPointArray[2] 
+		//print "ay:"+ay	
+		dist = ((ax-x)**2+(ay-y)**2)**(.5)
+		if (dist <= error){
+			sx = ax
+			sy = ay 
+		}
+	}
+	//print "sx:"+sx
+	//print "sy:"+sy
+	return [sx,sy]	
+}
+
+function sXYtoXY([sx,sy]){
+	nAtoms = {*}.size
+	var sxyzArray = {*}.sxyz.all
+	for (var i = 1; i<nAtoms+1; i++){
+		currentPoint = sxyzArray[i]
+	}
 }
 
 
