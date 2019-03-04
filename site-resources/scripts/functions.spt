@@ -231,12 +231,25 @@ function moveToSXYMatch(_X,_Y){
 	return [sx,sy]	
 }
 
-function sXYtoXY([sx,sy]){
-	nAtoms = {*}.size
+function sXYtoXY(sxyArray){
+	var nAtoms = {*}.size
 	var sxyzArray = {*}.sxyz.all
+	var x = sxyArray[1]
+	var y = sxyArray[2]
 	for (var i = 1; i<nAtoms+1; i++){
-		currentPoint = sxyzArray[i]
+		var currentPoint = sxyzArray[i]
+		var currentPointArray = pointToArray(currentPoint)
+		if (currentPointArray[1] == sxyArray[1]){
+			if (currentPointArray[2] == sxyArray[2]){
+				pointXY = {*}.xyz.all[i]
+				pointXYArray = pointToArray(pointXY)
+				print pointXYArray
+				x = pointXYArray[1]
+				y = pointXYArray[2]
+			}
+		}	
 	}
+	return [x,y]
 }
 
 
