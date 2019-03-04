@@ -195,6 +195,12 @@ function setSymopClickBinding(){
 	bind "LEFT+click" "+:pickSymops"
 }
 
+function storeScreenXY(_X,_Y){
+	x = _X
+	y = _Y
+	print [x,y] 
+	return [x,y]
+}
 
 
 //needs testing 
