@@ -204,14 +204,14 @@ function storeScreenXY(_X,_Y){
 //needs handling for multiple matches--TODO
 function moveToSXYMatch(_X,_Y){
 	//print "starting program"
-	var sxyzArray = {*}.sxyz.all
+	var sxyzArray = {visible}.sxyz.all
 	var x = _X
 	var y = _Y
 	//print "click:"+_X
 	var error = 100 //arbitrary 
 	var sx = x
 	var sy = y 
-	nAtoms = {*}.size 
+	nAtoms = {visible}.size 
 	for (var i = 1; i<nAtoms+1; i++){
 		print "i:"+i
 		currentPoint = sxyzArray[i]
@@ -232,8 +232,8 @@ function moveToSXYMatch(_X,_Y){
 }
 
 function sXYtoXY(sxyArray){
-	var nAtoms = {*}.size
-	var sxyzArray = {*}.sxyz.all
+	var nAtoms = {visible}.size
+	var sxyzArray = {visible}.sxyz.all
 	var x = sxyArray[1]
 	var y = sxyArray[2]
 	for (var i = 1; i<nAtoms+1; i++){
@@ -241,7 +241,7 @@ function sXYtoXY(sxyArray){
 		var currentPointArray = pointToArray(currentPoint)
 		if (currentPointArray[1] == sxyArray[1]){
 			if (currentPointArray[2] == sxyArray[2]){
-				pointXY = {*}.xyz.all[i]
+				pointXY = {visible}.xyz.all[i]
 				pointXYArray = pointToArray(pointXY)
 				print pointXYArray
 				x = pointXYArray[1]
