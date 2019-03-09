@@ -69,6 +69,23 @@ function readSymmetryVectors() {
 	return symopVectorArray
 }
 
+function screenUnitsToAngstroms(){
+	var screenUnitsXArray = {*}.sx.all
+	var angstromUnitsXArray = {*}.x.all
+	var ratio = (angstromUnitsXArray[2]-angstromUnitsXArray[1])/(screenUnitsXArray[2]-screenUnitsXArray[1])
+	if (ratio == 0){
+		var screenUnitsZArray = {*}.sz.all
+		var  angstromUnitsZArray = {*}.z.all
+		ratio = (angstromUnitsZArray[2]-angstromUnitsZArray[1])/(screenUnitsZArray[2]-screenUnitsZArray[1])
+		if (ratio == 0){
+			var screenUnitsYArray = {*}.sy.all
+			var angstromUnitsYArray = {*}.y.all
+			ratio = (angstromUnitsYArray[2]-angstromUnitsYArray[1])/(screenUnitsYArray[2]-screenUnitsYArray[1])
+		}
+	}
+	return ratio 
+}
+
  
 
 // returns the points given after performing a symmetry operation a chosen number of times (one point per operation)
