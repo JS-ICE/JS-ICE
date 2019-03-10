@@ -247,7 +247,7 @@ function moveToSXYMatch(_X,_Y){
 	//print "sy:"+sy
 	return [sx,sy]	
 }
-
+//only works for points with a given index (e.g. atoms) 
 function sXYtoXY(sxyArray){
 	var nAtoms = {visible}.size
 	var sxyzArray = {visible}.sxyz.all
@@ -269,6 +269,18 @@ function sXYtoXY(sxyArray){
 	return [x,y]
 }
 
+function radiusToSXYZSphere(centerSXYZ,radiusAngstroms,_X,_Y){
+	var screenUnitsToAngstromsRatio = screenUnitsToAngstroms()
+	r = radiusAngstroms //for now, r will be in screen coords 
+	var centerPointSXYZ = pointToArray(centerSXYZ)
+	var x = centerPointSXYZ[1]
+	var y = centerPointSXYZ[2]
+	var z = centerPointSXYZ[3]
+	var xp = _X
+	var yp = _Y
+	zp = z-(r**2-(x-xp)**2-(y-yp)**2)**(.5)
+	return zp 
+}
 
 //needs testing 
 function drawVector(vectorID,vectorStart,vectorEnd){
