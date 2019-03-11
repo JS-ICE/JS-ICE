@@ -218,14 +218,13 @@ function storeScreenXY(_X,_Y){
 	return [x,y]
 }
 
-//needs handling for multiple matches--TODO
-function moveToSXYMatch(_X,_Y){
+function moveToSXYMatch(_X,_Y,screenDistanceBound){
 	//print "starting program"
 	var sxyzArray = {visible}.sxyz.all
 	var x = _X
 	var y = _Y
 	//print "click:"+_X
-	var error = 100 //arbitrary 
+	var error = screenDistanceBound
 	var sx = x
 	var sy = y 
 	nAtoms = {visible}.size 
@@ -241,6 +240,7 @@ function moveToSXYMatch(_X,_Y){
 		if (dist <= error){
 			sx = ax
 			sy = ay 
+			break 1;
 		}
 	}
 	//print "sx:"+sx
