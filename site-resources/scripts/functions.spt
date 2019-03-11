@@ -269,17 +269,23 @@ function sXYtoXY(sxyArray){
 	return [x,y]
 }
 
-function radiusToSXYZSphere(centerSXYZ,radiusAngstroms,_X,_Y){
-	var screenUnitsToAngstromsRatioArray = screenUnitsToAngstroms()
-	r = radiusAngstroms //for now, r will be in screen coords 
-	var centerPointSXYZ = pointToArray(centerSXYZ)
-	var x = centerPointSXYZ[1]
-	var y = centerPointSXYZ[2]
-	var z = centerPointSXYZ[3]
-	var xp = _X
-	var yp = _Y
-	zp = z-(r**2-(x-xp)**2-(y-yp)**2)**(.5)
-	return zp 
+
+function clickToPoint(centerXYZ,radiusAngstroms,_X,_Y){
+	//var screenUnitsToAngstromsRatioArray = screenUnitsToAngstroms()
+	var r = radiusAngstroms //for now, r will be in screen coords 
+	var centerPointXYZ = pointToArray(centerXYZ)
+	var cXYZ = centerXYZ
+	var cSXYZ = point(cXYZ,true)
+	var p0XYZ = point(point(_X,_Y,cSXYZ.z),false)
+	var pTempXYZ = point(point(_X,_Y,cSXYZ.z+1000),false)
+	var normVect = (p0XYZ-pTempXYZ)/(p0XYZ-pTempXYZ)
+	var d = distance(p0XYZ,cXYZ)
+	if (d > r){
+		return 0
+	}
+	var dz = (r**2-d**2)**(.5)
+	var pXYZ = p0XYZ+normVect*dz
+	return pXYZ
 }
 
 //needs testing 
