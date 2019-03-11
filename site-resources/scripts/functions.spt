@@ -69,6 +69,7 @@ function readSymmetryVectors() {
 	return symopVectorArray
 }
 
+//
 function screenUnitsToAngstroms(){
 	var screenUnitsXArray = {*}.sx.all
 	var angstromUnitsXArray = {*}.x.all
@@ -188,8 +189,9 @@ function bindToSphereConstraint(sphereCenterPoint,sphereRadius,selectedPoint,err
 		return constrainedPoint 
 	}
 }
+
 // provides an array of the symops that do not change the position of a given point
-//needs testing  
+//needs further testing  
 function findInvariantSymOps(pointt,n){
 	var symopArray = readSymmetryVectors()
 	var invariantSymopsArray = []
@@ -207,6 +209,7 @@ function findInvariantSymOps(pointt,n){
 	}	
 	return invariantSymopsArray
 }	
+
 
 function setSymopClickBinding(){
 	bind "LEFT+click" "+:pickSymops"
