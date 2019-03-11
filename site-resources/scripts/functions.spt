@@ -71,20 +71,17 @@ function readSymmetryVectors() {
 
 //
 function screenUnitsToAngstroms(){
+	var ratioArray = [0,0,0]
 	var screenUnitsXArray = {*}.sx.all
 	var angstromUnitsXArray = {*}.x.all
-	var ratio = (angstromUnitsXArray[2]-angstromUnitsXArray[1])/(screenUnitsXArray[2]-screenUnitsXArray[1])
-	if (ratio == 0){
-		var screenUnitsZArray = {*}.sz.all
-		var  angstromUnitsZArray = {*}.z.all
-		ratio = (angstromUnitsZArray[2]-angstromUnitsZArray[1])/(screenUnitsZArray[2]-screenUnitsZArray[1])
-		if (ratio == 0){
-			var screenUnitsYArray = {*}.sy.all
-			var angstromUnitsYArray = {*}.y.all
-			ratio = (angstromUnitsYArray[2]-angstromUnitsYArray[1])/(screenUnitsYArray[2]-screenUnitsYArray[1])
-		}
-	}
-	return ratio 
+	var ratioArray[1] = (angstromUnitsXArray[2]-angstromUnitsXArray[1])/(screenUnitsXArray[2]-screenUnitsXArray[1])
+	var screenUnitsZArray = {*}.sz.all
+	var  angstromUnitsZArray = {*}.z.all
+	ratioArray[3] = (angstromUnitsZArray[2]-angstromUnitsZArray[1])/(screenUnitsZArray[2]-screenUnitsZArray[1])
+	var screenUnitsYArray = {*}.sy.all
+	var angstromUnitsYArray = {*}.y.all
+	ratioArray[2] = (angstromUnitsYArray[2]-angstromUnitsYArray[1])/(screenUnitsYArray[2]-screenUnitsYArray[1])
+	return ratioArray 
 }
 
  
@@ -273,7 +270,7 @@ function sXYtoXY(sxyArray){
 }
 
 function radiusToSXYZSphere(centerSXYZ,radiusAngstroms,_X,_Y){
-	var screenUnitsToAngstromsRatio = screenUnitsToAngstroms()
+	var screenUnitsToAngstromsRatioArray = screenUnitsToAngstroms()
 	r = radiusAngstroms //for now, r will be in screen coords 
 	var centerPointSXYZ = pointToArray(centerSXYZ)
 	var x = centerPointSXYZ[1]
