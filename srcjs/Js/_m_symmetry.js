@@ -18,7 +18,10 @@ function enterSymmetry() {
 	getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
 	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.operationList); //currently copy of all symops--to update 
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect; 
+	var enableVoidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0);
+	getbyID("enableVoidClickingDiv").innerHTML = enableVoidClicking; 
 }	
+
 
 function exitSymmetry() {
 }
@@ -41,6 +44,12 @@ function doActivateAllSymmetry(){
 function doSymopSelection(symop){
 	setSymop(symop);
 	displaySymmetryDrawObjects(symop);
+}
+
+function doEnableVoidClicking(){
+	cP = getValue("centerPoint");
+	rA = getValue("radiusAngstroms");
+	runJmolScriptWait("bind 'LEFT+click' 'print clickToPoint("+cP+","+rA+",_X,_Y)'");
 }
 
 
@@ -164,9 +173,28 @@ function createSymmetryGrp() {
 			+ "<option value=0.4>40%</option>"
 			+ "<option value=0.6>60%</option>"
 			+ "<option value=1.0>100%</option>" + "</select>";
-	
-	strSymmetry += "<tr><td>\n";		
-	strSymmetry += "<div id='symInvariantsDiv'></div>";
+	strSymmetry += "<BR>\n";
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += "<BR>\n";
+	strSymmetry += "<div id='activateSymmetryDiv'></div>";
+	strSymmetry += "</td></tr>\n";	
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += "<BR>\n";
+	strSymmetry += "Enter center point:";
+	strSymmetry += "<input type='text'  name='centerPoint' id='centerPoint' size='10' class='text'>";
+	strSymmetry += "</td></tr>\n";
+	strSymmetry += "<tr><td>\n";	
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += "<BR>\n";
+	strSymmetry += "Enter radius (angstroms):";
+	strSymmetry += "<input type='text'  name='radiusAngstroms' id='radiusAngstroms' size='10' class='text'>";
+	strSymmetry += "</td></tr>\n";
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += "<BR>\n";	
+	strSymmetry += "<div id='enableVoidClickingDiv'></div>";
+	strSymmetry += "</td></tr>\n";
+	strSymmetry += "<tr><td>\n";	
+	strSymmetry += "<div id='symInvariantsDiv'></div>";//currently shows all symops, will soon only show invariant symops 
 	strSymmetry += "</td></tr>\n";		
 	strSymmetry += "</form>\n";
 	return strSymmetry
