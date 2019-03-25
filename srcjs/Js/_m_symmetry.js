@@ -1,5 +1,5 @@
 //initialization upon entry into symmetry tab 
-//A. Salij 12.7.18 (salij1@stolaf.edu)
+//A. Salij 3.24.2018 (salij1@stolaf.edu)
 
 function enterSymmetry() {
 	if (! _file.symmetry){
