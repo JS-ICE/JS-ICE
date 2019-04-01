@@ -178,16 +178,16 @@ function bindToSphereConstraint(sphereCenterPoint,sphereRadius,selectedPoint,err
 function findInvariantSymOps(pointt,n){
 	var symopArray = readSymmetryVectors()
 	var invariantSymopsArray = []
-	var allowableError = .01 
+	var allowableError = .1 
     var invariantSymopsCounter = 0 
 	for (var i  = 0; i< n; i++){
 		var output = symop(symopArray[i],pointt)
-		print output
-		print distance(pointt,output)
+		//print output
+		//print distance(pointt,output)
 		if (distance(pointt,output)<= allowableError){
 			invariantSymopsCounter = invariantSymopsCounter+1
 			invariantSymopsArray[invariantSymopsCounter] = symopArray[i]
-			print "within error"
+			//print "within error"
 		}
 	}	
 	return invariantSymopsArray

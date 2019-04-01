@@ -29,7 +29,8 @@ function exitSymmetry() {
 }
 
 function updateSymInvariants(){
-
+	runJmolScript("symopInvariantList = findInvariantSymOps({selected}.xyz,readSymmetryVectors().size)");
+	symopInvariantList = Jmol.evaluateVar(jmolApplet0,"symopInvariantList");
 }
 
 //this appends new atoms by chosen symop
