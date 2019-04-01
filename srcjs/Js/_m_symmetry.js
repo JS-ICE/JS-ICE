@@ -16,10 +16,12 @@ function enterSymmetry() {
 	getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
 	var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'doActivateAllSymmetry()', 0); 
 	getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
-	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.operationList); //currently copy of all symops--to update 
+	symopInvariantList = []; //initialization of global variable for symop invariants
+	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, symopInvariantList); //currently copy of all symops--to update 
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect; 
 	var enableVoidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0);
 	getbyID("enableVoidClickingDiv").innerHTML = enableVoidClicking; 
+	runJmolScript("var initPoint = {selected}.xyz");
 }	
 
 
@@ -32,8 +34,17 @@ function updateSymInvariants(){
 
 //this appends new atoms by chosen symop
 function doActivateSymmetry(){
-	appendSymmetricAtoms(_file.symmetry.chosenSymElement,getValue("initPoint"),_file.symmetry.chosenSymop,getValue("symIterations"));
+	var clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
+	clickedPointt = "{"+clickedPoint[0]+","+clickedPoint[1]+","+clickedPoint[2]+"}";
+	if (clickedPoint){
+		appendSymmetricAtoms(_file.symmetry.chosenSymElement,clickedPointt,_file.symmetry.chosenSymop,getValue("symIterations"));
+	}
+	else {
+		appendSymmetricAtoms(_file.symmetry.chosenSymElement,getValue("initPoint"),_file.symmetry.chosenSymop,getValue("symIterations"));
+	}
 }
+
+
 
 //this only shows every point for a given point for all symops 
 function doActivateAllSymmetry(){
@@ -49,8 +60,12 @@ function doSymopSelection(symop){
 function doEnableVoidClicking(){
 	cP = getValue("centerPoint");
 	rA = getValue("radiusAngstroms");
-	runJmolScriptWait("bind 'LEFT+click' 'print clickToPoint("+cP+","+rA+",_X,_Y)'");
+	runJmolScriptWait("unbind"); //resets jmol to default mouse config
+	runJmolScriptWait("bind 'LEFT+click' 'clickedPoint = clickToPoint("+cP+","+rA+",_X,_Y)'");
 }
+
+
+
 
 
 function setSymElement(elementName){
@@ -109,6 +124,8 @@ function updateSymOffset(dimension,offset){
 function createSymmetryGrp() {
 	var strSymmetry = "<form autocomplete='nope'  id='symmetryGroup' name='symmetryGroup' style='display:none'>\n";
 	strSymmetry += "<tr><td>\n";
+	strSymmetry += createButton("byselection", "Allow for atom picking &nbsp;",
+	'runJmolScriptWait("select {};set picking select atom; selectionhalos on")', '');
 	strSymmetry += "Write points in the form '{x y z}'";
 	strSymmetry += "<BR>\n";
 
@@ -120,7 +137,7 @@ function createSymmetryGrp() {
 	strSymmetry += "<BR>\n";
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "Enter initial point:";
-	strSymmetry += "<input type='text'  name='initPoint' id='initPoint' size='10' class='text'>";
+	strSymmetry += "<input type='text' name='initPoint' id='initPoint' size='10' class='text'>";
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += "<tr><td>\n";
