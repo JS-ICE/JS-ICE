@@ -22,10 +22,19 @@ function enterSymmetry() {
 	var enableVoidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0);
 	getbyID("enableVoidClickingDiv").innerHTML = enableVoidClicking; 
 	runJmolScript("var initPoint = {selected}.xyz");
+	$('.japplet').on('click', function( event ) {
+		  console.log('Applet Clicked');
+		  onSymmetryClick();
+	});
+	messageCallback = "print 'params'";
 }	
 
 
 function exitSymmetry() {
+}
+
+function onSymmetryClick(){
+
 }
 
 function updateSymInvariants(){

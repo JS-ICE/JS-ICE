@@ -285,7 +285,9 @@ function drawVector(vectorID,vectorStart,vectorEnd){
 }
 
 
-
+function bindLeftClickKeyEvent(){
+	bind "LEFT+click" "+:set MessageCallback 'leftClick';print 'leftClick'"
+}
 
 //Unused
 // gets and returns the symmetry operation names (e.g. "identity") 
