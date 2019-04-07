@@ -230,7 +230,8 @@ function createSymmetryGrp() {
 	strSymmetry += "<BR>\n";	
 	strSymmetry += "<div id='enableVoidClickingDiv'></div>";
 	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<tr><td>\n";	
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += "Invariant Symmetry Operations of Selection:";		
 	strSymmetry += "<div id='symInvariantsDiv'></div>";//currently shows all symops, will soon only show invariant symops 
 	strSymmetry += "</td></tr>\n";		
 	strSymmetry += "</form>\n";
