@@ -17,16 +17,20 @@ function enterSymmetry() {
 	var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'doActivateAllSymmetry()', 0); 
 	getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
 	symopInvariantList = []; //initialization of global variable for symop invariants
-	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, symopInvariantList); //currently copy of all symops--to update 
+	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, symopInvariantList);
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect; 
 	var enableVoidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0);
 	getbyID("enableVoidClickingDiv").innerHTML = enableVoidClicking; 
 	runJmolScript("var initPoint = {selected}.xyz");
-	$('.japplet').on('click', function( event ) {
+	//$('.japplet').on('click', function( event ) {
+	//	  console.log('Applet Clicked');
+	//	  onSymmetryClick();
+	//});
+	document.getElementById("jmolApplet0_appletinfotablediv").addEventListener('click', function( event ) {
 		  console.log('Applet Clicked');
 		  onSymmetryClick();
 	});
-	messageCallback = "print 'params'";
+	//messageCallback = "print 'params'";
 }	
 
 
@@ -34,7 +38,13 @@ function exitSymmetry() {
 }
 
 function onSymmetryClick(){
-
+	updateSymInvariants();
+	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, symopInvariantList);
+	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect;
+	createSymmetryGrp();
+	messageCallback = "";//how do I get message from Jmol? 
+	switch(messageCallback){
+	}
 }
 
 function updateSymInvariants(){
