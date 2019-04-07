@@ -29,7 +29,7 @@ function exitSymmetry() {
 }
 
 function updateSymInvariants(){
-	runJmolScript("symopInvariantList = findInvariantSymOps({selected}.xyz,readSymmetryVectors().size)");
+	runJmolScript("symopInvariantList = findInvariantSymOps({selected},readSymmetryVectors().size)");
 	symopInvariantList = Jmol.evaluateVar(jmolApplet0,"symopInvariantList");
 }
 
