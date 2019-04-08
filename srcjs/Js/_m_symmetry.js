@@ -56,7 +56,7 @@ function onSymmetryClick(){
 			clickedPoint = newClickedPoint;
 			doActivateSymmetry(); 
 		case "showAllInvariantSymops":
-			runJmolScript("showAllInvariantSymops()");
+			runJmolScript("drawAllSymops(symopInvariantList)")
 	}
 }
 
