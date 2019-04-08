@@ -1,5 +1,5 @@
 //initialization upon entry into symmetry tab 
-//A. Salij 3.24.2018 (salij1@stolaf.edu)
+//A. Salij 4.7.2018 (salij1@stolaf.edu)
 
 function enterSymmetry() {
 	if (! _file.symmetry){
@@ -7,7 +7,8 @@ function enterSymmetry() {
 			operationList     : createSymopSet(),
 			chosenSymElement  : "", 
 			chosenSymop       : "",
-			symOffset         : "{0/1,0/1,0/1}"
+			symOffset         : "{0/1,0/1,0/1}",
+			errorDistance     : 0.1 
 		}; 
 	 	var symopSelection = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.operationList);
 		getbyID("symmetryOperationSet").innerHTML = symopSelection;
@@ -43,9 +44,23 @@ function onSymmetryClick(){
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect;
 	createSymmetryGrp();
 	messageCallback = "";//how do I get message from Jmol? 
-	switch(messageCallback){
+	symClickStatus = Jmol.evaluateVar(jmolApplet0,"symClickStatus");
+	var clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
+	switch(symClickStatus){
+		case "radiusBindAdd":
+			doActivateSymmetry(); 
+		case "vectorBindAdd": //to test 
+			var newClickedPoint = bindToVectorConstraint("sym_axis1",
+														clickedPoint,
+														_file.symmetry.errorDistance);
+			clickedPoint = newClickedPoint;
+			doActivateSymmetry(); 
+		case "showAllInvariantSymops":
+			runJmolScript("showAllInvariantSymops()");
 	}
 }
+
+
 
 function updateSymInvariants(){
 	runJmolScript("symopInvariantList = findInvariantSymOps({selected},readSymmetryVectors().size)");
@@ -78,10 +93,20 @@ function doSymopSelection(symop){
 }
 
 function doEnableVoidClicking(){
-	cP = getValue("centerPoint");
-	rA = getValue("radiusAngstroms");
+	var cP = getValue("centerPoint");
+	if(!cP){
+		cP = Jmol.evaluateVar(jmolApplet0,{selected}.xyz);
+	}
+	if (!cP){
+		alert("No center point selected");
+	}
+	var rA = getValue("radiusAngstroms");
+	if(!rA){
+		rA = 1; //default value 
+	}
 	runJmolScriptWait("unbind"); //resets jmol to default mouse config
 	runJmolScriptWait("bind 'LEFT+click' 'clickedPoint = clickToPoint("+cP+","+rA+",_X,_Y)'");
+	runJmolScriptWait("symClickStatus = radiusBindAdd");
 }
 
 

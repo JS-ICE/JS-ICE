@@ -2,6 +2,9 @@
 //A. Salij 2.18.18 (salij1@stolaf.edu) 
 
 //converts the point data type in jmol into arrays of the 3 coordinates, indexed x,y,z 
+
+symClickStatus = ""; 
+
 function pointToArray(pointt){
 	var pointt = ""+pointt+"" 
 	var coordinateArray = []
@@ -131,7 +134,6 @@ function getSymmetryAtomArrayAllSymops(point){
 //provides the closest point on a line designated by some axis draw object to some selected point if said point is within some distance 
 function bindToVectorConstraint(vectorDrawObjectID,selectedPoint,errorDistance){
 	var vectorPointer = ""+vectorDrawObjectID+"" //IMPORTANT: this is how to designate pointers in jmol
-	var errorDistance = 1
 	var startPoint = $ @vectorPointer[0]
 	var endPoint = $ @vectorPointer[1]
 	startPoint = $sym_rotvector1[0]// for demonstration bc pointers aren't working
@@ -195,10 +197,10 @@ function findInvariantSymOps(atom,n){
 	return invariantSymopsArray
 }	
 
-
-function setSymopClickBinding(){
-	bind "LEFT+click" "+:pickSymops"
-}
+//Unused 
+//function setSymopClickBinding(){
+//	bind "LEFT+click" "+:pickSymops"
+//}
 
 function storeScreenXY(_X,_Y){
 	var x = _X
@@ -287,6 +289,13 @@ function drawVector(vectorID,vectorStart,vectorEnd){
 
 function bindLeftClickKeyEvent(){
 	bind "LEFT+click" "+:set MessageCallback 'leftClick';print 'leftClick'"
+}
+
+function drawAllSymops(symopArray){
+	for (i=1;i<=symopArray.size;i++){
+		var symopID = "symop"+i
+		draw ID @symopID symop @i
+	}
 }
 
 //Unused
