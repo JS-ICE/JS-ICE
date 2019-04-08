@@ -5,6 +5,7 @@ function enterSymmetry() {
 	if (! _file.symmetry){
 		_file.symmetry = {
 			operationList     : createSymopSet(),
+			symopInvariantList  : [],
 			chosenSymElement  : "", 
 			chosenSymop       : "",
 			symOffset         : "{0/1,0/1,0/1}",
@@ -17,8 +18,7 @@ function enterSymmetry() {
 	getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
 	var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'doActivateAllSymmetry()', 0); 
 	getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
-	symopInvariantList = []; //initialization of global variable for symop invariants
-	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, symopInvariantList);
+	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.symopInvariantList);
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect; 
 	var enableVoidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0);
 	getbyID("enableVoidClickingDiv").innerHTML = enableVoidClicking; 
@@ -34,17 +34,16 @@ function enterSymmetry() {
 	//messageCallback = "print 'params'";
 }	
 
-
 function exitSymmetry() {
 }
 
 function onSymmetryClick(){
 	updateSymInvariants();
-	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, symopInvariantList);
+	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.symopInvariantList);
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect;
 	createSymmetryGrp();
-	messageCallback = "";//how do I get message from Jmol? 
-	symClickStatus = Jmol.evaluateVar(jmolApplet0,"symClickStatus");
+	var messageCallback = "";//how do I get message from Jmol? 
+	var symClickStatus = Jmol.evaluateVar(jmolApplet0,"symClickStatus");
 	var clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
 	switch(symClickStatus){
 		case "radiusBindAdd":
@@ -56,21 +55,19 @@ function onSymmetryClick(){
 			clickedPoint = newClickedPoint;
 			doActivateSymmetry(); 
 		case "showAllInvariantSymops":
-			runJmolScript("drawAllSymops(symopInvariantList)")
+			runJmolScript("drawAllSymops(_file.symmetry.symopInvariantList)")
 	}
 }
 
-
-
 function updateSymInvariants(){
-	runJmolScript("symopInvariantList = findInvariantSymOps({selected},readSymmetryVectors().size)");
-	symopInvariantList = Jmol.evaluateVar(jmolApplet0,"symopInvariantList");
+	runJmolScript("_file.symmetry.symopInvariantList = findInvariantSymOps({selected},readSymmetryVectors().size)");
+	_file.symmetry.symopInvariantList = Jmol.evaluateVar(jmolApplet0,"_file.symmetry.symopInvariantList");
 }
 
 //this appends new atoms by chosen symop
 function doActivateSymmetry(){
 	var clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
-	clickedPointt = "{"+clickedPoint[0]+","+clickedPoint[1]+","+clickedPoint[2]+"}";
+	var clickedPointt = "{"+clickedPoint[0]+","+clickedPoint[1]+","+clickedPoint[2]+"}";
 	if (clickedPoint){
 		appendSymmetricAtoms(_file.symmetry.chosenSymElement,clickedPointt,_file.symmetry.chosenSymop,getValue("symIterations"));
 	}
@@ -79,13 +76,10 @@ function doActivateSymmetry(){
 	}
 }
 
-
-
 //this only shows every point for a given point for all symops 
 function doActivateAllSymmetry(){
 	drawAllSymmetricPoints(getValue("initPoint"));
 }
-
 
 function doSymopSelection(symop){
 	setSymop(symop);
@@ -109,20 +103,13 @@ function doEnableVoidClicking(){
 	runJmolScriptWait("symClickStatus = radiusBindAdd");
 }
 
-
-
-
-
 function setSymElement(elementName){
 	_file.symmetry.chosenSymElement = elementName;
 }
 
-
 function setSymop(symop){
 	_file.symmetry.chosenSymop = symop;
 }
-
-
 
 //figures out from file data all of the symmetry operations as Jones faithful representations 
 function createSymopSet(){
@@ -132,7 +119,6 @@ function createSymopSet(){
 	symopSet = Jmol.evaluateVar(jmolApplet0,"symVectors"); 
 	return symopSet
 }
-
 
 function setOpacity(){
 	var opacityString = getbyID("selopacity2");

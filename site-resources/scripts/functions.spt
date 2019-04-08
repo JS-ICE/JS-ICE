@@ -280,9 +280,9 @@ function clickToPoint(centerXYZ,radiusAngstroms,_X,_Y){
 
 //needs testing 
 function drawVector(vectorID,vectorStart,vectorEnd){
-	vectorIDString = ""+vectorID+""
-	vectorStartString = ""+vectorStart+""
-	vectorEndString = ""+vectorEnd+""
+	var vectorIDString = ""+vectorID+""
+	var vectorStartString = ""+vectorStart+""
+	var vectorEndString = ""+vectorEnd+""
 	draw @vectorIDString @vectorstartString @vectorEndString
 }
 
@@ -292,7 +292,7 @@ function bindLeftClickKeyEvent(){
 }
 
 function drawAllSymops(symopArray){
-	for (i=1;i<=symopArray.size;i++){
+	for (var i=1;i<=symopArray.size;i++){
 		var symopID = "symop"+i
 		draw ID @symopID symop @i
 	}
