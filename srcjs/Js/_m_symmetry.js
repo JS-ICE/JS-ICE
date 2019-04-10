@@ -1,6 +1,8 @@
-//initialization upon entry into symmetry tab 
-//A. Salij 4.7.2018 (salij1@stolaf.edu)
+//The symmetry tab enables visualization and manipulation of file according to various symmetry operations. Compatible with
+//crystal and .cif files. 
+//A. Salij 4.7.2018 (salij1@stolaf.edu-->andrewsalij@gmail.com) 
 
+//initialization upon entry into symmetry tab 
 function enterSymmetry() {
 	if (! _file.symmetry){
 		_file.symmetry = {
@@ -34,9 +36,12 @@ function enterSymmetry() {
 	//messageCallback = "print 'params'";
 }	
 
+//upon exiting symmetry tab-currently blank 
 function exitSymmetry() {
 }
 
+
+//todo upon clicking on the japplet 
 function onSymmetryClick(){
 	updateSymInvariants();
 	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.symopInvariantList);
@@ -59,6 +64,7 @@ function onSymmetryClick(){
 	}
 }
 
+//Updates global sym invariant list with current invariant symops of selection 
 function updateSymInvariants(){
 	runJmolScript("_file.symmetry.symopInvariantList = findInvariantSymOps({selected},readSymmetryVectors().size)");
 	_file.symmetry.symopInvariantList = Jmol.evaluateVar(jmolApplet0,"_file.symmetry.symopInvariantList");
@@ -81,11 +87,13 @@ function doActivateAllSymmetry(){
 	drawAllSymmetricPoints(getValue("initPoint"));
 }
 
+
 function doSymopSelection(symop){
 	setSymop(symop);
 	displaySymmetryDrawObjects(symop);
 }
 
+//Enables clicking upon blank space in java applet 
 function doEnableVoidClicking(){
 	var cP = getValue("centerPoint");
 	if(!cP){
@@ -130,6 +138,7 @@ function setOpacity(){
 	runJmolScript(opacityScript);
 }
 
+//Changes global variable offset added to symmetry operation
 function updateSymOffset(dimension,offset){
 	var symOffsetString = _file.symmetry.symOffset;
 	symOffsetString = symOffsetString.substring(1);

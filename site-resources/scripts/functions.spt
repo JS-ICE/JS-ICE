@@ -1,10 +1,11 @@
 // functions for JS-ICE
-//A. Salij 2.18.18 (salij1@stolaf.edu) 
+//A. Salij 4.10.2018 (salij1@stolaf.edu----->andrewsalij@gmail.com) 
 
 //converts the point data type in jmol into arrays of the 3 coordinates, indexed x,y,z 
 
-symClickStatus = ""; 
+symClickStatus = ""; //NEW GLOBAL VARIABLE!
 
+//Converts a point "{x y z}" into an array "[x,y,z]"
 function pointToArray(pointt){
 	var pointt = ""+pointt+"" 
 	var coordinateArray = []
@@ -107,7 +108,7 @@ function drawCleanSymmetryAxisVectors(axisFactor){
 	draw ID "sym_axis2" vector @point3 @point4 
 } 
 
-//adds new atom to model
+//adds new atom to current model
 function appendNewAtom(elementName, point) {
 	model last;
 	assign atom @elementName @point //appends new atom, connected to a base atom in original structure 
@@ -129,7 +130,7 @@ function getSymmetryAtomArrayAllSymops(point){
 }
 
 //IDEA: constraint menu
-//UNTESTED
+//Not fully tested
 //Many of the below functions are outlines for future functions 
 //provides the closest point on a line designated by some axis draw object to some selected point if said point is within some distance 
 function bindToVectorConstraint(vectorDrawObjectID,selectedPoint,errorDistance){
@@ -175,8 +176,7 @@ function bindToSphereConstraint(sphereCenterPoint,sphereRadius,selectedPoint,err
 	}
 }
 
-// provides an array of the symops that do not change the position of a given point
-//needs further testing  
+// provides an array of the symops that do not change the position of a given atom--n is total number of symops to check  
 function findInvariantSymOps(atom,n){
 	var symopArray = readSymmetryVectors()
 	//print "symopArray:"+symopArray
@@ -202,11 +202,13 @@ function findInvariantSymOps(atom,n){
 //	bind "LEFT+click" "+:pickSymops"
 //}
 
+//Provides x and y screen coordinates of mouse 
 function storeScreenXY(_X,_Y){
 	var x = _X
 	var y = _Y
 	return [x,y]
 }
+
 
 function moveToSXYMatch(_X,_Y,screenDistanceBound){
 	//print "starting program"
@@ -259,7 +261,7 @@ function sXYtoXY(sxyArray){
 	return [x,y]
 }
 
-
+//Transforms a click to the closest point on a sphere defiend by some center and some radius 
 function clickToPoint(centerXYZ,radiusAngstroms,_X,_Y){
 	//var screenUnitsToAngstromsRatioArray = screenUnitsToAngstroms()
 	var r = radiusAngstroms //for now, r will be in screen coords 
@@ -278,7 +280,7 @@ function clickToPoint(centerXYZ,radiusAngstroms,_X,_Y){
 	return pXYZ
 }
 
-//needs testing 
+//needs more testing
 function drawVector(vectorID,vectorStart,vectorEnd){
 	var vectorIDString = ""+vectorID+""
 	var vectorStartString = ""+vectorStart+""
@@ -286,11 +288,13 @@ function drawVector(vectorID,vectorStart,vectorEnd){
 	draw @vectorIDString @vectorstartString @vectorEndString
 }
 
-
+//Sets a messagecallback for left clicking
+//This handling is not being used. Instead, JQuery is providing schema for general click handling. a
 function bindLeftClickKeyEvent(){
 	bind "LEFT+click" "+:set MessageCallback 'leftClick';print 'leftClick'"
 }
 
+//Draws every symmetry operation given some array of Jones-Faithful representations of symmetry operations 
 function drawAllSymops(symopArray){
 	for (var i=1;i<=symopArray.size;i++){
 		var symopID = "symop"+i
