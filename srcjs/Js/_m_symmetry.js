@@ -66,8 +66,8 @@ function onSymmetryClick(){
 
 //Updates global sym invariant list with current invariant symops of selection 
 function updateSymInvariants(){
-	runJmolScript("_file.symmetry.symopInvariantList = findInvariantSymOps({selected},readSymmetryVectors().size)");
-	_file.symmetry.symopInvariantList = Jmol.evaluateVar(jmolApplet0,"_file.symmetry.symopInvariantList");
+	runJmolScript("symopInvariantListJmol = findInvariantSymOps({selected},readSymmetryVectors().size)");
+	_file.symmetry.symopInvariantList = Jmol.evaluateVar(jmolApplet0,"symopInvariantListJmol");
 }
 
 //this appends new atoms by chosen symop

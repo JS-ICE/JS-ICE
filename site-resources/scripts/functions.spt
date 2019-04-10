@@ -187,6 +187,7 @@ function findInvariantSymOps(atom,n){
     var error = .01
 	for (var i  = 1; i<= n; i++){
 		output = symop(symopArray[i],atom)
+		print [output,identityPoint,i,symopArray[i],atom] 
 		if(distance(identityPoint,output)<error){
 			//print "symop found"
 			invariantSymopsCounter = invariantSymopsCounter+1
