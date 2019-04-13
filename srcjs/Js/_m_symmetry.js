@@ -16,6 +16,7 @@ function enterSymmetry() {
 	 	var symopSelection = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.operationList);
 		getbyID("symmetryOperationSet").innerHTML = symopSelection;
 	}
+	runJmolScriptWait("select {};set picking select atom; selectionhalos on");
 	var activateSymmetry = createButton("activateSymmetryButton", "Activate applied symmetry:", 'doActivateSymmetry()', 0);
 	getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
 	var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'doActivateAllSymmetry()', 0); 
@@ -164,8 +165,6 @@ function updateSymOffset(dimension,offset){
 function createSymmetryGrp() {
 	var strSymmetry = "<form autocomplete='nope'  id='symmetryGroup' name='symmetryGroup' style='display:none'>\n";
 	strSymmetry += "<tr><td>\n";
-	strSymmetry += createButton("byselection", "Allow for atom picking &nbsp;",
-	'runJmolScriptWait("select {};set picking select atom; selectionhalos on")', '');
 	strSymmetry += "Write points in the form '{x y z}'";
 	strSymmetry += "<BR>\n";
 
@@ -209,6 +208,7 @@ function createSymmetryGrp() {
 	strSymmetry += createRadio("zOffset"," ",'updateSymOffset("z",0)',0,1,"z+0","z+0");
 	strSymmetry += createRadio("zOffset"," ",'updateSymOffset("z",1)',0,0,"z+1","z+1");
 	strSymmetry += "</td></tr>\n";
+	strSymmetry += createLine('blue', '');
 	strSymmetry += "<BR>\n";
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "Symmetry Iterations:"; 
@@ -238,7 +238,7 @@ function createSymmetryGrp() {
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += "Enter center point:";
-	strSymmetry += "<input type='text'  name='centerPoint' id='centerPoint' size='10' class='text'>";
+	strSymmetry += "<input type='text'  name='centerPoint' id='centerPoint'   size='50' class='text'>";
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<tr><td>\n";	
 	strSymmetry += "<tr><td>\n";

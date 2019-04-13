@@ -178,10 +178,14 @@ function bindToSphereConstraint(sphereCenterPoint,sphereRadius,selectedPoint,err
 
 // provides an array of the symops that do not change the position of a given atom--n is total number of symops to check  
 function findInvariantSymOps(atom,n){
+	
 	var symopArray = readSymmetryVectors()
 	//print "symopArray:"+symopArray
 	//print "atom:"+atom
 	var invariantSymopsArray = []
+	if (atom == null){
+		return invariantSymopsArray
+	}
     var invariantSymopsCounter = 0 
     var identityPoint = symop("x,y,z",atom)
     var error = .01
