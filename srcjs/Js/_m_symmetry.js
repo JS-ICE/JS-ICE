@@ -42,9 +42,11 @@ function exitSymmetry() {
 }
 
 
+
 //todo upon clicking on the japplet 
 function onSymmetryClick(){
 	updateSymInvariants();
+	updateInputValues();
 	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.symopInvariantList);
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect;
 	createSymmetryGrp();
@@ -69,6 +71,12 @@ function onSymmetryClick(){
 function updateSymInvariants(){
 	runJmolScript("symopInvariantListJmol = findInvariantSymOps({selected},readSymmetryVectors().size)");
 	_file.symmetry.symopInvariantList = Jmol.evaluateVar(jmolApplet0,"symopInvariantListJmol");
+}
+
+function updateInputValues(){
+	var selectionPoint = Jmol.evaluateVar(jmolApplet0,"{selected}.xyz");
+	initPoint.value = selectionPoint;
+	centerPoint.value = selectionPoint; 
 }
 
 //this appends new atoms by chosen symop
@@ -176,7 +184,7 @@ function createSymmetryGrp() {
 	strSymmetry += "<BR>\n";
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "Enter initial point:";
-	strSymmetry += "<input type='text' name='initPoint' id='initPoint' size='10' class='text'>";
+	strSymmetry += "<input type='text' name='initPoint' placeholder='Click on atom to fill' id='initPoint' size='10' class='text'>";
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += "<tr><td>\n";
@@ -238,7 +246,7 @@ function createSymmetryGrp() {
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += "Enter center point:";
-	strSymmetry += "<input type='text'  name='centerPoint' id='centerPoint'   size='50' class='text'>";
+	strSymmetry += "<input type='text'  name='centerPoint'  placeholder='Click on atom to fill' id='centerPoint'   size='50' class='text'>";
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<tr><td>\n";	
 	strSymmetry += "<tr><td>\n";
