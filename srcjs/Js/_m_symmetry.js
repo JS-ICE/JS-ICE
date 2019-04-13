@@ -25,7 +25,6 @@ function enterSymmetry() {
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect; 
 	var enableVoidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0);
 	getbyID("enableVoidClickingDiv").innerHTML = enableVoidClicking; 
-	runJmolScript("var initPoint = {selected}.xyz");
 	//$('.japplet').on('click', function( event ) {
 	//	  console.log('Applet Clicked');
 	//	  onSymmetryClick();
@@ -77,6 +76,8 @@ function updateInputValues(){
 	var selectionPoint = Jmol.evaluateVar(jmolApplet0,"{selected}.xyz");
 	initPoint.value = selectionPoint;
 	centerPoint.value = selectionPoint; 
+	var clickedPointString = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
+	voidClickPoint.value = clickedPointString[0].toFixed(4)+","+clickedPointString[1].toFixed(4)+","+clickedPointString[0].toFixed(4);
 }
 
 //this appends new atoms by chosen symop
@@ -105,6 +106,9 @@ function doSymopSelection(symop){
 //Enables clicking upon blank space in java applet 
 function doEnableVoidClicking(){
 	var cP = getValue("centerPoint");
+	if (cP[0] != "{"){
+		cP = "{"+cP+"}";
+	}
 	if(!cP){
 		cP = Jmol.evaluateVar(jmolApplet0,{selected}.xyz);
 	}
@@ -184,7 +188,7 @@ function createSymmetryGrp() {
 	strSymmetry += "<BR>\n";
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "Enter initial point:";
-	strSymmetry += "<input type='text' name='initPoint' placeholder='Click on atom to fill' id='initPoint' size='10' class='text'>";
+	strSymmetry += "<input type='text' name='initPoint' placeholder='Click on atom to fill' id='initPoint' size='25' class='text'>";
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += "<tr><td>\n";
@@ -246,7 +250,7 @@ function createSymmetryGrp() {
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += "Enter center point:";
-	strSymmetry += "<input type='text'  name='centerPoint'  placeholder='Click on atom to fill' id='centerPoint'   size='50' class='text'>";
+	strSymmetry += "<input type='text'  name='centerPoint'  placeholder='Click on atom to fill' id='centerPoint'   size='25' class='text'>";
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<tr><td>\n";	
 	strSymmetry += "<tr><td>\n";
@@ -258,7 +262,13 @@ function createSymmetryGrp() {
 	strSymmetry += "<BR>\n";	
 	strSymmetry += "<div id='enableVoidClickingDiv'></div>";
 	strSymmetry += "</td></tr>\n";
+	strSymmetry += "<BR>\n";
+	strSymmetry += "Clicked Point:";
+	strSymmetry +=  "<input type='text'  name='voidClickPoint'  placeholder='Click on position close to center point to fill' id='voidClickPoint'   size='40' class='text'>";
 	strSymmetry += "<tr><td>\n";
+	strSymmetry += "</td></tr>\n";
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += "<BR>\n";
 	strSymmetry += "Invariant Symmetry Operations of Selection:";		
 	strSymmetry += "<div id='symInvariantsDiv'></div>";//currently shows all symops, will soon only show invariant symops 
 	strSymmetry += "</td></tr>\n";		
