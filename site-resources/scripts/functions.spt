@@ -129,9 +129,7 @@ function getSymmetryAtomArrayAllSymops(point){
 	return symAtomArrayAllSymops
 }
 
-//IDEA: constraint menu
 //Not fully tested
-//Many of the below functions are outlines for future functions 
 //provides the closest point on a line designated by some axis draw object to some selected point if said point is within some distance 
 function bindToVectorConstraint(vectorDrawObjectID,selectedPoint,errorDistance){
 	var vectorPointer = ""+vectorDrawObjectID+"" //IMPORTANT: this is how to designate pointers in jmol
@@ -299,10 +297,10 @@ function bindLeftClickKeyEvent(){
 }
 
 //Draws every symmetry operation given some array of Jones-Faithful representations of symmetry operations 
-function drawAllSymops(symopArray){
+function drawAllSymops(symopArray,centerPoint){
 	for (var i=1;i<=symopArray.size;i++){
 		var symopID = "symop"+i
-		draw ID @symopID symop @i
+		draw ID @symopID symop @i @centerPoint
 	}
 }
 

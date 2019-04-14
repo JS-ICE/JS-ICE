@@ -56,14 +56,19 @@ function onSymmetryClick(){
 	switch(symClickStatus){
 		case "radiusBindAdd":
 			doActivateSymmetry(); 
-		case "vectorBindAdd": //to test 
-			var newClickedPoint = bindToVectorConstraint("sym_axis1",
-														clickedPoint,
-														_file.symmetry.errorDistance);
-			clickedPoint = newClickedPoint;
-			doActivateSymmetry(); 
+		//case "vectorBindAdd": //to test 
+			//var newClickedPoint = bindToVectorConstraint("sym_axis1",
+			//											clickedPoint,
+			//											_file.symmetry.errorDistance);
+			//clickedPoint = newClickedPoint;
+			//doActivateSymmetry(); 
 		case "showAllInvariantSymops":
-			runJmolScript("drawAllSymops(_file.symmetry.symopInvariantList)")
+			var centerPoint = getValue("initPoint");
+			if (centerPoint[0] != "{"){
+				centerPoint = "{"+centerPoint+"}";
+			}
+			runJmolScript("drawAllSymops("+_file.symmetry.symopInvariantList+","+centerPoint+")")
+		default: 
 	}
 }
 
@@ -85,19 +90,20 @@ function updateInputValues(){
 
 //this appends new atoms by chosen symop
 function doActivateSymmetry(){
-	var clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
-	var clickedPointt = "{"+clickedPoint[0]+","+clickedPoint[1]+","+clickedPoint[2]+"}";
-	if (clickedPoint){
-		appendSymmetricAtoms(_file.symmetry.chosenSymElement,clickedPointt,_file.symmetry.chosenSymop,getValue("symIterations"));
+	var clickedPoint =  getValue("voidClickPoint");
+	if (clickedPoint[0] != "{"){
+		clickedPoint = "{"+clickedPoint+"}";
 	}
-	else {
-		appendSymmetricAtoms(_file.symmetry.chosenSymElement,getValue("initPoint"),_file.symmetry.chosenSymop,getValue("symIterations"));
-	}
+	appendSymmetricAtoms(_file.symmetry.chosenSymElement,clickedPoint,_file.symmetry.chosenSymop,getValue("symIterations"));
 }
 
 //this only shows every point for a given point for all symops 
 function doActivateAllSymmetry(){
-	drawAllSymmetricPoints(getValue("initPoint"));
+	var clickedPoint =  getValue("voidClickPoint");
+	if (clickedPoint[0] != "{"){
+		clickedPoint = "{"+clickedPoint+"}";
+	}
+	drawAllSymmetricPoints(clickedPoint);
 }
 
 
@@ -124,7 +130,6 @@ function doEnableVoidClicking(){
 	}
 	runJmolScriptWait("unbind"); //resets jmol to default mouse config
 	runJmolScriptWait("bind 'LEFT+click' 'clickedPoint = clickToPoint("+cP+","+rA+",_X,_Y)'");
-	runJmolScriptWait("symClickStatus = 'radiusBindAdd'");
 }
 
 function doDisableVoidClicking(){
@@ -316,6 +321,9 @@ function appendSymmetricAtoms(elementName,point,symopSelected,iterations){
 	}
 	if (symopSelected == ""){
 		console.log("ERROR: empty symmetry operation");
+	}
+	if (point[0] != "{"){
+		point = "{"+point+"}";
 	}
 	else {
 		runJmolScriptWait("appendNewAtom('"+elementName+"', "+point+")");
