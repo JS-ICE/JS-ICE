@@ -23,8 +23,9 @@ function enterSymmetry() {
 	getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
 	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.symopInvariantList);
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect; 
-	var enableVoidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0);
-	getbyID("enableVoidClickingDiv").innerHTML = enableVoidClicking; 
+	var voidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0)+"\n"+
+						createButton("disableVoidClickingButton", "Disable Clicking", 'doDisableVoidClicking()', 0);
+	getbyID("voidClickingDiv").innerHTML = voidClicking; 
 	//$('.japplet').on('click', function( event ) {
 	//	  console.log('Applet Clicked');
 	//	  onSymmetryClick();
@@ -66,7 +67,7 @@ function onSymmetryClick(){
 	}
 }
 
-//Updates global sym invariant list with current invariant symops of selection 
+//Updates global sym invariant list with current  symops of selection 
 function updateSymInvariants(){
 	runJmolScript("symopInvariantListJmol = findInvariantSymOps({selected},readSymmetryVectors().size)");
 	_file.symmetry.symopInvariantList = Jmol.evaluateVar(jmolApplet0,"symopInvariantListJmol");
@@ -77,7 +78,9 @@ function updateInputValues(){
 	initPoint.value = selectionPoint;
 	centerPoint.value = selectionPoint; 
 	var clickedPointString = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
-	voidClickPoint.value = clickedPointString[0].toFixed(4)+","+clickedPointString[1].toFixed(4)+","+clickedPointString[0].toFixed(4);
+	if (clickedPointString){
+		voidClickPoint.value = clickedPointString[0].toFixed(4)+","+clickedPointString[1].toFixed(4)+","+clickedPointString[0].toFixed(4);
+	}
 }
 
 //this appends new atoms by chosen symop
@@ -100,7 +103,7 @@ function doActivateAllSymmetry(){
 
 function doSymopSelection(symop){
 	setSymop(symop);
-	displaySymmetryDrawObjects(symop);
+	displaySymmetryDrawObjects(symop,getValue("initPoint"));
 }
 
 //Enables clicking upon blank space in java applet 
@@ -121,7 +124,12 @@ function doEnableVoidClicking(){
 	}
 	runJmolScriptWait("unbind"); //resets jmol to default mouse config
 	runJmolScriptWait("bind 'LEFT+click' 'clickedPoint = clickToPoint("+cP+","+rA+",_X,_Y)'");
-	runJmolScriptWait("symClickStatus = radiusBindAdd");
+	runJmolScriptWait("symClickStatus = 'radiusBindAdd'");
+}
+
+function doDisableVoidClicking(){
+	runJmolScriptWait("unbind");
+	runJmolScriptWait("symClickStatus = 'default'");
 }
 
 function setSymElement(elementName){
@@ -169,7 +177,7 @@ function updateSymOffset(dimension,offset){
 		zValue = offset+"/1";
 	}
 	_file.symmetry.symOffset = "{"+xValue+","+yValue+","+zValue+"}"; 
-	displaySymmetryDrawObjects(_file.symmetry.chosenSymop);
+	displaySymmetryDrawObjects(_file.symmetry.chosenSymop,getValue("initPoint"));
 }
 
 //creates symmetry menu 
@@ -177,17 +185,14 @@ function updateSymOffset(dimension,offset){
 function createSymmetryGrp() {
 	var strSymmetry = "<form autocomplete='nope'  id='symmetryGroup' name='symmetryGroup' style='display:none'>\n";
 	strSymmetry += "<tr><td>\n";
-	strSymmetry += "Write points in the form '{x y z}'";
+	//strSymmetry += "Write points in the form '{x y z}'";
+	strSymmetry += "Symmetry Visualization:"; 
 	strSymmetry += "<BR>\n";
-
 	strSymmetry += "<tr><td>\n";
-	strSymmetry += "Add element:"
-	strSymmetry += createSelect('addSymEle', 'setSymElement(value)', 0, 1,
-			eleSymb);
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += "<tr><td>\n";
-	strSymmetry += "Enter initial point:";
+	strSymmetry += "Selected point:";
 	strSymmetry += "<input type='text' name='initPoint' placeholder='Click on atom to fill' id='initPoint' size='25' class='text'>";
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<BR>\n";
@@ -221,6 +226,12 @@ function createSymmetryGrp() {
 	strSymmetry += createRadio("zOffset"," ",'updateSymOffset("z",1)',0,0,"z+1","z+1");
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += createLine('blue', '');
+	strSymmetry += "<BR>\n";
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += "Add element:"
+	strSymmetry += createSelect('addSymEle', 'setSymElement(value)', 0, 1,
+			eleSymb);
+	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "Symmetry Iterations:"; 
@@ -260,7 +271,7 @@ function createSymmetryGrp() {
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "<BR>\n";	
-	strSymmetry += "<div id='enableVoidClickingDiv'></div>";
+	strSymmetry += "<div id='voidClickingDiv'></div>";
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += "Clicked Point:";
@@ -277,7 +288,7 @@ function createSymmetryGrp() {
 }
 
 // draws the axis lines for rotation axes and mirror planes for mirror symops 
-function displaySymmetryDrawObjects(symop){
+function displaySymmetryDrawObjects(symop,pointt){
 	var symOffsetString = _file.symmetry.symOffset;
 	symOffsetString = symOffsetString.substring(1);
 	var symOffsetArray = symOffsetString.split(",");
@@ -291,7 +302,7 @@ function displaySymmetryDrawObjects(symop){
 	var ySymopValue = symopArray[1];
 	var zSymopValue = symopArray[2];
 	symopWithOffset = xSymopValue+"+"+xOffsetValue+","+ySymopValue+"+"+yOffsetValue+","+zSymopValue+"+"+zOffsetValue
-	runJmolScriptWait("draw symop '"+symopWithOffset+"'");
+	runJmolScriptWait("draw symop '"+symopWithOffset+"' {"+pointt+"}");
 	axisFactor = 3;
 	runJmolScriptWait("drawCleanSymmetryAxisVectors("+axisFactor+")");
 } 
