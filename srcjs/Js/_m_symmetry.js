@@ -21,7 +21,7 @@ function enterSymmetry() {
 	getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
 	var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'doActivateAllSymmetry()', 0); 
 	getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
-	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.symopInvariantList);
+	var symInvariantsSelect = createSelect('addSymInvariantsSymop', 'doSymopSelection(value)', 0, _file.symmetry.symopInvariantList.length , _file.symmetry.symopInvariantList);
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect; 
 	var voidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0)+"\n"+
 						createButton("disableVoidClickingButton", "Disable Clicking", 'doDisableVoidClicking()', 0);
@@ -47,7 +47,7 @@ function exitSymmetry() {
 function onSymmetryClick(){
 	updateSymInvariants();
 	updateInputValues();
-	var symInvariantsSelect = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.symopInvariantList);
+	var symInvariantsSelect = createSelect('addSymInvariantsSymop', 'doSymopSelection(value)', 0,_file.symmetry.symopInvariantList.length, _file.symmetry.symopInvariantList);
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect;
 	createSymmetryGrp();
 	var messageCallback = "";//how do I get message from Jmol? 
@@ -76,6 +76,7 @@ function onSymmetryClick(){
 function updateSymInvariants(){
 	runJmolScript("symopInvariantListJmol = findInvariantSymOps({selected},readSymmetryVectors().size)");
 	_file.symmetry.symopInvariantList = Jmol.evaluateVar(jmolApplet0,"symopInvariantListJmol");
+	addSymInvariantsSymop.length = _file.symmetry.symopInvariantList.size; 
 }
 
 function updateInputValues(){
