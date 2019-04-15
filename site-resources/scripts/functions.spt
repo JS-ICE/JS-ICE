@@ -300,7 +300,9 @@ function bindLeftClickKeyEvent(){
 function drawAllSymops(symopArray,centerPoint){
 	for (var i=1;i<=symopArray.size;i++){
 		var symopID = "symop"+i
-		draw ID @symopID symop @i @centerPoint
+		print "symopID: "+ symopID
+		var currentSymop = "'"+symopArray[i]+"'"
+		draw ID @symopID symop @currentSymop @centerPoint
 	}
 }
 
