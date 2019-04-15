@@ -67,7 +67,7 @@ function onSymmetryClick(){
 			if (centerPoint[0] != "{"){
 				centerPoint = "{"+centerPoint+"}";
 			}
-			runJmolScript("drawAllSymops("+_file.symmetry.symopInvariantList+","+centerPoint+")")
+			runJmolScript("drawAllSymops(symopInvariantListJmol,"+centerPoint+")")
 		default: 
 	}
 }
@@ -136,6 +136,10 @@ function doEnableVoidClicking(){
 function doDisableVoidClicking(){
 	runJmolScriptWait("unbind");
 	runJmolScriptWait("symClickStatus = 'default'");
+}
+
+function setSymClickStatus(status){
+	runJmolScript("symClickStatus = '"+status+"'");
 }
 
 function setSymElement(elementName){
@@ -288,12 +292,16 @@ function createSymmetryGrp() {
 	strSymmetry += "<BR>\n";
 	strSymmetry += "Invariant Symmetry Operations of Selection:";		
 	strSymmetry += "<div id='symInvariantsDiv'></div>";//currently shows all symops, will soon only show invariant symops 
+	strSymmetry += "</td></tr>\n";
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += "<BR>\n";
+	strSymmetry += createCheck('setStatusAllInvariantSymops', 'Show All Invariants', 'setSymClickStatus("showAllInvariantSymops")', 0,0,0);
 	strSymmetry += "</td></tr>\n";		
 	strSymmetry += "</form>\n";
 	return strSymmetry
 }
 
-// draws the axis lines for rotation axes and mirror planes for mirror symops 
+// draws the axis lines for rotation axes and mirror planes for mirror symops
 function displaySymmetryDrawObjects(symop,pointt){
 	var symOffsetString = _file.symmetry.symOffset;
 	symOffsetString = symOffsetString.substring(1);
