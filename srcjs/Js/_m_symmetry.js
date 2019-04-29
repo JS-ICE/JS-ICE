@@ -97,7 +97,7 @@ function updateInputValues(){
 	centerPoint.value = selectionPoint; 
 	var clickedPointString = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
 	if (clickedPointString){
-		voidClickPoint.value = clickedPointString[0].toFixed(4)+","+clickedPointString[1].toFixed(4)+","+clickedPointString[0].toFixed(4);
+		voidClickPoint.value = clickedPointString[0].toFixed(4)+","+clickedPointString[1].toFixed(4)+","+clickedPointString[2].toFixed(4);
 	}
 }
 

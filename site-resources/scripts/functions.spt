@@ -117,7 +117,7 @@ function appendNewAtom(elementName, point) {
 
 function appendNewAtomPoint(elementName, point){
 	model last;
-	draw radius .3 @point color blue //to update radius size and color to be akin to chosen element 
+	draw ID "drawnPoint" radius .3 @point color blue //to update radius size and color to be akin to chosen element 
 }
 
 //provides all the output of all available symops of the current model upon a given point 
@@ -271,19 +271,22 @@ function sXYtoXY(sxyArray){
 //Transforms a click to the closest point on a sphere defiend by some center and some radius 
 function clickToPoint(centerXYZ,radiusAngstroms,_X,_Y){
 	//var screenUnitsToAngstromsRatioArray = screenUnitsToAngstroms()
-	var r = radiusAngstroms //for now, r will be in screen coords 
+	var r = radiusAngstroms 
 	var centerPointXYZ = pointToArray(centerXYZ)
 	var cXYZ = centerXYZ
 	var cSXYZ = point(cXYZ,true)
 	var p0XYZ = point(point(_X,_Y,cSXYZ.z),false)
+	//print "p0XYZ:"+p0XYZ
 	var pTempXYZ = point(point(_X,_Y,cSXYZ.z+1000),false)
 	var normVect = (p0XYZ-pTempXYZ)/(p0XYZ-pTempXYZ)
+	//print "normVect:"+normVect
 	var d = distance(p0XYZ,cXYZ)
 	if (d > r){
 		return 0
 	}
 	var dz = (r**2-d**2)**(.5)
 	var pXYZ = p0XYZ+normVect*dz
+	//print "pXYZ:"+pXYZ
 	return pXYZ
 }
 
