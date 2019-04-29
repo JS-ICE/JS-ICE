@@ -115,6 +115,11 @@ function appendNewAtom(elementName, point) {
 
 } 
 
+function appendNewAtomPoint(elementName, point){
+	model last;
+	draw radius .3 @point color blue //to update radius size and color to be akin to chosen element 
+}
+
 //provides all the output of all available symops of the current model upon a given point 
 function getSymmetryAtomArrayAllSymops(point){
 	getProperty spacegroupInfo.symmetryInfo
@@ -188,7 +193,7 @@ function findInvariantSymOps(atom,n){
     var error = .01
 	for (var i  = 1; i<= n; i++){
 		output = symop(symopArray[i],atom)
-		print [output,identityPoint,i,symopArray[i],atom] 
+		//print [output,identityPoint,i,symopArray[i],atom] 
 		if(distance(identityPoint,output)<error){
 			//print "symop found"
 			invariantSymopsCounter = invariantSymopsCounter+1
@@ -223,7 +228,7 @@ function moveToSXYMatch(_X,_Y,screenDistanceBound){
 	var sy = y 
 	nAtoms = {visible}.size 
 	for (var i = 1; i<nAtoms+1; i++){
-		print "i:"+i
+		//print "i:"+i
 		currentPoint = sxyzArray[i]
 		currentPointArray = pointToArray(currentPoint)
 		ax = currentPointArray[1]
@@ -254,7 +259,7 @@ function sXYtoXY(sxyArray){
 			if (currentPointArray[2] == sxyArray[2]){
 				pointXY = {visible}.xyz.all[i]
 				pointXYArray = pointToArray(pointXY)
-				print pointXYArray
+				//print pointXYArray
 				x = pointXYArray[1]
 				y = pointXYArray[2]
 			}
@@ -300,7 +305,7 @@ function bindLeftClickKeyEvent(){
 function drawAllSymops(symopArray,centerPoint){
 	for (var i=1;i<=symopArray.size;i++){
 		var symopID = "symop"+i
-		print "symopID: "+ symopID
+		//print "symopID: "+ symopID
 		var currentSymop = "'"+symopArray[i]+"'"
 		draw ID @symopID symop @currentSymop @centerPoint
 	}

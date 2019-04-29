@@ -148,12 +148,13 @@ function doEnableVoidClicking(){
 	}
 	runJmolScriptWait("unbind"); //resets jmol to default mouse config
 	runJmolScriptWait("bind 'LEFT+click' 'clickedPoint = clickToPoint("+cP+","+rA+",_X,_Y)'");
-	runJmolScriptWait("draw radius "+rA+" "+cP+" translucent"); 
+	runJmolScriptWait("sphereClickShow = 'sphereClickShow'; bind 'enter' 'draw ID @sphereClickShow radius "+rA+" "+cP+" translucent'"); 
 }
 
 function doDisableVoidClicking(){
 	runJmolScriptWait("unbind");
 	runJmolScriptWait("symClickStatus = 'default'");
+	runJmolScriptWait("draw 'symClickShow' delete");
 }
 
 function setSymClickStatus(status){
@@ -353,11 +354,11 @@ function appendSymmetricAtoms(elementName,point,symopSelected,iterations){
 		point = "{"+point+"}";
 	}
 	else {
-		runJmolScriptWait("appendNewAtom('"+elementName+"', "+point+")");
+		runJmolScriptWait("appendNewAtomPoint('"+elementName+"', "+point+")");
 		var newAtomArray = Jmol.evaluateVar(jmolApplet0,"getSymmetricAtomArray('"+symopSelected+"', "+point+","+iterations+")") ;
 		var numberOfNewAtoms = newAtomArray.length; 
 		for (i = 1; i <= numberOfNewAtoms; i++){
-			runJmolScriptWait("appendNewAtom('"+elementName+"', "+newAtomArray[i-1]+")"); //this is a jmol script in functions.spt
+			runJmolScriptWait("appendNewAtomPoint('"+elementName+i+"', "+newAtomArray[i-1]+")"); //this is a jmol script in functions.spt
 		}
 	}
 }
