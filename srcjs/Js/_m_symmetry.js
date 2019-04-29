@@ -26,6 +26,8 @@ function enterSymmetry() {
 	var voidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0)+"\n"+
 						createButton("disableVoidClickingButton", "Disable Clicking", 'doDisableVoidClicking()', 0);
 	getbyID("voidClickingDiv").innerHTML = voidClicking; 
+	var corePointDragging = createButton("corePointDraggingButton", "Enable Dragging", 'doEnableCorePointDragging()', 0)
+	getbyID("corePointDraggingDiv").innerHTML = corePointDragging; 
 	//$('.japplet').on('click', function( event ) {
 	//	  console.log('Applet Clicked');
 	//	  onSymmetryClick();
@@ -322,7 +324,11 @@ function createSymmetryGrp() {
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += createCheck('setStatusAllInvariantSymops', 'Show All Invariants', 'setSymClickStatus("showAllInvariantSymops")', 0,0,0);
-	strSymmetry += "</td></tr>\n";		
+	strSymmetry += "</td></tr>\n";	
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += "<BR>\n";
+	strSymmetry += "<div id='corePointDraggingDiv'></div>"
+	strSymmetry += "</td></tr>\n";	
 	strSymmetry += "</form>\n";
 	return strSymmetry
 }
