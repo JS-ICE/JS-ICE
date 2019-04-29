@@ -57,7 +57,7 @@ function onSymmetryClick(){
 	}
 	switch(symClickStatus){
 		case "radiusBindAdd":
-			doActivateSymmetry(); 
+			doActivateSymmetry(getValue("voidClickPoint")); 
 			break;
 		case "radiusBindAddAll":
 			doActivateAllSymmetry(); 
@@ -67,8 +67,10 @@ function onSymmetryClick(){
 			//											clickedPoint,
 			//											_file.symmetry.errorDistance);
 			//clickedPoint = newClickedPoint;
-			//doActivateSymmetry();
+			//doActivateSymmetry(getValue("voidClickPoint"));
 			//break; 
+		case "corePointDragging":
+			doActivateSymmetry(clickedPoint);
 		case "showAllInvariantSymops":
 			var centerPoint = getValue("initPoint");
 			if (centerPoint[0] != "{"){
@@ -105,8 +107,7 @@ function toFixedPointArray(pointArray,decimalPlaces){
 }
 
 //this appends new atoms by chosen symop
-function doActivateSymmetry(){
-	var clickedPoint =  getValue("voidClickPoint");
+function doActivateSymmetry(clickedPoint){
 	if (clickedPoint[0] != "{"){
 		clickedPoint = "{"+clickedPoint+"}";
 	}
@@ -155,6 +156,12 @@ function doDisableVoidClicking(){
 	runJmolScriptWait("unbind");
 	runJmolScriptWait("symClickStatus = 'default'");
 	runJmolScriptWait("draw 'symClickShow' delete");
+}
+
+function doEnableCorePointDragging(){
+	runJmolScriptWait("set picking draw");
+	runJmolScriptWait("bind 'LEFT+drag+shift' '+:clickedPoint = $corePoint'");
+	runJmolScriptWait("symClickStatus = 'corePointDragging'");
 }
 
 function setSymClickStatus(status){
@@ -354,11 +361,11 @@ function appendSymmetricAtoms(elementName,point,symopSelected,iterations){
 		point = "{"+point+"}";
 	}
 	else {
-		runJmolScriptWait("appendNewAtomPoint('"+elementName+"', "+point+")");
+		runJmolScriptWait("appendNewAtomPoint('corePoint', "+point+")");
 		var newAtomArray = Jmol.evaluateVar(jmolApplet0,"getSymmetricAtomArray('"+symopSelected+"', "+point+","+iterations+")") ;
 		var numberOfNewAtoms = newAtomArray.length; 
 		for (i = 1; i <= numberOfNewAtoms; i++){
-			runJmolScriptWait("appendNewAtomPoint('"+elementName+i+"', "+newAtomArray[i-1]+")"); //this is a jmol script in functions.spt
+			runJmolScriptWait("appendNewAtomPoint('"+elementName+i+"', {"+newAtomArray[i-1]+"})"); //this is a jmol script in functions.spt
 		}
 	}
 }

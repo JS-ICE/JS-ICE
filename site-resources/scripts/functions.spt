@@ -115,9 +115,15 @@ function appendNewAtom(elementName, point) {
 
 } 
 
-function appendNewAtomPoint(elementName, point){
+function appendNewAtomPoint(elementName, pointt){
 	model last;
-	draw ID "drawnPoint" radius .3 @point color blue //to update radius size and color to be akin to chosen element 
+	if (!pointt){
+		var pointt = {0 0 0}
+	}
+	if (pointt == {}){
+		var pointt = {0 0 0}
+	}
+	draw ID @elementName radius .3 @pointt color blue //to update radius size and color to be akin to chosen element 
 }
 
 //provides all the output of all available symops of the current model upon a given point 
