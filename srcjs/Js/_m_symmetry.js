@@ -73,6 +73,7 @@ function onSymmetryClick(){
 			//break; 
 		case "corePointDragging":
 			doActivateSymmetry(clickedPoint);
+			break;
 		case "showAllInvariantSymops":
 			var centerPoint = getValue("initPoint");
 			if (centerPoint[0] != "{"){
@@ -367,11 +368,11 @@ function appendSymmetricAtoms(elementName,point,symopSelected,iterations){
 		point = "{"+point+"}";
 	}
 	else {
-		runJmolScriptWait("appendNewAtomPoint('corePoint', "+point+")");
+		runJmolScriptWait("appendNewAtomPoint('corePoint','"+elementName+"',"+point+")");
 		var newAtomArray = Jmol.evaluateVar(jmolApplet0,"getSymmetricAtomArray('"+symopSelected+"', "+point+","+iterations+")") ;
 		var numberOfNewAtoms = newAtomArray.length; 
 		for (i = 1; i <= numberOfNewAtoms; i++){
-			runJmolScriptWait("appendNewAtomPoint('"+elementName+i+"', {"+newAtomArray[i-1]+"})"); //this is a jmol script in functions.spt
+			runJmolScriptWait("appendNewAtomPoint('"+elementName+i+"','"+elementName+"', {"+newAtomArray[i-1]+"})"); //this is a jmol script in functions.spt
 		}
 	}
 }
