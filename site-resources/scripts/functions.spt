@@ -78,6 +78,12 @@ function readSymmetryVectors() {
 
 // returns the points given after performing a symmetry operation a chosen number of times (one point per operation)
 function getSymmetricAtomArray(symopSelected,pointt,iterations){
+	if (!pointt){
+		return []
+	}
+	if (pointt == {}){
+		return []
+	}
 	var symAtomArray = [];
 	for (var i = 1; i<= iterations;i++) {
 		if (i=1){
@@ -281,6 +287,9 @@ function sXYtoXY(sxyArray){
 //Transforms a click to the closest point on a sphere defiend by some center and some radius 
 function clickToPoint(centerXYZ,radiusAngstroms,_X,_Y){
 	//var screenUnitsToAngstromsRatioArray = screenUnitsToAngstroms()
+	if (centerXYZ == {}){
+		return 0 
+	}
 	var r = radiusAngstroms 
 	var centerPointXYZ = pointToArray(centerXYZ)
 	var cXYZ = centerXYZ
