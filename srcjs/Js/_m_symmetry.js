@@ -36,8 +36,15 @@ function enterSymmetry() {
 		  console.log('Applet Clicked');
 		  onSymmetryClick();
 	});
-	//messageCallback = "print 'params'";
-}	
+	$('.japplet').on('mouseenter', function( event ) {
+		  console.log('Applet Entered');
+		  onSymmetryHoverStart();
+	});
+	$('.japplet').on('mouseleave', function( event ) {
+		  console.log('Applet Left');
+		  onSymmetryHoverEnd();
+	});
+}
 
 //upon exiting symmetry tab-currently blank 
 function exitSymmetry() {
@@ -45,7 +52,29 @@ function exitSymmetry() {
 
 
 
-//todo upon clicking on the japplet 
+//todo upon clicking on the japplet
+
+function onSymmetryHover(){
+	console.log("hov check");
+	var symClickStatus = Jmol.evaluateVar(jmolApplet0,"symClickStatus");
+	//switch(symClickStatus){
+	//	case "corePointDragging":
+	//		doActivateSymmetry(clickedPoint);
+	//		break;
+	//	default:
+	//		break;
+	//}
+} 
+
+function onSymmetryHoverStart(){
+	console.log("setting intervalID");
+	intervalId = window.setInterval(function(){ onSymmetryHover() },50);
+}
+
+function onSymmetryHoverEnd(){
+	window.clearInterval(intervalId);
+}
+
 function onSymmetryClick(){
 	updateSymInvariants();
 	updateInputValues();
