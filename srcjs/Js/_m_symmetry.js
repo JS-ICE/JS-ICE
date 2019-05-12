@@ -364,23 +364,39 @@ function createSymmetryGrp() {
 
 // draws the axis lines for rotation axes and mirror planes for mirror symops
 function displaySymmetryDrawObjects(symop,pointt){
+	if (!pointt){
+		var pointt = "";
+	}
+	else{
+		var pointt = "{"+pointt+"}";
+	}
 	var symOffsetString = _file.symmetry.symOffset;
 	symOffsetString = symOffsetString.substring(1);
 	var symOffsetArray = symOffsetString.split(",");
-	var xOffsetValue = parseInt(symOffsetArray[0])+"/1";
-	var yOffsetValue = parseInt(symOffsetArray[1])+"/1";
-	var zOffsetValue = parseInt(symOffsetArray[2])+"/1";
+	var xOffsetValue = parseInt(symOffsetArray[0]);
+	var yOffsetValue = parseInt(symOffsetArray[1]);
+	var zOffsetValue = parseInt(symOffsetArray[2]);
 	var symopString = ""+symop+"";
 	var symopArray = symopString.split(",");
 	console.log(symopArray)
-	var xSymopValue = symopArray[0];
-	var ySymopValue = symopArray[1];
-	var zSymopValue = symopArray[2];
-	symopWithOffset = xSymopValue+"+"+xOffsetValue+","+ySymopValue+"+"+yOffsetValue+","+zSymopValue+"+"+zOffsetValue
-	runJmolScriptWait("draw symop '"+symopWithOffset+"' {"+pointt+"}");
+	var xSymopValue = eval(symopArray[0].substring(1));
+	var ySymopValue = eval(symopArray[1].substring(1));
+	var zSymopValue = eval(symopArray[2].substring(1));
+	if (xSymopValue){
+		var xOffsetUpdated = xOffsetValue+xSymopValue;}
+	else{ var xOffsetUpdated = xOffsetValue;}
+	if (ySymopValue){
+		var yOffsetUpdated = yOffsetValue+ySymopValue;}
+	else{ var yOffsetUpdated = yOffsetValue;}
+	if (zSymopValue){
+		var zOffsetUpdated = zOffsetValue+zSymopValue;}
+	else{ var zOffsetUpdated = zOffsetValue;}	
+	var symopWithOffset = symopArray[0].substring(0,1)+"+"+xOffsetUpdated+"/1,"+symopArray[1].substring(0,1)+"+"+yOffsetUpdated+"/1,"+symopArray[2].substring(0,1)+"+"+zOffsetUpdated+"/1";
+	console.log("finalSymop:"+symopWithOffset);
+	runJmolScriptWait("draw symop '"+symopWithOffset+"' "+pointt);
 	axisFactor = 3;
 	runJmolScriptWait("drawCleanSymmetryAxisVectors("+axisFactor+")");
-} 
+}  
 
 // takes a given point and add the elements provided to it by a symmetry operation
 // symmetry operations with multiple outputs (e.g. C3) will produce multiple symmetry atoms 
