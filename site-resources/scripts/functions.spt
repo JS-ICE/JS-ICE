@@ -183,17 +183,15 @@ function bindToPlaneConstraint(planeDrawObjectID, selectedPoint, errorDistance){
 }
 
 function bindToSphereConstraint(sphereCenterPoint,sphereRadius,selectedPoint,errorDistance){
-	//details need filling--talk to Dr. Hanson about documentation on circle intersection
-	//var constrainedPoint = intersection() NEEDS FILLING 
-	var contrainedPoint = {0 0 0} //PLACEHOLDER
-	var selectedPointToNewPointDistance = @selectedPoint.distance(constrainedPoint)
-	if (selectedPointToNewPointDistance > errorDistance){
-		return selectedPoint 
-	}
-	else{
-		return constrainedPoint 
-	}
+	var c = sphereCenterPoint
+	var r = sphereRadius
+	var s = selectedPoint
+	var d = errorDistance
+	var fromCenterVectorUnit = (s-c)/(s-c)
+	var pointOnSphere = c+fromCenterVectorUnit*r
+	return pointOnSphere
 }
+
 
 // provides an array of the symops that do not change the position of a given atom--n is total number of symops to check  
 function findInvariantSymOps(atom,n){

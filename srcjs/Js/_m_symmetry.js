@@ -100,6 +100,7 @@ function onSymmetryClick(){
 			//doActivateSymmetry(getValue("voidClickPoint"));
 			//break; 
 		case "corePointDragging":
+			runJmolScriptWait("$corePoint");
 			doActivateSymmetry(clickedPoint);
 			break;
 		case "showAllInvariantSymops":
