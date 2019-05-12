@@ -16,7 +16,7 @@ function enterSymmetry() {
 	 	var symopSelection = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.operationList);
 		getbyID("symmetryOperationSet").innerHTML = symopSelection;
 	}
-	runJmolScriptWait("select {};set picking select atom; selectionhalos on");
+	runJmolScriptWait("select none;set picking select atom; selectionhalos on");
 	var activateSymmetry = createButton("activateSymmetryButton", "Activate applied symmetry:", 'setSymClickStatus("radiusBindAdd")', 0);
 	getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
 	var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'setSymClickStatus("radiusBindAddAll")', 0); 
@@ -28,11 +28,7 @@ function enterSymmetry() {
 	getbyID("voidClickingDiv").innerHTML = voidClicking; 
 	var corePointDragging = createButton("corePointDraggingButton", "Enable Dragging", 'doEnableCorePointDragging()', 0)
 	getbyID("corePointDraggingDiv").innerHTML = corePointDragging; 
-	//$('.japplet').on('click', function( event ) {
-	//	  console.log('Applet Clicked');
-	//	  onSymmetryClick();
-	//});
-	document.getElementById("jmolApplet0_appletinfotablediv").addEventListener('click', function( event ) {
+	$('.japplet').on('click', function( event ) {
 		  console.log('Applet Clicked');
 		  onSymmetryClick();
 	});
@@ -48,6 +44,7 @@ function enterSymmetry() {
 
 //upon exiting symmetry tab-currently blank 
 function exitSymmetry() {
+	onSymmetryHoverEnd();
 }
 
 
@@ -57,22 +54,24 @@ function exitSymmetry() {
 function onSymmetryHover(){
 	console.log("hov check");
 	var symClickStatus = Jmol.evaluateVar(jmolApplet0,"symClickStatus");
-	//switch(symClickStatus){
-	//	case "corePointDragging":
-	//		doActivateSymmetry(clickedPoint);
-	//		break;
-	//	default:
-	//		break;
-	//}
+	switch(symClickStatus){
+		case "corePointDragging":
+			doActivateSymmetry(clickedPoint);
+			break;
+		default:
+			break;
+	}
 } 
 
 function onSymmetryHoverStart(){
+	onSymmetryHoverEnd();
 	console.log("setting intervalID");
 	intervalId = window.setInterval(function(){ onSymmetryHover() },50);
 }
 
 function onSymmetryHoverEnd(){
-	window.clearInterval(intervalId);
+	intervalId && window.clearInterval(intervalId);
+	intervalId = 0;
 }
 
 function onSymmetryClick(){
@@ -295,23 +294,6 @@ function createSymmetryGrp() {
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += createLine('blue', '');
 	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "Add element:"
-	strSymmetry += createSelect('addSymEle', 'setSymElement(value)', 0, 1,
-			eleSymb);
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "Symmetry Iterations:"; 
-	strSymmetry += "<input type='text'  name='symIterations' id='symIterations'  value = '1' size='2' class='text'>";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "<div id='activateSymmetryDiv'></div>";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "<div id='activateAllSymmetryDiv'></div>";
-	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "</td></tr>\n";
@@ -359,6 +341,23 @@ function createSymmetryGrp() {
 	strSymmetry += "<BR>\n";
 	strSymmetry += "<div id='corePointDraggingDiv'></div>"
 	strSymmetry += "</td></tr>\n";	
+		strSymmetry += "<tr><td>\n";
+	strSymmetry += "Add element:"
+	strSymmetry += createSelect('addSymEle', 'setSymElement(value)', 0, 1,
+			eleSymb);
+	strSymmetry += "</td></tr>\n";
+	strSymmetry += "<BR>\n";
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += "Symmetry Iterations:"; 
+	strSymmetry += "<input type='text'  name='symIterations' id='symIterations'  value = '1' size='2' class='text'>";
+	strSymmetry += "</td></tr>\n";
+	strSymmetry += "<BR>\n";
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += "<div id='activateSymmetryDiv'></div>";
+	strSymmetry += "</td></tr>\n";
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += "<div id='activateAllSymmetryDiv'></div>";
+	strSymmetry += "</td></tr>\n";
 	strSymmetry += "</form>\n";
 	return strSymmetry
 }
