@@ -81,15 +81,13 @@ function onSymmetryHoverEnd(){
 
 function onSymmetryClick(){
 	var currentSelection = Jmol.evaluateVar(jmolApplet0,"{selected}")
-	var selectionFound = false;
+	var selectionFoundIndex = -1;
 	for (i = 0;i<_symmetry.symopInvariantAlreadyCalculated.length;i++){
 		if (currentSelection == _symmetry.symopInvariantAlreadyCalculated[i]){
-			selectionFound = true; 
+			selectionFoundIndex = i; 
 		}
 	}
-	if (!selectionFound){
-		updateSymInvariants();
-	}
+	updateSymInvariants(selectionFoundIndex);
 	updateInputValues();
 	if (_file.symmetry){
 	var symInvariantsSelect = createSelect('addSymInvariantsSymop', 'doSymopSelection(value)', 0,_file.symmetry.symopInvariantList.length, _file.symmetry.symopInvariantList);
@@ -129,14 +127,22 @@ function onSymmetryClick(){
 }
 
 //Updates global sym invariant list with current  symops of selection 
-function updateSymInvariants(){
-	runJmolScript("symopInvariantListJmol = findInvariantSymOps({selected},readSymmetryVectors().size)");
-	if (_file.symmetry){
-		_file.symmetry.symopInvariantList = Jmol.evaluateVar(jmolApplet0,"symopInvariantListJmol");
-		addSymInvariantsSymop.length = _file.symmetry.symopInvariantList.size; 
-		_symmetry.symInvariantCache.push(_file.symmetry.symopInvariantList);
-		var currentSelection = Jmol.evaluateVar(jmolApplet0,"{selected}");
-		_symmetry.symopInvariantAlreadyCalculated.push(currentSelection);
+function updateSymInvariants(cacheValue){ //-1 means that symInvariant is not yet cached
+	if (cacheValue == -1){
+		runJmolScript("symopInvariantListJmol = findInvariantSymOps({selected},readSymmetryVectors().size)");
+		if (_file.symmetry){
+			_file.symmetry.symopInvariantList = Jmol.evaluateVar(jmolApplet0,"symopInvariantListJmol");
+			addSymInvariantsSymop.length = _file.symmetry.symopInvariantList.size; 
+			_symmetry.symInvariantCache.push(_file.symmetry.symopInvariantList);
+			var currentSelection = Jmol.evaluateVar(jmolApplet0,"{selected}");
+			_symmetry.symopInvariantAlreadyCalculated.push(currentSelection);
+		}
+	}
+	else{
+		if (_file.symmetry){
+			_file.symmetry.symopInvariantList = _symmetry.symInvariantCache[cacheValue];
+			addSymInvariantsSymop.length = _file.symmetry.symopInvariantList.size; 
+		}
 	}
 }
 
