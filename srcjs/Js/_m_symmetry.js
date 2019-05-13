@@ -41,14 +41,14 @@ function enterSymmetry() {
 		  console.log('Applet Clicked');
 		  onSymmetryClick();
 	});
-//	$('.japplet').on('mouseenter', function( event ) {
-//		  console.log('Applet Entered');
-//		  onSymmetryHoverStart();
-//	});
-//	$('.japplet').on('mouseleave', function( event ) {
-//		  console.log('Applet Left');
-//		  onSymmetryHoverEnd();
-//	});
+	$('.japplet').on('mouseenter', function( event ) {
+		  console.log('Applet Entered');
+		  onSymmetryHoverStart();
+	});
+	$('.japplet').on('mouseleave', function( event ) {
+		  console.log('Applet Left');
+		  onSymmetryHoverEnd();
+	});
 }
 
 //upon exiting symmetry tab-currently blank 
@@ -61,22 +61,24 @@ function exitSymmetry() {
 
 function onSymmetryHover(){
 	console.log("hov check");
+	var clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint")
 	var symClickStatus = Jmol.evaluateVar(jmolApplet0,"symClickStatus");
-	//switch(symClickStatus){
-	//	case "corePointDragging":
-	//		doActivateSymmetry(clickedPoint);
-	//		break;
-	//	default:
-	//		break;
-	//}
+	switch(symClickStatus){
+		case "corePointDragging":
+			doActivateSymmetry(clickedPoint);
+			break;
+		default:
+			break;
+	}
 } 
 
 function onSymmetryHoverStart(){
-	_symmetry.intervalID= window.setInterval(onSymmetryHover(),50);
+	_symmetry.intervalID= window.setInterval(function(){onSymmetryHover();},50);
 }
 
 function onSymmetryHoverEnd(){
 	window.clearInterval(_symmetry.intervalID);
+	_symmetry.intervalID = "";
 }
 
 function onSymmetryClick(){
@@ -196,7 +198,7 @@ function doEnableVoidClicking(){
 	if(!cP){
 		cP = Jmol.evaluateVar(jmolApplet0,{selected}.xyz);
 	}
-	if (!cP){
+	if (!cP || cP == "{}"){
 		alert("No center point selected");
 	}
 	var rA = getValue("radiusAngstroms");
