@@ -16,7 +16,12 @@ function enterSymmetry() {
 	 	var symopSelection = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.operationList);
 		getbyID("symmetryOperationSet").innerHTML = symopSelection;
 	}
-	runJmolScriptWait("select none;set picking select atom; selectionhalos on");
+	_symmetry = {
+			intervalID : "",
+			symInvariantCache : [],
+			symopInvariantAlreadyCalculated : [], //collection of points for which symop invariants are already calculated
+		}; 
+	runJmolScriptWait("select {};set picking select atom; selectionhalos on");
 	var activateSymmetry = createButton("activateSymmetryButton", "Activate applied symmetry:", 'setSymClickStatus("radiusBindAdd")', 0);
 	getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
 	var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'setSymClickStatus("radiusBindAddAll")', 0); 
@@ -28,23 +33,26 @@ function enterSymmetry() {
 	getbyID("voidClickingDiv").innerHTML = voidClicking; 
 	var corePointDragging = createButton("corePointDraggingButton", "Enable Dragging", 'doEnableCorePointDragging()', 0)
 	getbyID("corePointDraggingDiv").innerHTML = corePointDragging; 
-	$('.japplet').on('click', function( event ) {
+	//$('.japplet').on('click', function( event ) {
+	//	  console.log('Applet Clicked');
+	//	  onSymmetryClick();
+	//});
+	document.getElementById("jmolApplet0_appletinfotablediv").addEventListener('click', function( event ) {
 		  console.log('Applet Clicked');
 		  onSymmetryClick();
 	});
-	$('.japplet').on('mouseenter', function( event ) {
-		  console.log('Applet Entered');
-		  onSymmetryHoverStart();
-	});
-	$('.japplet').on('mouseleave', function( event ) {
-		  console.log('Applet Left');
-		  onSymmetryHoverEnd();
-	});
+//	$('.japplet').on('mouseenter', function( event ) {
+//		  console.log('Applet Entered');
+//		  onSymmetryHoverStart();
+//	});
+//	$('.japplet').on('mouseleave', function( event ) {
+//		  console.log('Applet Left');
+//		  onSymmetryHoverEnd();
+//	});
 }
 
 //upon exiting symmetry tab-currently blank 
 function exitSymmetry() {
-	onSymmetryHoverEnd();
 }
 
 
@@ -54,28 +62,34 @@ function exitSymmetry() {
 function onSymmetryHover(){
 	console.log("hov check");
 	var symClickStatus = Jmol.evaluateVar(jmolApplet0,"symClickStatus");
-	switch(symClickStatus){
-		case "corePointDragging":
-			doActivateSymmetry(clickedPoint);
-			break;
-		default:
-			break;
-	}
+	//switch(symClickStatus){
+	//	case "corePointDragging":
+	//		doActivateSymmetry(clickedPoint);
+	//		break;
+	//	default:
+	//		break;
+	//}
 } 
 
 function onSymmetryHoverStart(){
-	onSymmetryHoverEnd();
-	console.log("setting intervalID");
-	intervalId = window.setInterval(function(){ onSymmetryHover() },50);
+	_symmetry.intervalID= window.setInterval(onSymmetryHover(),50);
 }
 
 function onSymmetryHoverEnd(){
-	intervalId && window.clearInterval(intervalId);
-	intervalId = 0;
+	window.clearInterval(_symmetry.intervalID);
 }
 
 function onSymmetryClick(){
-	updateSymInvariants();
+	var currentSelection = Jmol.evaluateVar(jmolApplet0,"{selected}")
+	var selectionFound = false;
+	for (i = 0;i<_symmetry.symopInvariantAlreadyCalculated.length;i++){
+		if (currentSelection == _symmetry.symopInvariantAlreadyCalculated[i]){
+			selectionFound = true; 
+		}
+	}
+	if (!selectionFound){
+		updateSymInvariants();
+	}
 	updateInputValues();
 	if (_file.symmetry){
 	var symInvariantsSelect = createSelect('addSymInvariantsSymop', 'doSymopSelection(value)', 0,_file.symmetry.symopInvariantList.length, _file.symmetry.symopInvariantList);
@@ -100,7 +114,6 @@ function onSymmetryClick(){
 			//doActivateSymmetry(getValue("voidClickPoint"));
 			//break; 
 		case "corePointDragging":
-			runJmolScriptWait("$corePoint");
 			doActivateSymmetry(clickedPoint);
 			break;
 		case "showAllInvariantSymops":
@@ -121,6 +134,9 @@ function updateSymInvariants(){
 	if (_file.symmetry){
 		_file.symmetry.symopInvariantList = Jmol.evaluateVar(jmolApplet0,"symopInvariantListJmol");
 		addSymInvariantsSymop.length = _file.symmetry.symopInvariantList.size; 
+		_symmetry.symInvariantCache.push(_file.symmetry.symopInvariantList);
+		var currentSelection = Jmol.evaluateVar(jmolApplet0,"{selected}");
+		_symmetry.symopInvariantAlreadyCalculated.push(currentSelection);
 	}
 }
 
@@ -304,11 +320,7 @@ function createSymmetryGrp() {
 			+ "<option value=0.4>40%</option>"
 			+ "<option value=0.6>60%</option>"
 			+ "<option value=1.0>100%</option>" + "</select>";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<div id='activateSymmetryDiv'></div>";
-	strSymmetry += "</td></tr>\n";	
+	strSymmetry += "<BR>\n";	
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += "Enter center point:";
@@ -341,7 +353,7 @@ function createSymmetryGrp() {
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "<BR>\n";
 	strSymmetry += "<div id='corePointDraggingDiv'></div>"
-	strSymmetry += "</td></tr>\n";	
+	strSymmetry += "</td></tr>\n";
 		strSymmetry += "<tr><td>\n";
 	strSymmetry += "Add element:"
 	strSymmetry += createSelect('addSymEle', 'setSymElement(value)', 0, 1,
@@ -358,14 +370,14 @@ function createSymmetryGrp() {
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "<div id='activateAllSymmetryDiv'></div>";
-	strSymmetry += "</td></tr>\n";
+	strSymmetry += "</td></tr>\n";	
 	strSymmetry += "</form>\n";
 	return strSymmetry
 }
 
 // draws the axis lines for rotation axes and mirror planes for mirror symops
 function displaySymmetryDrawObjects(symop,pointt){
-	if (!pointt){
+	if (pointt == ""){
 		var pointt = "";
 	}
 	else{
@@ -394,10 +406,10 @@ function displaySymmetryDrawObjects(symop,pointt){
 	else{ var zOffsetUpdated = zOffsetValue;}	
 	var symopWithOffset = symopArray[0].substring(0,1)+"+"+xOffsetUpdated+"/1,"+symopArray[1].substring(0,1)+"+"+yOffsetUpdated+"/1,"+symopArray[2].substring(0,1)+"+"+zOffsetUpdated+"/1";
 	console.log("finalSymop:"+symopWithOffset);
-	runJmolScriptWait("draw symop '"+symopWithOffset+"' "+pointt);
+	runJmolScriptWait("draw symop '"+symopWithOffset+"' "+pointt+"");
 	axisFactor = 3;
 	runJmolScriptWait("drawCleanSymmetryAxisVectors("+axisFactor+")");
-}  
+} 
 
 // takes a given point and add the elements provided to it by a symmetry operation
 // symmetry operations with multiple outputs (e.g. C3) will produce multiple symmetry atoms 
@@ -472,4 +484,3 @@ function drawAllSymmetricPoints(point){
 //	}
 //	return symopSet
 //}
-
