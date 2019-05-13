@@ -149,8 +149,10 @@ function updateSymInvariants(cacheValue){ //-1 means that symInvariant is not ye
 //Changes 
 function updateInputValues(){
 	var selectionPoint = Jmol.evaluateVar(jmolApplet0,"{selected}.xyz");
-	initPoint.value = selectionPoint;
-	centerPoint.value = selectionPoint; 
+	if (selectionPoint != -1){
+		initPoint.value = selectionPoint;
+		centerPoint.value = selectionPoint; 
+	}
 	var clickedPointString = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
 	if (clickedPointString){
 		voidClickPoint.value = clickedPointString[0].toFixed(4)+","+clickedPointString[1].toFixed(4)+","+clickedPointString[2].toFixed(4);
@@ -376,7 +378,10 @@ function createSymmetryGrp() {
 	strSymmetry += "</td></tr>\n";
 	strSymmetry += "<tr><td>\n";
 	strSymmetry += "<div id='activateAllSymmetryDiv'></div>";
-	strSymmetry += "</td></tr>\n";	
+	strSymmetry += "</td></tr>\n";
+	strSymmetry += "<tr><td>\n";
+	strSymmetry += createButton("resetSymmetryButton", "Reset Symmetry Page:", 'resetSymmetryPage()', 0); 
+	strSymmetry += "</td></tr>\n"
 	strSymmetry += "</form>\n";
 	return strSymmetry
 }
@@ -445,6 +450,11 @@ function drawAllSymmetricPoints(point){
 	runJmolScriptWait("allSymPoints = getSymmetryAtomArrayAllSymops("+pointValue+")");
 	runJmolScriptWait("allSymPoints = allSymPoints");
 	runJmolScriptWait("draw points @allSymPoints");
+}
+
+function resetSymmetryPage(){
+	enterSymmetry();
+	document.getElementById('symmetryGroup').reset();
 }
 
 //Additional functions: yet unused 
