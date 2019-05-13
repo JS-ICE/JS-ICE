@@ -41,14 +41,14 @@ function enterSymmetry() {
 		  console.log('Applet Clicked');
 		  onSymmetryClick();
 	});
-	$('.japplet').on('mouseenter', function( event ) {
-		  console.log('Applet Entered');
-		  onSymmetryHoverStart();
-	});
-	$('.japplet').on('mouseleave', function( event ) {
-		  console.log('Applet Left');
-		  onSymmetryHoverEnd();
-	});
+//	$('.japplet').on('mouseenter', function( event ) {
+//		  console.log('Applet Entered');
+//		  onSymmetryHoverStart();
+//	});
+//	$('.japplet').on('mouseleave', function( event ) {
+//		  console.log('Applet Left');
+//		  onSymmetryHoverEnd();
+//	});
 }
 
 //upon exiting symmetry tab-currently blank 
@@ -207,7 +207,9 @@ function doEnableVoidClicking(){
 	}
 	runJmolScriptWait("unbind"); //resets jmol to default mouse config
 	runJmolScriptWait("bind 'LEFT+click' 'clickedPoint = clickToPoint("+cP+","+rA+",_X,_Y)'");
-	runJmolScriptWait("sphereClickShow = 'sphereClickShow'; bind 'enter' 'draw ID @sphereClickShow radius "+rA+" "+cP+" translucent'"); 
+	if (cP != "{}"){
+		runJmolScriptWait("sphereClickShow = 'sphereClickShow'; draw ID @sphereClickShow radius "+rA+" "+cP+" translucent"); 
+	}
 }
 
 function doDisableVoidClicking(){
