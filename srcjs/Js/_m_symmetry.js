@@ -1,6 +1,6 @@
 //The symmetry tab enables visualization and manipulation of file according to various symmetry operations. Compatible with
 //crystal and .cif files. 
-//A. Salij 4.7.2018 (salij1@stolaf.edu-->andrewsalij@gmail.com) 
+//A. Salij 5.23.2018 (andrewsalij@gmail.com) 
 
 //initialization upon entry into symmetry tab 
 function enterSymmetry() {
@@ -41,14 +41,14 @@ function enterSymmetry() {
 		  console.log('Applet Clicked');
 		  onSymmetryClick();
 	});
-//	$('.japplet').on('mouseenter', function( event ) {
-//		  console.log('Applet Entered');
-//		  onSymmetryHoverStart();
-//	});
-//	$('.japplet').on('mouseleave', function( event ) {
-//		  console.log('Applet Left');
-//		  onSymmetryHoverEnd();
-//	});
+	$('.japplet').on('mouseenter', function( event ) {
+		  console.log('Applet Entered');
+		  onSymmetryHoverStart();
+	});
+	$('.japplet').on('mouseleave', function( event ) {
+		  console.log('Applet Left');
+		  onSymmetryHoverEnd();
+	});
 }
 
 //upon exiting symmetry tab-currently blank 
@@ -61,10 +61,17 @@ function exitSymmetry() {
 
 function onSymmetryHover(){
 	console.log("hov check");
-	var clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint")
+	var clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
 	var symClickStatus = Jmol.evaluateVar(jmolApplet0,"symClickStatus");
 	switch(symClickStatus){
 		case "corePointDragging":
+			var cP = getValue("centerPoint");
+				var rA = getValue("radiusAngstroms");
+				if(!rA){
+					rA = 1; //default value 
+				} 
+			runJmolScriptWait("clickedPoint = bindToSphereConstraint("+cP+","+rA+",clickedPoint)");
+			clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
 			doActivateSymmetry(clickedPoint);
 			break;
 		default:
@@ -73,7 +80,9 @@ function onSymmetryHover(){
 } 
 
 function onSymmetryHoverStart(){
-	_symmetry.intervalID= window.setInterval(function(){onSymmetryHover();},50);
+	if (! _symmetry.intervalID){
+		_symmetry.intervalID = window.setInterval(function(){onSymmetryHover();},200);
+	}
 }
 
 function onSymmetryHoverEnd(){
@@ -114,6 +123,13 @@ function onSymmetryClick(){
 			//doActivateSymmetry(getValue("voidClickPoint"));
 			//break; 
 		case "corePointDragging":
+			var cP = getValue("centerPoint");
+				var rA = getValue("radiusAngstroms");
+				if(!rA){
+					rA = 1; //default value 
+				} 
+			runJmolScriptWait("clickedPoint = bindToSphereConstraint("+cP+","+rA+",clickedPoint)");
+			clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
 			doActivateSymmetry(clickedPoint);
 			break;
 		case "showAllInvariantSymops":

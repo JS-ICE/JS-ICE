@@ -182,11 +182,10 @@ function bindToPlaneConstraint(planeDrawObjectID, selectedPoint, errorDistance){
 	}
 }
 
-function bindToSphereConstraint(sphereCenterPoint,sphereRadius,selectedPoint,errorDistance){
+function bindToSphereConstraint(sphereCenterPoint,sphereRadius,selectedPoint){
 	var c = sphereCenterPoint
 	var r = sphereRadius
 	var s = selectedPoint
-	var d = errorDistance
 	var fromCenterVectorUnit = (s-c)/(s-c)
 	var pointOnSphere = c+fromCenterVectorUnit*r
 	return pointOnSphere
