@@ -105,7 +105,6 @@ function onSymmetryClick(){
 	var symInvariantsSelect = createSelect('addSymInvariantsSymop', 'doSymopSelection(value)', 0,_file.symmetry.symopInvariantList.length, _file.symmetry.symopInvariantList);
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect;
 	createSymmetryGrp();
-	var messageCallback = "";//how do I get message from Jmol? 
 	var symClickStatus = Jmol.evaluateVar(jmolApplet0,"symClickStatus");
 	var clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
 	}
@@ -166,16 +165,25 @@ function updateSymInvariants(cacheValue){ //-1 means that symInvariant is not ye
 	}
 }
 
+function pointStringToFixed(pointString,decimalPlaces){
+	if (!pointString){
+		return "";
+	}
+	var dP = decimalPlaces;
+	var pointStringUpdated = pointString[0].toFixed(dP)+","+pointString[1].toFixed(dP)+","+pointString[2].toFixed(dP);
+	return pointStringUpdated
+}
+
 //Changes input tables to current selection in JSmol 
 function updateInputValues(){
 	var selectionPoint = Jmol.evaluateVar(jmolApplet0,"{selected}.xyz");
 	if (selectionPoint != -1){
-		initPoint.value = selectionPoint;
-		centerPoint.value = selectionPoint; 
+		initPoint.value = pointStringToFixed(selectionPoint,4);
+		centerPoint.value = pointStringToFixed(selectionPoint,4);
 	}
 	var clickedPointString = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
-	if (clickedPointString){
-		voidClickPoint.value = clickedPointString[0].toFixed(4)+","+clickedPointString[1].toFixed(4)+","+clickedPointString[2].toFixed(4);
+	if (clickedPointString && clickedPointString != ""){
+		voidClickPoint.value = pointStringToFixed(clickedPointString,4);
 	}
 }
 
