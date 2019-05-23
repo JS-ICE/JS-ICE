@@ -57,8 +57,6 @@ function exitSymmetry() {
 
 
 
-//todo upon clicking on the japplet
-
 function onSymmetryHover(){
 	console.log("hov check");
 	var clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
@@ -91,6 +89,7 @@ function onSymmetryHoverEnd(){
 	_symmetry.intervalID = "";
 }
 
+//todo upon clicking on the japplet
 function onSymmetryClick(){
 	var currentSelection = Jmol.evaluateVar(jmolApplet0,"{selected}")
 	var selectionFoundIndex = -1;
@@ -360,6 +359,7 @@ function appendSymmetricAtoms(elementName,point,symopSelected,iterations){
 	}
 }
 
+//For a given point, applies all symmetry operations to that point and draws points (small yellow dots) for each symop
 function drawAllSymmetricPoints(point){
 	var pointValue = point;
 	runJmolScriptWait("draw pointValue"); //check

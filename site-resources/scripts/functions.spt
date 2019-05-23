@@ -34,6 +34,12 @@ function pointToArray(pointt){
 	return coordinateArray
 }
 
+//Converts an array "[x,y,z]" into a point "{x y z}" 
+function arrayToPoint(xyzArray){
+	pointt = "{"+xyzArray[0]+","+xyzArray[1]+","+xyzArray[2]+"}"
+	return pointt 
+}
+
 // gets and returns the symmetry operation vector (as in "x,y,z" for identity are so forth) names 
 function readSymmetryVectors() {
 	var symopVectorArray = [];
@@ -305,6 +311,7 @@ function clickToPoint(centerXYZ,radiusAngstroms,_X,_Y){
 	//print "pXYZ:"+pXYZ
 	return pXYZ
 }
+
 
 //needs more testing
 function drawVector(vectorID,vectorStart,vectorEnd){
