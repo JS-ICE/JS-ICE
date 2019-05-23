@@ -102,7 +102,6 @@ function getSymmetricAtomArray(symopSelected,pointt,iterations){
 //draws narrow arrows as opposed to the thicker, shorter arrows provided by the default draw symop command 
 function drawCleanSymmetryAxisVectors(axisFactor){
 	//draw sym_axis* off 
-	//draw symop @symOperation
 	point1 = $sym_rotvector1[0]
 	point2 = $sym_rotvector1[1]
 	point3 = $sym_rotvector2[0]
@@ -156,7 +155,6 @@ function getSymmetryAtomArrayAllSymops(point){
 	return symAtomArrayAllSymops
 }
 
-//Not fully tested
 //provides the closest point on a line designated by some axis draw object to some selected point if said point is within some distance 
 function bindToVectorConstraint(vectorDrawObjectID,selectedPoint,errorDistance){
 	var vectorPointer = ""+vectorDrawObjectID+"" //IMPORTANT: this is how to designate pointers in jmol
@@ -188,6 +186,7 @@ function bindToPlaneConstraint(planeDrawObjectID, selectedPoint, errorDistance){
 	}
 }
 
+//Takes some point and outputs the closest point on some arbitrary sphere 
 function bindToSphereConstraint(sphereCenterPoint,sphereRadius,selectedPoint){
 	var c = sphereCenterPoint
 	var r = sphereRadius
@@ -196,7 +195,6 @@ function bindToSphereConstraint(sphereCenterPoint,sphereRadius,selectedPoint){
 	var pointOnSphere = c+fromCenterVectorUnit*r
 	return pointOnSphere
 }
-
 
 // provides an array of the symops that do not change the position of a given atom--n is total number of symops to check  
 function findInvariantSymOps(atom,n){
@@ -223,10 +221,6 @@ function findInvariantSymOps(atom,n){
 	return invariantSymopsArray
 }	
 
-//Unused 
-//function setSymopClickBinding(){
-//	bind "LEFT+click" "+:pickSymops"
-//}
 
 //Provides x and y screen coordinates of mouse 
 function storeScreenXY(_X,_Y){
@@ -234,7 +228,6 @@ function storeScreenXY(_X,_Y){
 	var y = _Y
 	return [x,y]
 }
-
 
 function moveToSXYMatch(_X,_Y,screenDistanceBound){
 	//print "starting program"
@@ -265,6 +258,7 @@ function moveToSXYMatch(_X,_Y,screenDistanceBound){
 	//print "sy:"+sy
 	return [sx,sy]	
 }
+
 //only works for points with a given index (e.g. atoms) 
 function sXYtoXY(sxyArray){
 	var nAtoms = {visible}.size
@@ -320,11 +314,6 @@ function drawVector(vectorID,vectorStart,vectorEnd){
 	draw @vectorIDString @vectorstartString @vectorEndString
 }
 
-//Sets a messagecallback for left clicking
-//This handling is not being used. Instead, JQuery is providing schema for general click handling. a
-function bindLeftClickKeyEvent(){
-	bind "LEFT+click" "+:set MessageCallback 'leftClick';print 'leftClick'"
-}
 
 //Draws every symmetry operation given some array of Jones-Faithful representations of symmetry operations 
 function drawAllSymops(symopArray,centerPoint){
@@ -336,19 +325,5 @@ function drawAllSymops(symopArray,centerPoint){
 	}
 }
 
-//Unused
-// gets and returns the symmetry operation names (e.g. "identity") 
-//not really necessary for current functionality but nice to have 
-//only functional in jsmol as jsice cannot read spacegroupInfo.operations
-function readSymmetryNames() {
-	var allSymopInfo = _M.getProperty("spacegroupInfo.operations");
-	var numSymops = allSymopInfo.length;
-	var symopNameArray = [];
-	for (var i = 1; i<= numSymops;i++){
-		var symopCurrent = allSymopInfo[i];
-		var currentName = symopCurrent[3];
-		symopNameArray[i] = currentName;
-	}
-	return symopNameArray
-}
+
 
