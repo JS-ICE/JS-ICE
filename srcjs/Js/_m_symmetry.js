@@ -71,11 +71,12 @@ function onSymmetryHover(){
 					rA = 1; //default value 
 				} 
 			runJmolScriptWait("clickedPoint = bindToSphereConstraint("+cP+","+rA+",clickedPoint)");
+			runJmolScriptWait("appendNewAtomPoint('corepoint',"+_file.symmetry.chosenSymElement+", clickedPoint)");
 			clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
 			doActivateSymmetry(clickedPoint);
 			break;
 		default:
-			break;
+			break; 
 	}
 } 
 
@@ -122,13 +123,14 @@ function onSymmetryClick(){
 			//clickedPoint = newClickedPoint;
 			//doActivateSymmetry(getValue("voidClickPoint"));
 			//break; 
-		case "corePointDragging":
+			case "corePointDragging":
 			var cP = getValue("centerPoint");
 				var rA = getValue("radiusAngstroms");
 				if(!rA){
 					rA = 1; //default value 
 				} 
-			runJmolScriptWait("clickedPoint = bindToSphereConstraint("+cP+","+rA+",clickedPoint)");
+			runJmolScriptWait("clickedPoint = bindToSphereConstraint({"+cP+"},"+rA+",clickedPoint)");
+			runJmolScriptWait("appendNewAtomPoint('corepoint',"+_file.symmetry.chosenSymElement+", clickedPoint)");
 			clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
 			doActivateSymmetry(clickedPoint);
 			break;
