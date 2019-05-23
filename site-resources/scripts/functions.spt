@@ -1,5 +1,5 @@
 // functions for JS-ICE
-//A. Salij 4.10.2018 (salij1@stolaf.edu----->andrewsalij@gmail.com) 
+//A. Salij 5.23.2018 (andrewsalij@gmail.com) 
 
 //converts the point data type in jmol into arrays of the 3 coordinates, indexed x,y,z 
 

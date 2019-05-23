@@ -33,13 +33,9 @@ function enterSymmetry() {
 	getbyID("voidClickingDiv").innerHTML = voidClicking; 
 	var corePointDragging = createButton("corePointDraggingButton", "Enable Dragging", 'doEnableCorePointDragging()', 0)
 	getbyID("corePointDraggingDiv").innerHTML = corePointDragging; 
-	//$('.japplet').on('click', function( event ) {
-	//	  console.log('Applet Clicked');
-	//	  onSymmetryClick();
-	//});
-	document.getElementById("jmolApplet0_appletinfotablediv").addEventListener('click', function( event ) {
+	$('.japplet').on('click', function( event ) {
 		  console.log('Applet Clicked');
-		  onSymmetryClick();
+			  onSymmetryClick();
 	});
 	$('.japplet').on('mouseenter', function( event ) {
 		  console.log('Applet Entered');
@@ -47,6 +43,10 @@ function enterSymmetry() {
 	});
 	$('.japplet').on('mouseleave', function( event ) {
 		  console.log('Applet Left');
+		  onSymmetryHoverEnd();
+	});
+	$('.rightframe').on('mouseenter', function( event ) {
+		  console.log('Right Frame Entered');
 		  onSymmetryHoverEnd();
 	});
 }
@@ -166,7 +166,7 @@ function updateSymInvariants(cacheValue){ //-1 means that symInvariant is not ye
 	}
 }
 
-//Changes 
+//Changes input tables to current selection in JSmol 
 function updateInputValues(){
 	var selectionPoint = Jmol.evaluateVar(jmolApplet0,"{selected}.xyz");
 	if (selectionPoint != -1){
@@ -294,8 +294,6 @@ function updateSymOffset(dimension,offset){
 	displaySymmetryDrawObjects(_file.symmetry.chosenSymop,getValue("initPoint"));
 }
 
-
-
 // draws the axis lines for rotation axes and mirror planes for mirror symops
 function displaySymmetryDrawObjects(symop,pointt){
 	if (pointt == ""){
@@ -334,7 +332,6 @@ function displaySymmetryDrawObjects(symop,pointt){
 
 // takes a given point and add the elements provided to it by a symmetry operation
 // symmetry operations with multiple outputs (e.g. C3) will produce multiple symmetry atoms 
-
 function appendSymmetricAtoms(elementName,point,symopSelected,iterations){
 	if (elementName == ""){
 		console.log("ERROR: empty element name");
@@ -354,6 +351,7 @@ function appendSymmetricAtoms(elementName,point,symopSelected,iterations){
 		}
 	}
 }
+
 function drawAllSymmetricPoints(point){
 	var pointValue = point;
 	runJmolScriptWait("draw pointValue"); //check
