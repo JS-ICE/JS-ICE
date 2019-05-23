@@ -129,6 +129,12 @@ function appendNewAtomPoint(elementID, elementName, pointt){
 	if (pointt == {}){
 		return 0 
 	}
+	if (!elementName || elementName == ""){
+		var elementName = "H" 
+	}
+	if (!elementID || elementID = ""){
+		var elementID  = "defaultID"
+	}
 	var x = @1.element
 	@1.element = elementName
 	var col = @1.color
