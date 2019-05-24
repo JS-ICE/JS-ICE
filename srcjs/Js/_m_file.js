@@ -1,3 +1,4 @@
+var _fileIsReload;
 
 var sampleOptionArr = ["Load a Sample File", 
 	"MgO slab", 
@@ -194,7 +195,6 @@ function file_loadedCallback(filePath) {
 			exportFractionalCoord : false
 	};
 	
-	counterFreq = 0;
 	_file.info = extractInfoJmol("auxiliaryInfo.models");
 	setFlags();
 	setFileName();

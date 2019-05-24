@@ -30,8 +30,8 @@ function exitSurface() {
 	cancelPicking();
 }
 
-SURFACE_VDW   			 = "isosurface VDW"; // BH Q: Why was this VDW + 2.0 ?
-SURFACE_VDW_PERIODIC     = "isosurface lattice _CELL_ VDW";
+var SURFACE_VDW   			 = "isosurface VDW"; // BH Q: Why was this VDW + 2.0 ?
+var SURFACE_VDW_PERIODIC     = "isosurface lattice _CELL_ VDW";
 //SURFACE_VDW_MEP			 = "isosurface resolution 7 VDW map MEP"; // why SOLVENT, which is VDW + 1.2?
 //SURFACE_VDW_MEP_PERIODIC = "isosurface lattice _CELL_ resolution 7 VDW map MEP";
 

@@ -80,7 +80,6 @@ function exportVASP() {
 	var stringTitle = "";
 	var stringList = "";
 	var stringElement = "";
-	numAtomelement = null;
 	getUnitcell(_file.frameValue);
 	setUnitCell();
 	var sortedElement = getElementList();
@@ -102,7 +101,7 @@ function exportVASP() {
 	var lattice = fromfractionaltoCartesian();
 
 	warningMsg("Make sure you have selected the model you would like to export.");
-	vaspFile = prompt("Type here the job title:", "");
+	var vaspFile = prompt("Type here the job title:", "");
 	(vaspFile == "") ? (vaspFile = 'POSCAR prepared with J-ICE whose atoms are: ')
 			: (vaspFile = 'POSCAR prepared with J-ICE ' + vaspFile
 					+ ' whose atoms are:');

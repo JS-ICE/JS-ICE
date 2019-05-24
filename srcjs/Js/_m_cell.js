@@ -191,7 +191,7 @@ getKindCell = function() {
 }
 
 function setPackRangeAndReload(val) {
-	packRange = val;
+	_cell.packRange = val;
 	reload("{1 1 1} RANGE " + val, getKindCell());
 	cellOperation();
 }
@@ -215,7 +215,7 @@ function setCellType(value) {
 	if (valueConv == "on" && checkBoxchPack == "off") {
 		reload(null, value);
 	} else if (valueConv == "off" && checkBoxchPack == "on") {
-		reload("{1 1 1} RANGE " + packRange, value);
+		reload("{1 1 1} RANGE " + _cell.packRange, value);
 	} else {
 		reload(null, value);
 	}

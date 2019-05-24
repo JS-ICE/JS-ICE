@@ -137,8 +137,7 @@ var grpDispDelayed = function(n, mode) {
 	}
 	switch(mode) {
 	case TAB_OVER:
-		tabs_timeouts[n] = setTimeout(function(){grpDispDelayed(n,1)},TAB_DELAY_MS);
-		
+		//tabs_timeouts[n] = setTimeout(function(){grpDispDelayed(n,1)},TAB_DELAY_MS);
 		break;
 	case TAB_CLICK:
 		for (var i = 0; i < tabs_menu.length; i++) {
@@ -148,7 +147,6 @@ var grpDispDelayed = function(n, mode) {
 		getbyID(tabs_menu[n].grp).style.display = "inline";
 		tabs_menu[n].disp = 1;
 		showMenu(n);
-		
 		break;
 	case TAB_OUT:
 		break;

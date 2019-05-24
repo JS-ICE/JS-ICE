@@ -142,9 +142,9 @@ function exportGULP() {
 	if (_file.cell.typeSystem == "crystal") {
 		// interNumber from crystalfunction .. BH??? interNumber is only defined locally in figureOutSpaceGroup
 		if (!flagsymmetryGulp)
-			interNumber = "P 1"
+			_file.interNumber = "P 1"
 		var spacegroupGulp = 'var spaceheader = \"spacegroup\";'
-				+ 'var spacegroup = \"' + interNumber + '\";'// TBC
+				+ 'var spacegroup = \"' + _file.interNumber + '\";'// TBC
 				+ 'spacegulp = [spaceheader, spacegroup];';
 		runJmolScriptWait(spacegroupGulp);
 	}

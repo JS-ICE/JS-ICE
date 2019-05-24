@@ -128,10 +128,10 @@ function exportCRYSTAL() {
 			// BH: THIS METHOD WILL RELOAD THE FILE!
 			figureOutSpaceGroup(true, true);
 			var endCRYSTAL = "TEST', 'END";
-			var script = "var cellp = [" + stringCellParam + "];"
+			var script = "var cellp = [" + _file.stringCellParam + "];"
 					+ 'var cellparam = cellp.join(" ");' + "var crystalArr = ['"
 					+ titleCRYS + "', " + systemCRYSTAL + ", " + keywordCRYSTAL + ", "
-					+ interNumber + "];" + 'crystalArr = crystalArr.replace("\n\n"," ");'
+					+ _file.interNumber + "];" + 'crystalArr = crystalArr.replace("\n\n"," ");'
 					+ "var crystalRestArr = [" + numAtomCRYSTAL + ", " + fractionalCRYSTAL
 					+ ", '" + endCRYSTAL + "'];"
 					+ 'crystalRestArr = crystalRestArr.replace("\n\n"," ");'

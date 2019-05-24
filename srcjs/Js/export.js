@@ -133,7 +133,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 						.replace(/international table number:/, ""));
 		}
 	}
-	var interNumber = parseInt(s);
+	var interNumber = _file.internationalTableNumber = parseInt(s);
 	getUnitcell(prevFrame);
 	// /from crystal manual http://www.crystal.unito.it/Manuals/crystal09.pdf
 	switch (true) {
@@ -259,6 +259,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 //			+ roundNumber(_file.cell.c) + ' ' + roundNumber(_file.cell.alpha) + ' '
 //			+ roundNumber(_file.cell.beta) + ' ' + roundNumber(_file.cell.gamma);
 	//	alert(stringCellparamgulp)
+	_file.stringCellParam = stringCellParam;
 	if (doReload) {
 		reload("primitive");
 		restoreStateAndOrientation_a();

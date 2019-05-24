@@ -353,8 +353,8 @@ function extractIRData_gaussian(specData) {
 	}
 }
 
-function rtrim(s, i0, char, i1) {
-	return s.substring(i0,s.indexOf("K") - i1);
+function rtrim(s, i0, ch, i1) {
+	return s.substring(i0,s.indexOf(ch) - i1);
 }
 
 function extractRamanData(specData) {
@@ -404,7 +404,7 @@ function createCoolSpectrum(specData, type) {
 		if (specData.sortInt) {
 		 	maxInt = maxValue(specData.sortInt);
 		} else if (specData.maxR) {
-			maxint = specData.maxR;
+			maxInt = specData.maxR;
 		} else {
 			maxInt = 100;
 		}
@@ -445,7 +445,7 @@ function createConvolvedSpectrum(specData, type) {
 	var sb = Math.sqrt(cx) / (sigma * Math.sqrt(Math.PI));
 
 	var freq = (type == "ir" ? irFreq : ramanFreq);
-	var int = (type == "ir" ? irInt : ramanInt);
+	var integ = (type == "ir" ? irInt : ramanInt);
 	
 	for (var i = 0; i < 4000; i++) {
 		var sp = 0;
@@ -453,8 +453,8 @@ function createConvolvedSpectrum(specData, type) {
 			// discard translation
 			if (!freq[k]) 
 				continue;
-			int[k] || (int[k] = 0);
-			v = (allZero ? 100 : int[k]);
+			integ[k] || (integ[k] = 0);
+			var v = (allZero ? 100 : integ[k]);
 			var xnn = i - freq[k];
 			sp += (isGaussian ? Math.exp(-xnn * xnn / ssa) : ssc / (xnn * xnn + ssd)) * v * sb;
 		}
@@ -503,7 +503,7 @@ function showFreqGraph(plotDiv, specData, plot) {
 			clickable: true, 
 			hoverDelay: 10, 
 		    autoHighlight: false,
-			hoverDelayDefault: 10,
+			hoverDelayDefault: 10
       }
 	};
 	var ir = [];
@@ -559,7 +559,7 @@ function getRanges(specData) {
 //range which facilitates clicking peaks. 
 	var freqs = specData.freqs
 	var sigma = specData.sigma;
-	n = specData.freqs.length;
+	var n = specData.freqs.length;
 	
 	for (var i = 0, x1, x2, last=n-1; i <= last; i++) { 
 		switch (i) {
@@ -602,7 +602,7 @@ function plotHoverCallbackFreq(event, pos, itemFreq) {
 	hideTooltip();
 	if(!itemFreq)return
 	if (_file.specData.previousPointFreq != itemFreq.datapoint) {
-		previousPointFreq = itemFreq.datapoint;
+		_file.specData.previousPointFreq = itemFreq.datapoint;
 		var range = getFreqForClick(itemFreq.datapoint);
 		if (!range)
 			return;
@@ -614,7 +614,7 @@ function plotHoverCallbackFreq(event, pos, itemFreq) {
 		var x = roundoff(itemFreq.datapoint[0],2);
 		var y = roundoff(itemFreq.datapoint[1],1);
 		var model = itemFreq.datapoint[2];		
-		label = getbyID('vib').options[listIndex].text;
+		var label = getbyID('vib').options[listIndex].text;
 		showTooltipFreq(itemFreq.pageX, itemFreq.pageY + 10, label, pos);
 	}
 	if (pos.canvasY < 30)setTimeout(function(){plotClickCallbackFreq(event, pos, itemFreq)},50);
@@ -823,7 +823,7 @@ function createFreqGrp() {
 function getFreqForClick(p) {
 //This retrieves only the frequencies within range. 
 	var freq = p[0];
-	var int = p[1];
+	var integ = p[1];
 	var listIndex = -1;
 	
 	for (var i = 0; i < _file.specData.ranges.length; i++) {

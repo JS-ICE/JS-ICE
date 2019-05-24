@@ -22,7 +22,6 @@
  *  02111-1307  USA.
  */
 
-//var counterFreq = 0;
 
 loadDone_molden = function(msg) {
 

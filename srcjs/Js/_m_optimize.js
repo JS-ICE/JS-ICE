@@ -104,8 +104,8 @@ function convertGeomData(f, toUnits) {
 
 	// The required value is the end of the string Energy = -123.456 Hartree.
 	
-	for (var i = (_file.hasInputModel ? 1 : 0); i < geomData.length; i++) {
-		var data = _fileInfo.geomData[i];
+	for (var i = (_file.hasInputModel ? 1 : 0); i < _file.geomData.length; i++) {
+		var data = _file.geomData[i];
 		var val = f(data.substring(data.indexOf('=') + 1, 
 				data.indexOf(u) - 1));
 		addOption(geom, i + " E = " + val + toUnits, i + 1);

@@ -23,7 +23,7 @@
  */
 
 //////////Following functions control the structural optimization of a structure using the embedded uff of Jmol
-_uff = {
+var _uff = {
 	counterUff : 0
 }
 

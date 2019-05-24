@@ -1,6 +1,6 @@
 // BH 2018
 
-_callback = {
+var _callback = {
 	fPick : null
 }
 

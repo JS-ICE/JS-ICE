@@ -85,7 +85,7 @@ function connectAtom() {
 		return false;
 	}
 
-	if (radbondVal == "all") {
+	if (_edit.radbondVal == "all") {
 		if (_edit.radBondRange == "just") {
 			var bondRadFrom = getValue("radiuscoonectFrom");
 			if (bondRadFrom == "") {
@@ -110,7 +110,7 @@ function connectAtom() {
 					+ bondRadTo + " (all) (all) " + styleBond
 					+ " ModifyOrCreate;");
 		}
-	} else if (radbondVal == "atom") {
+	} else if (_edit.radbondVal == "atom") {
 		var atomFrom = getValue("connectbyElementList");
 		var atomTo = getValue("connectbyElementListone");
 		if (_edit.radBondRange == "just") {
@@ -139,7 +139,7 @@ function connectAtom() {
 					+ atomTo + ") " + styleBond + " ModifyOrCreate;");
 		}
 
-	} else if (radbondVal == "selection") {
+	} else if (_edit.radbondVal == "selection") {
 		runJmolScriptWait("connect (selected) (selected) " + styleBond + " ModifyOrCreate;");
 	}
 }
@@ -147,7 +147,7 @@ function connectAtom() {
 function deleteBond() {
 	var styleBond = getValue("setBondFashion");
 
-	if (radbondVal == "all") {
+	if (_edit.radbondVal == "all") {
 		if (_edit.radBondRange == "just") {
 			var bondRadFrom = getValue("radiuscoonectFrom");
 			if (bondRadFrom == "") {
@@ -166,7 +166,7 @@ function deleteBond() {
 			runJmolScriptWait("connect " + bondRadFrom + " " + bondRadTo
 					+ " (all) (all)  DELETE;");
 		}
-	} else if (radbondVal == "atom") {
+	} else if (_edit.radbondVal == "atom") {
 		var atomFrom = getValue("connectbyElementList");
 		var atomTo = getValue("connectbyElementListone");
 		if (_edit.radBondRange == "just") {
@@ -189,15 +189,15 @@ function deleteBond() {
 					+ ") (" + atomTo + ") DELETE;");
 		}
 
-	} else if (radbondVal == "selection") {
+	} else if (_edit.radbondVal == "selection") {
 		runJmolScriptWait("connect (selected) (selected) " + styleBond + " DELETE;");
 	}
 }
 
 function checkBondStatus(radval) {
 	runJmolScriptWait("select *; halos off; label off; select none;");
-	radbondVal = radval;
-	if (radbondVal == "selection") {
+	_edit.radbondVal = radval;
+	if (_edit.radbondVal == "selection") {
 		for (var i = 0; i < document.editGroup.range.length; i++)
 			document.editGroup.range[i].disabled = true;
 		runJmolScriptWait('showSelections TRUE; select none; set picking identify; halos on;');
@@ -212,7 +212,7 @@ function checkBondStatus(radval) {
 		getbyID("connectbyElementList").disabled = true;
 		getbyID("connectbyElementListone").disabled = true;
 
-		if (radbondVal == "atom") {
+		if (_edit.radbondVal == "atom") {
 			getbyID("connectbyElementList").disabled = false;
 			getbyID("connectbyElementListone").disabled = false;
 		}

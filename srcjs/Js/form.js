@@ -104,6 +104,15 @@ function createButton(name, text, onclick, disab, style) {
 	return createButton1(name, text, onclick, disab, "button", style);
 }
 
+function getButtonText(name) {
+	return getbyID(name).innerHTML;
+}
+
+function setButtonText(name, text) {
+	getbyID(name).innerHTML = text;
+}
+
+
 function createButtonB(name, text, onclick, disab, style) {
 	var s = "<BUTTON type='button' ";
 	s += "NAME='" + name + "' ";
@@ -246,7 +255,7 @@ function createSelectKey(name, onclick, onkey, disab, size) {
 	return createSelect(name, onclick, disab, size, [], [], [], "key", onkey)
 }
 
-function createSelectElement(name, onclick, onkey, disab, size, ) {
+function createSelectElement(name, onclick, onkey, disab, size) {
 	return createSelect(name, onclick, disab, size, [], [], [], "elem", onkey)
 }
 

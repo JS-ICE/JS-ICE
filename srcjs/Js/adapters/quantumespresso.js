@@ -42,21 +42,9 @@ loadDone_espresso = function() {
 				addOption(getbyID('geom'), i + 1 + " " + line, i + 1);
 				_file.geomData[i + 1] = line;
 				_file.counterFreq++;
-			} /*
-			 * else if (line.search(/cm/i) != -1) { // alert("vibration")
-			 * freqData[i - counterFreq] = _file.info[i].name; counterMD++; } else
-			 * if (line.search(/Temp/i) != -1) { addOption(getbyID('geom'),
-			 * (i - counterMD) + " " + _file.info[i].name, i + 1); }
-			 */
+			} 
 		}
 	}
-	/*
-	 * if (freqData != null) { for (var i = 1; i < freqData.length; i++) { if
-	 * (freqData[i] != null) var data =
-	 * parseFloat(freqData[i].substring(0,freqData[i].indexOf("c") - 1));
-	 * addOption(getbyID('vib'), i + " A " + data + " cm^-1", i + counterFreq +
-	 * 1 ); } }
-	 */
 	getUnitcell("1");
 	setFrameValues("1");
 	getSymInfo();
@@ -125,7 +113,7 @@ function exportQuantum() {
 
 function prepareControlblock() {
 
-	var stringTitle = prompt("Type here the job title:", "");
+	var stringTitleNew, stringTitle = prompt("Type here the job title:", "");
 	(stringTitle == "") ? (stringTitleNew = 'Input prepared with J-ICE ')
 			: (stringTitleNew = 'Input prepared with J-ICE ' + stringTitle);
 

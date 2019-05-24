@@ -25,9 +25,9 @@
 
 
 
-ENERGY_EV      = 0;
-ENERGY_HARTREE = 1;
-ENERGY_RYDBERG = 2;
+var ENERGY_EV      = 0;
+var ENERGY_HARTREE = 1;
+var ENERGY_RYDBERG = 2;
 
 
 var eleSymb = [];

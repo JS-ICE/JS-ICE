@@ -19,20 +19,24 @@ function enterSymmetry() {
 	_symmetry = {
 			intervalID : "",
 			symInvariantCache : [],
-			symopInvariantAlreadyCalculated : [], //collection of points for which symop invariants are already calculated
+			symopInvariantAlreadyCalculated : [] //collection of points for which symop invariants are already calculated
 		}; 
 	runJmolScriptWait("select {};set picking select atom; selectionhalos on");
-	var activateSymmetry = createButton("activateSymmetryButton", "Activate applied symmetry:", 'setSymClickStatus("radiusBindAdd")', 0);
-	getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
-	var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'setSymClickStatus("radiusBindAddAll")', 0); 
-	getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
+//	var activateSymmetry = createButton("activateSymmetryButton", "Activate applied symmetry:", 'setSymClickStatus("radiusBindAdd")', 0);
+//	getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
+//	var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'setSymClickStatus("radiusBindAddAll")', 0); 
+//	getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
 	var symInvariantsSelect = createSelect('addSymInvariantsSymop', 'doSymopSelection(value)', 0, _file.symmetry.symopInvariantList.length , _file.symmetry.symopInvariantList);
 	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect; 
-	var voidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0)+"\n"+
-						createButton("disableVoidClickingButton", "Disable Clicking", 'doDisableVoidClicking()', 0);
-	getbyID("voidClickingDiv").innerHTML = voidClicking; 
-	var corePointDragging = createButton("corePointDraggingButton", "Enable Dragging", 'doEnableCorePointDragging()', 0)
-	getbyID("corePointDraggingDiv").innerHTML = corePointDragging; 
+//	var voidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0)+"\n"+
+//						createButton("disableVoidClickingButton", "Disable Clicking", 'doDisableVoidClicking()', 0);
+//	getbyID("voidClickingDiv").innerHTML = voidClicking; 
+//	var corePointDragging = createButton("corePointDraggingButton", "Enable Dragging", 'doEnableCorePointDragging()', 0)
+//	getbyID("corePointDraggingDiv").innerHTML = corePointDragging; 
+	//$('.japplet').on('click', function( event ) {
+	//	  console.log('Applet Clicked');
+	//	  onSymmetryClick();
+	//});
 	$('.japplet').on('click', function( event ) {
 		  console.log('Applet Clicked');
 			  onSymmetryClick();
@@ -64,6 +68,8 @@ function onSymmetryHover(){
 	switch(symClickStatus){
 		case "corePointDragging":
 			var cP = getValue("centerPoint");
+			if (!cP)
+				return; // BH cP can be null if no selection has been made
 				var rA = getValue("radiusAngstroms");
 				if(!rA){
 					rA = 1; //default value 
@@ -74,7 +80,7 @@ function onSymmetryHover(){
 			doActivateSymmetry(clickedPoint);
 			break;
 		default:
-			break; 
+			break;
 	}
 } 
 
@@ -121,7 +127,7 @@ function onSymmetryClick(){
 			//clickedPoint = newClickedPoint;
 			//doActivateSymmetry(getValue("voidClickPoint"));
 			//break; 
-			case "corePointDragging":
+		case "corePointDragging":
 			var cP = getValue("centerPoint");
 				var rA = getValue("radiusAngstroms");
 				if(!rA){
@@ -177,12 +183,12 @@ function pointStringToFixed(pointString,decimalPlaces){
 function updateInputValues(){
 	var selectionPoint = Jmol.evaluateVar(jmolApplet0,"{selected}.xyz");
 	if (selectionPoint != -1){
-		initPoint.value = pointStringToFixed(selectionPoint,4);
-		centerPoint.value = pointStringToFixed(selectionPoint,4);
+		setValue("initPoint", pointStringToFixed(selectionPoint,4));
+		setValue("centerPoint", pointStringToFixed(selectionPoint,4));
 	}
 	var clickedPointString = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
-	if (clickedPointString && clickedPointString != ""){
-		voidClickPoint.value = pointStringToFixed(clickedPointString,4);
+	if (clickedPointString){
+		setValue("voidClickPoint", pointStringToFixed(clickedPointString,4));
 	}
 }
 
@@ -221,7 +227,7 @@ function doEnableVoidClicking(){
 		cP = "{"+cP+"}";
 	}
 	if(!cP){
-		cP = Jmol.evaluateVar(jmolApplet0,{selected}.xyz);
+		cP = Jmol.evaluateVar(jmolApplet0,"{selected}.xyz");// BH needed quotes
 	}
 	if (!cP || cP == "{}"){
 		alert("No center point selected");
@@ -243,9 +249,15 @@ function doDisableVoidClicking(){
 	runJmolScriptWait("draw 'symClickShow' delete");
 }
 
-function doEnableCorePointDragging(){
+function doEnableVoidDragging(){
 	runJmolScriptWait("set picking draw");
 	runJmolScriptWait("bind 'LEFT+drag+shift' '+:clickedPoint = $corePoint'");
+	runJmolScriptWait("symClickStatus = 'corePointDragging'");
+}
+
+function doDisableVoidDragging(){
+	runJmolScriptWait("unbind");
+	runJmolScriptWait("set picking identify");
 	runJmolScriptWait("symClickStatus = 'corePointDragging'");
 }
 
@@ -276,7 +288,7 @@ function setOpacity(){
 	if (opacity < 0){
 		opacity = 1;
 	}
-	opacityScript = "select *;color atoms translucent " + (1 - opacity)
+	var opacityScript = "select *;color atoms translucent " + (1 - opacity)
 	runJmolScript(opacityScript);
 }
 
@@ -333,12 +345,13 @@ function displaySymmetryDrawObjects(symop,pointt){
 	var symopWithOffset = symopArray[0].substring(0,1)+"+"+xOffsetUpdated+"/1,"+symopArray[1].substring(0,1)+"+"+yOffsetUpdated+"/1,"+symopArray[2].substring(0,1)+"+"+zOffsetUpdated+"/1";
 	console.log("finalSymop:"+symopWithOffset);
 	runJmolScriptWait("draw symop '"+symopWithOffset+"' "+pointt+"");
-	axisFactor = 3;
+	var axisFactor = 3;
 	runJmolScriptWait("drawCleanSymmetryAxisVectors("+axisFactor+")");
 } 
 
 // takes a given point and add the elements provided to it by a symmetry operation
 // symmetry operations with multiple outputs (e.g. C3) will produce multiple symmetry atoms 
+
 function appendSymmetricAtoms(elementName,point,symopSelected,iterations){
 	if (elementName == ""){
 		console.log("ERROR: empty element name");
