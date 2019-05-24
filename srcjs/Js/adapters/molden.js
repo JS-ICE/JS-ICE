@@ -23,9 +23,9 @@
  */
 
 
-loadDone_molden = function(msg) {
+var loadDone_molden = function(msg) {
 
-	_file.energyUnits = ENERGY_EV;
+	_file.energyUnits = _constant.ENERGY_EV;
 	_file.StrUnitEnergy = "e";
 	
 	for (var i = 0; i < _file.info.length; i++) {
@@ -41,6 +41,6 @@ loadDone_molden = function(msg) {
 		}
 	}
 
-	getSymInfo();
+	//getSymInfo();
 	loadDone();
 }

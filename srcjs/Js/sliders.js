@@ -36,7 +36,7 @@ var _slider = {
 	slab 			: null,
 	depth			: null
 }	
-function applyBond(angstroms) {
+var applyBond = function(angstroms) {
 	if (_show.firstTimeBond) {
 		runJmolScriptWait("wireframe .2;");
 	} else {
@@ -47,7 +47,7 @@ function applyBond(angstroms) {
 }
 
 
-loadSliders = function() {
+var loadSliders = function() {
 	_slider.bond = new Slider(getbyID("slider.bond-div"), getbyID("slider.bond-input"), "horizontal");
 	_slider.bond.setMaximum(100);
 	_slider.bond.setMinimum(0);

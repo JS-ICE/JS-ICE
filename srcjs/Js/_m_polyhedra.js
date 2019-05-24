@@ -6,12 +6,11 @@ function exitPolyhedra() {
 
 function createPolyedra() {
 
-	var vertNo, from, to, distance, style, selected, face;
-	vertNo = getValue("polyEdge");
-	from = getValue('polybyElementList');
-	to = getValue("poly2byElementList");
-	style = getValue("polyVert");
-	face =  getValue("polyFace");
+	var vertNo = getValue("polyEdge");
+	var from = getValue('polybyElementList');
+	var to = getValue("poly2byElementList");
+	var style = getValue("polyVert");
+	var face =  getValue("polyFace");
 	if (face.equals("0.0") && !style.equals("collapsed"))
 		face = "";
 	runJmolScriptWait("polyhedra DELETE");
@@ -21,7 +20,7 @@ function createPolyedra() {
 	// return false;
 	// }
 
-	distance = getValue("polyDistance");
+	var distance = getValue("polyDistance");
 
 	if (distance == "") {
 		runJmolScriptWait("polyhedra 4, 6" + face + " " + style);
@@ -51,13 +50,13 @@ function createPolyedra() {
 }
 
 function checkPolyValue(value) {
-	(value == "collapsed") ? (makeEnable("polyFace"))
-			: (makeDisable("polyFace"));
+	(value == "collapsed") ? (enableElement("polyFace"))
+			: (disableElement("polyFace"));
 }
 
-function setPolyString(value) {
-	runJmolScriptWait("polyhedra 4, 6" + "  faceCenterOffset " + face + " " + value);
-}
+//function setPolyString(face, value) {
+//	runJmolScriptWait("polyhedra 4, 6" + "  faceCenterOffset " + face + " " + value);
+//}
 
 function setPolybyPicking(element) {
 	setPicking(element);
@@ -73,84 +72,84 @@ function createPolyGrp() {
 	var polyStyleValue = new Array("NOEDGES", "noedges", "collapsed",
 			"noedges", "edges", "frontedges");
 	var polyFaceName = new Array("0.0", "0.25", "0.5", "0.9", "1.2");
-	var strPoly = "<form autocomplete='nope'  id='polyGroup' name='polyGroup' style='display:none'>\n";
-	strPoly += "<table class='contents'>\n";
-	strPoly += "<tr><td>\n";
-	strPoly += "<h2>Polyhedron</h2>\n";
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += "Make polyhedra: \n";
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td  colspan='2'>\n";
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += "&nbsp;a) Select central atom:  <br>\n";
-	strPoly += "&nbsp;&nbsp;  by element "
+	var str = "<form autocomplete='nope'  id='polyGroup' name='polyGroup' style='display:none'>\n";
+	str += "<table class='contents'>\n";
+	str += "<tr><td>\n";
+	str += "<h2>Polyhedron</h2>\n";
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "Make polyhedra: \n";
+	str += "</td></tr>\n";
+	str += "<tr><td  colspan='2'>\n";
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "&nbsp;a) Select central atom:  <br>\n";
+	str += "&nbsp;&nbsp;  by element "
 		+ createSelect2('polybyElementList', "", false, 0);
-	// strPoly+=createCheck("byselectionPoly", "&nbsp;by picking &nbsp;",
+	// str+=createCheck("byselectionPoly", "&nbsp;by picking &nbsp;",
 	// 'setPolybyPicking(this)', 0, 0, "set picking") + "<br>\n";
-	strPoly += "<br>&nbsp;&nbsp;just central atom"
+	str += "<br>&nbsp;&nbsp;just central atom"
 		+ createCheck("centralPoly", "",
 				'checkBoxStatus(this, "poly2byElementList")', 0, 0, "");
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += "&nbsp; b) select vertex atoms:  <br>\n";
-	strPoly += "&nbsp;&nbsp;  by element "
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "&nbsp; b) select vertex atoms:  <br>\n";
+	str += "&nbsp;&nbsp;  by element "
 		+ createSelect2('poly2byElementList', "", false, 0) + "\n";
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += "&nbsp; c) based on <br>";
-	strPoly += "&nbsp;"
-		+ createRadio("bondPoly", "bond", 'makeDisable("polyDistance") ',
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "&nbsp; c) based on <br>";
+	str += "&nbsp;"
+		+ createRadio("bondPoly", "bond", 'disableElement("polyDistance") ',
 				0, 0, "bondPoly", "off");
-	strPoly += createRadio("bondPoly", " max distance ",
-			' makeEnable("polyDistance")', 0, 0, "bondPoly1", "on");
-	strPoly += createText2("polyDistance", "2.0", "3", "") + " &#197;";
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += "&nbsp;d) number of vertices "
+	str += createRadio("bondPoly", " max distance ",
+			' enableElement("polyDistance")', 0, 0, "bondPoly1", "on");
+	str += createText2("polyDistance", "2.0", "3", "") + " &#197;";
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "&nbsp;d) number of vertices "
 		+ createSelect('polyEdge', '', 0, 0, polyEdgeName) + "\n";
-	strPoly += createLine('blue', '');
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += "Polyedra style:<br>\n";
-	strPoly += "</td></tr><tr><td > &nbsp;a) colour polyhedra\n";
-	strPoly += createButton("polyColor", "Default colour",
+	str += createLine('blue', '');
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "Polyedra style:<br>\n";
+	str += "</td></tr><tr><td > &nbsp;a) colour polyhedra\n";
+	str += createButton("polyColor", "Default colour",
 			'runJmolScriptWait("set defaultColors Jmol")', 0);
-	strPoly += "</td><td align='left'><script>\n";
-	strPoly += "jmolColorPickerBox([setColorWhat,'polyhedra'],'','polyColorPicker');";
-	strPoly += "</script> </td></tr>";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += createButton('advancePoly', '+',
+	str += "</td><td align='left'><script>\n";
+	str += "jmolColorPickerBox([setColorWhat,'polyhedra'],'','polyColorPicker');";
+	str += "</script> </td></tr>";
+	str += "<tr><td colspan='2'>\n";
+	str += createButton('advancePoly', '+',
 			'toggleDivValue(true,"advancePolyDiv",this)', '')
 			+ " Advanced style options"
-			strPoly += "<div id='advancePolyDiv' style='display:none; margin-top:20px'>"
-				strPoly += "<br> &nbsp;b)"
+			str += "<div id='advancePolyDiv' style='display:none; margin-top:20px'>"
+				str += "<br> &nbsp;b)"
 					+ createRadio("polyFashion", "opaque",
 							'runJmolScriptWait("color polyhedra opaque") ', 0, 1, "opaque", "opaque")
 							+ "\n";
-	strPoly += createRadio("polyFashion", "translucent",
+	str += createRadio("polyFashion", "translucent",
 			'runJmolScriptWait("color polyhedra translucent") ', 0, 0, "translucent",
 	"translucent")
 	+ "\n<br><br>";
-	strPoly += "&nbsp;c) style edges\n"
+	str += "&nbsp;c) style edges\n"
 		+ createSelect('polyVert', 'checkPolyValue(this.value)', 0, 0,
 				polyStyleValue, polyStyleName) + "\n";
-	strPoly += "<br>"
-		strPoly += "&nbsp;&nbsp;collapsed faces Offset \n"
+	str += "<br>"
+		str += "&nbsp;&nbsp;collapsed faces Offset \n"
 			+ createSelect('polyFace', '', 0, 0, polyFaceName) + "\n";
-	strPoly += "</div>";
-	strPoly += createLine('blue', '');
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += createButton('createPoly', 'create', 'createPolyedra()', '');
-	strPoly += createButton('createpoly', 'create auto',
+	str += "</div>";
+	str += createLine('blue', '');
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += createButton('createPoly', 'create', 'createPolyedra()', '');
+	str += createButton('createpoly', 'create auto',
 			'runJmolScriptWait("polyhedra 4,6 " + getValue("polyVert"))', '');
-	strPoly += createButton('deletePoly', 'delete', 'runJmolScriptWait("polyhedra DELETE")',
+	str += createButton('deletePoly', 'delete', 'runJmolScriptWait("polyhedra DELETE")',
 	'');
-	strPoly += "</td></tr>\n";
-	strPoly += "</table>\n";
-	strPoly += "</FORM>\n";
-	return strPoly;
+	str += "</td></tr>\n";
+	str += "</table>\n";
+	str += "</FORM>\n";
+	return str;
 }
 

@@ -4,8 +4,7 @@ var _callback = {
 	fPick : null
 }
 
-getCallbackSettings = function() {
-//	return  "set messageCallback 'myMessageCallback';" +
+var getCallbackSettings = function() {
 	return	"set errorCallback 'myErrorCallback';" +
 			"set loadStructCallback 'myLoadStructCallback';" +
 			"set measureCallback 'myMeasurementCallback';" +
@@ -13,36 +12,36 @@ getCallbackSettings = function() {
 			"set minimizationCallback 'myMinimizationCallback';"
 }
 
-function myMeasuramentCallback(app, msg, type, state, value) {
+var myMeasurementCallback = function(app, msg, type, state, value) {
 	// BH 2018
 	if (state == "measurePicked")
-		setMeasureText(msg);
+		_measure.setMeasureText(msg);
 }
 
-myLoadStructCallback = function(applet,filePath,c,d) {
+var myLoadStructCallback = function(applet,filePath,c,d) {
 	if (filePath)
 		file_loadedCallback(filePath);
 }
 
-myErrorCallback = function(applet, b, msg, d) {
+var myErrorCallback = function(applet, b, msg, d) {
 	errorMsg(msg);
 }
 
 
 
-setPickingCallbackFunction = function(f) {
+var setPickingCallbackFunction = function(f) {
 	_callback.fPick = f;
 }
 
-myPickCallback = function(applet, b, c, d) {
+var myPickCallback = function(applet, b, c, d) {
 	_callback.fPick && _callback.fPick(b,c,d);
 }
 
-setMinimizationCallbackFunction = function(f) {
+var setMinimizationCallbackFunction = function(f) {
 	_file.fMinim = f;
 }
 
-myMinimizationCallback = function(applet,b,c,d) {
+var myMinimizationCallback = function(applet,b,c,d) {
 	_file.fMinim && _file.fMinim(b, c, d);
 }
 

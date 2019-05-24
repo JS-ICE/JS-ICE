@@ -48,17 +48,17 @@ function addAtomfrac() {
 	var value = checkBoxX("addNewFrac");
 	if (value == "on") {
 		messageMsg("Enter the three fractional positions of the atom you would like to add. \n ADVICE: use the functions view fractional/Cartesian coordinates of of neighbor atom/s. ");
-		makeEnable("x_frac");
-		makeEnable("y_frac");
-		makeEnable("z_frac");
-		makeEnable("addNewFracList");
-		makeEnable("addNewFracListBut");
+		enableElement("x_frac");
+		enableElement("y_frac");
+		enableElement("z_frac");
+		enableElement("addNewFracList");
+		enableElement("addNewFracListBut");
 	} else {
-		makeDisable("x_frac");
-		makeDisable("y_frac");
-		makeDisable("z_frac");
-		makeDisable("addNewFracList");
-		makeDisable("addNewFracListBut");
+		disableElement("x_frac");
+		disableElement("y_frac");
+		disableElement("z_frac");
+		disableElement("addNewFracList");
+		disableElement("addNewFracListBut");
 	}
 }
 
@@ -197,60 +197,60 @@ function addZatoms() {
 
 function createCrystalStr(form) {
 	if (form.checked) {
-		makeDisable("periodMole");
+		disableElement("periodMole");
 	} else {
 
 	}
 }
 
 function checkIfThreeD(value) {
-	makeEnablePeriodicityMol()
+	enableElementPeriodicityMol()
 	if (value == "crystal") {
 
-		makeEnable("periodMole");
+		enableElement("periodMole");
 		setValue("a_frac", "");
 		setValue("b_frac", "");
 		setValue("c_frac", "");
 	} else if (value == "slab") {
-		makeDisable("periodMole");
+		disableElement("periodMole");
 		_build.makeCrystalSpaceGroup = "P-1"; // / set P-1 as symmetry for film and
 		// polymer
 		setValue("a_frac", "");
 		setValue("b_frac", "");
 		setValue("c_frac", "0");
-		makeDisable("c_frac");
+		disableElement("c_frac");
 		setValue("alpha_frac", "");
 		setValue("beta_frac", "");
 		setValue("gamma_frac", "90");
-		makeDisable("gamma_frac");
+		disableElement("gamma_frac");
 	} else if (value == "polymer") {
-		makeDisable("periodMole");
+		disableElement("periodMole");
 		_build.makeCrystalSpaceGroup = "P-1"; // / set P-1 as symmetry for film and
 		// polymer
 		setValue("a_frac", "");
 		setValue("b_frac", "0");
-		makeDisable("b_frac");
+		disableElement("b_frac");
 		setValue("c_frac", "0");
-		makeDisable("c_frac");
+		disableElement("c_frac");
 		setValue("alpha_frac", "90");
-		makeDisable("alpha_frac");
+		disableElement("alpha_frac");
 		setValue("beta_frac", "90");
-		makeDisable("beta_frac");
+		disableElement("beta_frac");
 		setValue("gamma_frac", "90");
-		makeDisable("gamma_frac");
+		disableElement("gamma_frac");
 	} else if (value == "") {
 		setValue("a_frac", "");
-		makeDisable("a_frac");
+		disableElement("a_frac");
 		setValue("b_frac", "");
-		makeDisable("b_frac");
+		disableElement("b_frac");
 		setValue("c_frac", "");
-		makeDisable("c_frac");
+		disableElement("c_frac");
 		setValue("alpha_frac", "");
-		makeDisable("alpha_frac");
+		disableElement("alpha_frac");
 		setValue("beta_frac", "");
-		makeDisable("beta_frac");
+		disableElement("beta_frac");
 		setValue("gamma_frac", "");
-		makeDisable("gamma_frac");
+		disableElement("gamma_frac");
 	}
 }
 
@@ -276,12 +276,12 @@ function setCellParamSpaceGroup(spaceGroup) {
 	setValue("alpha_frac", "");
 	setValue("beta_frac", "");
 	setValue("gamma_frac", "");
-	makeEnable("a_frac");
-	makeEnable("b_frac");
-	makeEnable("c_frac");
-	makeEnable("alpha_frac");
-	makeEnable("beta_frac");
-	makeEnable("gamma_frac");
+	enableElement("a_frac");
+	enableElement("b_frac");
+	enableElement("c_frac");
+	enableElement("alpha_frac");
+	enableElement("beta_frac");
+	enableElement("gamma_frac");
 
 	break;
 
@@ -293,12 +293,12 @@ function setCellParamSpaceGroup(spaceGroup) {
 	setValue("alpha_frac", "");
 	setValue("beta_frac", "90.000");
 	setValue("gamma_frac", "90.000");
-	makeEnable("a_frac");
-	makeEnable("b_frac");
-	makeEnable("c_frac");
-	makeEnable("alpha_frac");
-	makeDisable("beta_frac");
-	makeDisable("gamma_frac");
+	enableElement("a_frac");
+	enableElement("b_frac");
+	enableElement("c_frac");
+	enableElement("alpha_frac");
+	disableElement("beta_frac");
+	disableElement("gamma_frac");
 	break;
 
 	case ((trimSpaceGroup > 15) && (trimSpaceGroup <= 74)): // Orthorhombic
@@ -309,12 +309,12 @@ function setCellParamSpaceGroup(spaceGroup) {
 	setValue("alpha_frac", "90.000");
 	setValue("beta_frac", "90.000");
 	setValue("gamma_frac", "90.000");
-	makeEnable("a_frac");
-	makeEnable("b_frac");
-	makeEnable("c_frac");
-	makeDisable("alpha_frac");
-	makeDisable("beta_frac");
-	makeDisable("gamma_frac");
+	enableElement("a_frac");
+	enableElement("b_frac");
+	enableElement("c_frac");
+	disableElement("alpha_frac");
+	disableElement("beta_frac");
+	disableElement("gamma_frac");
 
 	break;
 
@@ -326,12 +326,12 @@ function setCellParamSpaceGroup(spaceGroup) {
 	setValue("alpha_frac", "90.000");
 	setValue("beta_frac", "90.000");
 	setValue("gamma_frac", "90.000");
-	makeEnable("a_frac");
-	makeEnable("b_frac");
-	makeEnable("c_frac");
-	makeDisable("alpha_frac");
-	makeDisable("beta_frac");
-	makeDisable("gamma_frac");
+	enableElement("a_frac");
+	enableElement("b_frac");
+	enableElement("c_frac");
+	disableElement("alpha_frac");
+	disableElement("beta_frac");
+	disableElement("gamma_frac");
 
 	break;
 
@@ -343,12 +343,12 @@ function setCellParamSpaceGroup(spaceGroup) {
 	setValue("alpha_frac", "");
 	setValue("beta_frac", "");
 	setValue("gamma_frac", "");
-	makeEnable("a_frac");
-	makeEnable("b_frac");
-	makeEnable("c_frac");
-	makeEnable("alpha_frac");
-	makeEnable("beta_frac");
-	makeEnable("gamma_frac");
+	enableElement("a_frac");
+	enableElement("b_frac");
+	enableElement("c_frac");
+	enableElement("alpha_frac");
+	enableElement("beta_frac");
+	enableElement("gamma_frac");
 
 	break;
 
@@ -360,12 +360,12 @@ function setCellParamSpaceGroup(spaceGroup) {
 	setValue("alpha_frac", "90.000");
 	setValue("beta_frac", "90.000");
 	setValue("gamma_frac", "120.000");
-	makeEnable("a_frac");
-	makeEnable("b_frac");
-	makeEnable("c_frac");
-	makeDisable("alpha_frac");
-	makeDisable("beta_frac");
-	makeDisable("gamma_frac");
+	enableElement("a_frac");
+	enableElement("b_frac");
+	enableElement("c_frac");
+	disableElement("alpha_frac");
+	disableElement("beta_frac");
+	disableElement("gamma_frac");
 
 	break;
 	case ((trimSpaceGroup > 194) && (trimSpaceGroup <= 230)): // Cubic
@@ -376,12 +376,12 @@ function setCellParamSpaceGroup(spaceGroup) {
 	setValue("alpha_frac", "90.000");
 	setValue("beta_frac", "90.000");
 	setValue("gamma_frac", "90.000");
-	makeEnable("a_frac");
-	makeEnable("b_frac");
-	makeEnable("c_frac");
-	makeDisable("alpha_frac");
-	makeDisable("beta_frac");
-	makeDisable("gamma_frac");
+	enableElement("a_frac");
+	enableElement("b_frac");
+	enableElement("c_frac");
+	disableElement("alpha_frac");
+	disableElement("beta_frac");
+	disableElement("gamma_frac");
 	break;
 
 	default:
@@ -411,13 +411,13 @@ function getValueMakeCrystal() {
 	getbyID("createmolecularCrystal").style.display = "none";
 }
 
-function makeEnablePeriodicityMol() {
-	makeEnable("a_frac");
-	makeEnable("b_frac");
-	makeEnable("c_frac");
-	makeEnable("alpha_frac");
-	makeEnable("beta_frac");
-	makeEnable("gamma_frac");
+function enableElementPeriodicityMol() {
+	enableElement("a_frac");
+	enableElement("b_frac");
+	enableElement("c_frac");
+	enableElement("alpha_frac");
+	enableElement("beta_frac");
+	enableElement("gamma_frac");
 	setValue("a_frac", "");
 	setValue("b_frac", "");
 	setValue("c_frac", "");
@@ -428,17 +428,17 @@ function makeEnablePeriodicityMol() {
 
 function cleanCreateCrystal() {
 	setValue("a_frac", "");
-	makeDisable("a_frac");
+	disableElement("a_frac");
 	setValue("b_frac", "");
-	makeDisable("b_frac");
+	disableElement("b_frac");
 	setValue("c_frac", "");
-	makeDisable("c_frac");
+	disableElement("c_frac");
 	setValue("alpha_frac", "");
-	makeDisable("alpha_frac");
+	disableElement("alpha_frac");
 	setValue("beta_frac", "");
-	makeDisable("beta_frac");
+	disableElement("beta_frac");
 	setValue("gamma_frac", "");
-	makeDisable("gamma_frac");
+	disableElement("gamma_frac");
 	document.builGroup.reset();
 }
 
@@ -471,7 +471,7 @@ function createBuildGrp() {
 	strBuild += "y <input type='text'  name='y_frac' id='y_frac' size='1' class='text'> ";
 	strBuild += "z <input type='text'  name='z_frac' id='z_frac' size='1' class='text'> ";
 	strBuild += ", Element: "
-		+ createSelect('addNewFracList', '', 0, 1, eleSymb);
+		+ createSelect('addNewFracList', '', 0, 1, _constant.ELEM_SYM);
 	strBuild += createButton("addNewFracListBut", "add Atom", "addNewatom()",
 	"");
 	strBuild += "<br><br> Read out coordinates of neighbor atom/s";
@@ -496,7 +496,7 @@ function createBuildGrp() {
 				periodicityValue, periodicityName);
 	strBuild += "<br> Space group: "
 		+ createSelect('periodMole', 'setCellParamSpaceGroup(value)', 0, 1,
-				spaceGroupValue, spaceGroupName)
+				_constant.SPACE_GROUP_VALUE, _constant.SPACE_GROUP_NAME)
 				+ " <a href=http://en.wikipedia.org/wiki/Hermann%E2%80%93Mauguin_notation target=_blank>Hermann-Mauguin</a>"; // space
 	// group
 	// list
@@ -517,13 +517,13 @@ function createBuildGrp() {
 	strBuild += "<tr><td>\n";
 	strBuild += "Optimize (OPT.) structure  UFF force filed<br>";
 	strBuild += "Rappe, A. K., <i>et. al.</i>; <i>J. Am. Chem. Soc.</i>, 1992, <b>114</b>, 10024-10035. <br><br>";
-	strBuild += createButton("minuff", "Optimize", "minimizeStructure()", "");
+	strBuild += createButton("minuff", "Optimize", "_uff.minimizeStructure()", "");
 	strBuild += createCheck("fixstructureUff", "fix fragment",
-			'fixFragmentUff(this) + toggleDiv(this,"fragmentSelected")', "",
+			'_uff.fixFragmentUff(this) + toggleDiv(this,"fragmentSelected")', "",
 			"", "")
 			+ " ";
-	strBuild += createButton("stopuff", "Stop Opt.", "stopOptimize()", "");
-	strBuild += createButton("resetuff", "Reset Opt.", "resetOptimize()", "");
+	strBuild += createButton("stopuff", "Stop Opt.", "_uff.stopOptimize()", "");
+	strBuild += createButton("resetuff", "Reset Opt.", "_uff.resetOptimize()", "");
 	strBuild += "</td></tr><tr><td><div id='fragmentSelected' style='display:none; margin-top:20px'>Fragment selection options:<br>";
 	// strBuild += "by element "
 	// + createSelectKey('colourbyElementList', "elementSelected(value)",

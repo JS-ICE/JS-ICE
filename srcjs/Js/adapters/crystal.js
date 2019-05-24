@@ -29,8 +29,8 @@
 
 ///////////////////////// LOAD & ON LOAD functions
 
-loadDone_crystal = function() {
-	_file.energyUnits = ENERGY_HARTREE;
+var loadDone_crystal = function() {
+	_file.energyUnits = _constant.ENERGY_HARTREE;
 	_file.StrUnitEnergy = "H";
 	var vib = getbyID('vib');
 	for (var i = 0; i < _file.info.length; i++) {

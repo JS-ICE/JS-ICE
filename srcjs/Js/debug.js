@@ -1,4 +1,4 @@
-debugSay = function(script) {
+var debugSay = function(script) {
 	// the debug area at the bottom of each tab
 	var div = getbyID("debugdiv");
 	var area = getbyID("debugarea");
@@ -18,15 +18,15 @@ debugSay = function(script) {
 	area.scrollTop = area.scrollHeight;
 }
 
-debugShowCommands = function(isOn) {
+var debugShowCommands = function(isOn) {
 	getbyID("debugdiv").style.display = (isOn ? "block" : "none");
 }
 
-debugShowHistory = function() {
+var debugShowHistory = function() {
  	debugSay(jmolEvaluate("show('history')"));
 }
 
-addCommandBox = function() {
+var addCommandBox = function() {
 	// see debug.js
 	return "<div id='debugpanel'><hr>"
 		+ createCheck("debugMode", "Show Commands", "debugShowCommands(this.checked)", 0,

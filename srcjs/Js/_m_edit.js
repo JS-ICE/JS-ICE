@@ -334,7 +334,7 @@ function createEditGrp() {
 	strEdit += "Rename atom/s<br>";
 	strEdit += "Element Name ";
 	strEdit += createSelect('renameEle', 'changeElement(value)', 0, 1,
-			eleSymb);
+			_constant.ELEM_SYM);
 	strEdit += createLine('blue', '');
 	strEdit += "</td></tr>\n";
 	strEdit += "<tr><td colspan='2'>\n";

@@ -24,8 +24,8 @@
 
 //3rd-Sept-2010 CANEPA
 
-loadDone_dmol = function() {
-	_file.energyUnits = ENERGY_HARTREE;
+var loadDone_dmol = function() {
+	_file.energyUnits = _constant.ENERGY_HARTREE;
 	_file.StrUnitEnergy = "H";
 	for (var i = 0; i < _file.info.length; i++) {
 		var line = _file.info[i].name;
@@ -46,6 +46,6 @@ loadDone_dmol = function() {
 
 	getUnitcell("1");
 	setFrameValues("1");
-	getSymInfo();
+	//getSymInfo();
 	loadDone();
 }

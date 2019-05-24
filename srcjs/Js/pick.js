@@ -73,7 +73,7 @@ function setPickingHide(form) {
  */
 
 
-function onClickPickPlane(checkbox, callback) {
+var onClickPickPlane = function(checkbox, callback) {
 	_pick.menuCallback = callback;
 	_pick.selectCheckbox = checkbox;
 	if (!checkbox || checkbox.checked) {
@@ -131,7 +131,7 @@ function setDistanceHide(checkbox) {
 function pickPlaneCallback() {
 	if (_pick.pickingEnabled) {
 		runJmolScriptWait("select pickedList");
-		var picklist = Jmol.evaluateVar(jmolApplet0, "pickedlist");
+		var picklist = getJmolValue( "pickedlist");
 		if (picklist.length < 3) {
 			setStatus('Select another atom.');
 			return false;

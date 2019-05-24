@@ -9,76 +9,76 @@ function doConvertPlotUnits(unitEnergy) {
 	switch (unitEnergy) {
 	case "h": // Hartree
 		switch (_file.energyUnits) {
-		case ENERGY_RYDBERG:
-			convertGeomData(fromRydbergtohartree, "Hartree");
+		case _constant.ENERGY_RYDBERG:
+			convertGeomData(fromRydbergToHartree, "Hartree");
 			break;
-		case ENERGY_EV:
-			convertGeomData(fromevToHartree, "Hartree");
+		case _constant.ENERGY_EV:
+			convertGeomData(fromEVToHartree, "Hartree");
 			break;
-		case ENERGY_HARTREE:
-			convertGeomData(fromHartreetoHartree, "Hartree");
+		case _constant.ENERGY_HARTREE:
+			convertGeomData(fromHartreeToHartree, "Hartree");
 			break;
 		}
 		break;
 	case "e": // eV
 		switch (_file.energyUnits) {
-		case ENERGY_RYDBERG:
-			convertGeomData(fromRydbergtoEV, "eV");
+		case _constant.ENERGY_RYDBERG:
+			convertGeomData(fromRydbergToEV, "eV");
 			break;
-		case ENERGY_EV:
-			convertGeomData(fromevToev, "eV");
+		case _constant.ENERGY_EV:
+			convertGeomData(fromEVToEV, "eV");
 			break;
-		case ENERGY_HARTREE:
-			convertGeomData(fromHartreetoEv, "eV");
+		case _constant.ENERGY_HARTREE:
+			convertGeomData(fromHartreeToEV, "eV");
 			break;
 		}
 		break;
 
 	case "r": // Rydberg
 		switch (_file.energyUnits) {
-		case ENERGY_RYDBERG:
-			convertGeomData(fromRydbergtorydberg, "Ry");
+		case _constant.ENERGY_RYDBERG:
+			convertGeomData(fromRydbergToRydberg, "Ry");
 			break;
-		case ENERGY_EV:
-			convertGeomData(fromevTorydberg, "Ry");
+		case _constant.ENERGY_EV:
+			convertGeomData(fromEVToRydberg, "Ry");
 			break;
-		case ENERGY_HARTREE:
-			convertGeomData(fromHartreetoRydberg, "Ry");
+		case _constant.ENERGY_HARTREE:
+			convertGeomData(fromHartreeToRydberg, "Ry");
 			break;
 		}
 		break;
 
 	case "kj": // Kj/mol
 			switch (_file.energyUnits) {
-			case ENERGY_RYDBERG:
-				convertGeomData(fromRydbergtoKj, "kJ/mol");
+			case _constant.ENERGY_RYDBERG:
+				convertGeomData(fromRydbergToKJ, "kJ/mol");
 				break;
-			case ENERGY_EV:
-				convertGeomData(fromevTokJ, "kJ/mol");
+			case _constant.ENERGY_EV:
+				convertGeomData(fromEVToKJ, "kJ/mol");
 				break;
-			case ENERGY_HARTREE:
-				convertGeomData(fromHartreetoKj, "kJ/mol");
+			case _constant.ENERGY_HARTREE:
+				convertGeomData(fromHartreeToKJ, "kJ/mol");
 				break;
 			}
 		break;
 
 	case "kc": // Kcal*mol
 		switch (_file.energyUnits) {
-		case ENERGY_RYDBERG:
-			convertGeomData(fromRydbergtokcalmol, "kcal/mol");
+		case _constant.ENERGY_RYDBERG:
+			convertGeomData(fromRydbergToKcalmol, "kcal/mol");
 			break;
-		case ENERGY_EV:
-			convertGeomData(fromevTokcalmol, "kcal/mol");
+		case _constant.ENERGY_EV:
+			convertGeomData(fromEVToKcalmol, "kcal/mol");
 			break;
-		case ENERGY_HARTREE:
-			convertGeomData(fromHartreetokcalmol, "kcal/mol");
+		case _constant.ENERGY_HARTREE:
+			convertGeomData(fromHartreeToKcalmol, "kcal/mol");
 			break;
 		}
 		break;
 	}
 }
 
-function convertGeomData(f, toUnits) {
+var convertGeomData = function(f, toUnits) {
 	
 	var geom = getbyID('geom');
 	if (geom != null)
@@ -88,16 +88,16 @@ function convertGeomData(f, toUnits) {
 	
 	var u = _file.unitGeomEnergy;
 	switch (_file.energyUnits) {
-	case ENERGY_RYDBERG:
+	case _constant.ENERGY_RYDBERG:
 		u = "R";
 		break;
-	case ENERGY_EV:
+	case _constant.ENERGY_EV:
 		u = "e";
 		break;
-	case ENERGY_HARTREE:
+	case _constant.ENERGY_HARTREE:
 		u = "H";
 		break;
-//	case ENERGY_KJ_PER_MOLE:
+//	case _constant.ENERGY_KJ_PER_MOLE:
 //		u = "k";
 //		break;
 	}
@@ -163,7 +163,7 @@ function createOptimizeGrp() {
 			+ "\n";
 	strGeom += "<br>"
 		+ createSelect("framepersec", "runJmolScriptWait(value)", 0, 1, vecAnimValue,
-				vecAnimText) + " _orient.motion speed | ";
+				vecAnimText) + " motion speed";
 // this is problematic in JavaScript -- too many files created
 //	strGeom += createCheck('saveFrames', ' save video frames', 'saveFrame()',
 //			0, 0, "");

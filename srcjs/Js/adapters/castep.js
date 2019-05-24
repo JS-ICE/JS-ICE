@@ -45,8 +45,8 @@
 
 // /// FUNCTION LOAD
 
-loadDone_castep = function() {
-	_file.energyUnits = ENERGY_EV;
+var loadDone_castep = function() {
+	_file.energyUnits = _constant.ENERGY_EV;
 	_file.counterFreq = 0;
 	_file.counterMD = 0;
 	for (var i = 0; i < _file.info.length; i++) {
@@ -67,8 +67,8 @@ loadDone_castep = function() {
 	}
 	getUnitcell("1");
 	setFrameValues("1");
-	disableFreqOpts();
-	getSymInfo();
+	//disableFreqOpts();
+	//getSymInfo();
 	loadDone();
 }
 

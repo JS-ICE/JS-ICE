@@ -24,9 +24,9 @@
 
 ///// QUANTUM ESPRESSO READER
 
-loadDone_espresso = function() {
+var loadDone_espresso = function() {
 	
-	_file.energyUnits = ENERGY_RYDBERG;
+	_file.energyUnits = _constant.ENERGY_RYDBERG;
 	_file.StrUnitEnergy = "R";
 	_file.hasInputModel = true;
 
@@ -47,7 +47,7 @@ loadDone_espresso = function() {
 	}
 	getUnitcell("1");
 	setFrameValues("1");
-	getSymInfo();
+	//getSymInfo();
 	loadDone();
 }
 
@@ -168,7 +168,7 @@ function prepareSystemblock() {
 		var flagsymmetry = confirm("Do you want to introduce symmetry ?")
 		if (!flagsymmetry) {
 			cellDimString = "           celldm(1) = "
-				+ roundNumber(fromAngstromtoBohr(_file.cell.a))
+				+ roundNumber(fromAngstromToBohr(_file.cell.a))
 				+ "  \n           celldm(2) =  "
 				+ roundNumber(_file.cell.b / _file.cell.a)
 				+ "  \n           celldm(3) =  "
@@ -191,7 +191,7 @@ function prepareSystemblock() {
 		setVacuum();
 		scaleModelCoordinates("z", "div", _file.cell.c);
 		cellDimString = "            celldm(1) = "
-			+ roundNumber(fromAngstromtoBohr(_file.cell.a))
+			+ roundNumber(fromAngstromToBohr(_file.cell.a))
 			+ "  \n            celldm(2) =  " + roundNumber(_file.cell.b / _file.cell.a)
 			+ "  \n            celldm(3) =  " + roundNumber(_file.cell.c / _file.cell.a)
 			+ "  \n            celldm(4) =  "
@@ -205,7 +205,7 @@ function prepareSystemblock() {
 		scaleModelCoordinates("z", "div", _file.cell.c);
 		scaleModelCoordinates("y", "div", _file.cell.b);
 		cellDimString = "            celldm(1) = "
-			+ roundNumber(fromAngstromtoBohr(_file.cell.a))
+			+ roundNumber(fromAngstromToBohr(_file.cell.a))
 			+ "  \n            celldm(2) =  " + roundNumber(_file.cell.b / _file.cell.a)
 			+ "  \n            celldm(3) =  " + roundNumber(_file.cell.b / _file.cell.a)
 			+ "  \n            celldm(4) =  " + (cosRounded(90))
@@ -219,7 +219,7 @@ function prepareSystemblock() {
 		scaleModelCoordinates("y", "div", _file.cell.b);
 		scaleModelCoordinates("z", "div", _file.cell.c);
 		cellDimString = "            celldm(1) = "
-			+ roundNumber(fromAngstromtoBohr(_file.cell.a))
+			+ roundNumber(fromAngstromToBohr(_file.cell.a))
 			+ "  \n            celldm(2) =  " + roundNumber(1.00000)
 			+ "  \n            celldm(3) =  " + roundNumber(1.00000)
 			+ "  \n            celldm(4) =  "
@@ -303,7 +303,7 @@ function prepareSpecieblock() {
 		var elemento = sortedElement[i];
 		var numeroAtom = jmolEvaluate('{' + _file.frameNum + ' and _' + elemento
 				+ '}[0].label("%l")'); //tobe changed in atomic mass
-		scriptEl = "'" + elemento + " " + eleSymbMass[parseInt(numeroAtom)]
+		scriptEl = "'" + elemento + " " +  _constant.ELEM_MASS[parseInt(numeroAtom)]
 		+ " #Here goes the psudopotential filename e.g.: " + elemento
 		+ ".pbe-van_ak.UPF '";
 		scriptEl = scriptEl.replace("\n", " ");

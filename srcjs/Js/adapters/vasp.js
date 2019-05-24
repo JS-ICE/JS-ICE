@@ -23,8 +23,8 @@
  */
 
 
-loadDone_vaspoutcar = function() {
-	_file.energyUnits = ENERGY_EV;
+var loadDone_vaspoutcar = function() {
+	_file.energyUnits = _constant.ENERGY_EV;
 	_file.StrUnitEnergy = "e";
 	_file.counterFreq = 1; 
 	for (var i = 0; i < _file.info.length; i++) {
@@ -48,11 +48,11 @@ loadDone_vaspoutcar = function() {
 
 	getUnitcell("1");
 	setFrameValues("1");
-	getSymInfo();
+	//getSymInfo();
 	loadDone();
 }
 
-loadDone_xmlvasp = function() {
+var loadDone_xmlvasp = function() {
 
 	warningMsg("This reader is limited in its own functionalities\n  It does not recognize between \n geometry optimization and frequency calculations.")
 

@@ -1,4 +1,4 @@
-;(function() {
+;(function($, Jmol) {
 
 
 // global variables used in JS-ICE
@@ -8,27 +8,6 @@ var version = "3.0.0"; // BH 2018
 
 
 // _m_file.js
-
-var _file = {
-		specData: null,
-		plotFreq: null
-};
-
-var _fileIsReload = false;
-
-var _cell = {};
-
-// pick.js
-
-var _constant = {};
-
-var _pick = {};
-
-// plotgraph.js
-
-var _plot = {};
-
-// for citations:
 
 var _global = {
 	citations : [
@@ -42,35 +21,53 @@ var _global = {
 	 ]  
 };
 
-var _surface = {};
+var _file = {
+		specData: null,
+		plotFreq: null
+};
 
-var _orient = {};
-var _show = {};
+var _fileIsReload = false;
+
+var _cell = {};
+
+var _constant = {};
+
 var _edit = {};
 
-var _symmetry = {};
+var _orient = {};
+
+var _pick = {};
+
+var _plot = {};
+
+var _show = {};
+
 // note that JmolColorPicker is customized -- BH 2018
 
-function doClickSaveCurrentState() {
+var doClickSaveCurrentState = function() {
 	warningMsg("This option only saves the state temporarily. To save your work, use File...Export...image+state(PNGJ). The image created can be dragged back into Jmol or JSmol or sent to a colleague to reproduce the current state exactly as it appears in the image.");
 	runJmolScriptWait('save ORIENTATION orask; save STATE stask; save BOND bask');
 }
 
-function doClickReloadCurrentState() {
+var doClickReloadCurrentState = function() {
 	runJmolScriptWait('restore ORIENTATION orask; restore STATE stask; restore BOND bask;');
 }
 
-runJmolScript = function(script) {
+var runJmolScript = function(script) {
 	debugSay(script);
 	jmolScript(script);	
 }
 
-runJmolScriptWait = function(script) {
+var runJmolScriptWait = function(script) {
 	debugSay(script);
 	jmolScriptWait(script);	
 }
 
-createApplet = function() {
+var getJmolValue = function(expression) {
+	return Jmol.evaluateVar(jmolApplet0, expression);
+}
+
+var createApplet = function() {
 	Jmol.Info || (Jmol.Info = {});
 	Jmol.Info.serverUrl = "https://chemapps.stolaf.edu/jmol/jsmol/php/jmol.php"
 	jmolSetAppletColor("white");
@@ -83,22 +80,22 @@ createApplet = function() {
 			);
 }
 
-setAntialias = function(isON) {
+var setAntialias = function(isOn) {
 	runJmolScriptWait(isOn? 
 			"antialiasDisplay = true;set hermiteLevel 5"
 			: "antialiasDisplay = false;set hermiteLevel 0"
 	);
 }
 
-function setStatus(status) {
+var setStatus = function(status) {
 	setTextboxValue("statusLine", status); 
 }
 		
-function warningMsg(msg) {
+var warningMsg = function(msg) {
 	alert("WARNING: " + msg);
 }
 
-function errorMsg(msg) {
+var errorMsg = function(msg) {
 	if (msg.indexOf("#CANCELED#") < 0) {
 		alert("ERROR: " + msg);
 	} else {
@@ -107,15 +104,15 @@ function errorMsg(msg) {
 	return false;
 }
 
-function messageMsg(msg) {
+var messageMsg = function(msg) {
 	alert(msg);
 }
 
-function docWriteTabs() {
+var docWriteTabs = function() {
 	document.write(createTabMenu());
 }
 
-function docWriteBottomFrame() {
+var docWriteBottomFrame = function() {
 	document.write("<br> ");	
 	document.write(createText5('statusLine', '', '108', '', '', "disab"));
 	document.write("<br>");
@@ -135,12 +132,12 @@ function docWriteBottomFrame() {
 	document.write(createButton("Feedback", 'Feedback', 'newAppletWindowFeed()', 0));
 }
 
-function docWriteRightFrame() {
+var docWriteRightFrame = function() {
 	document.write(createAllMenus());
 }
 
 
-function docWriteSpectrumHeader() {
+var docWriteSpectrumHeader = function() {
 	// for spectrum.html
 //	var s = 
 	//"Min Freq. " + createTextSpectrum("minValue", "", "5", "")
@@ -345,7 +342,7 @@ var sampleOptionArr = ["Load a Sample File",
 	"urea VASP test"
 ]
 
-function onChangeLoadSample(value) {
+var onChangeLoadSample = function(value) {
 	var fname = null;
 	switch(value) {
 	case "urea VASP test":
@@ -397,16 +394,16 @@ function enterFile() {
 function exitFile() {
 }
 
-file_method = function(methodName, defaultMethod, params) {
+var file_method = function(methodName, defaultMethod, params) {
 	// Execute a method specific to a given file type, for example:
-	// loadDone_crystal
+	// var loadDone_crystal
 	params || (params = []);
 	methodName += "_" + _file.fileType;
 	var f = self[methodName] || defaultMethod;
 	return (f && f.apply(null, params));
 }
 
-reload = function(packing, filter, more) {	
+var reload = function(packing, filter, more) {	
 	// no ZAP here
 	runJmolScriptWait("set echo top left; echo reloading...;");
 	loadFile("", packing, filter, more);
@@ -416,11 +413,11 @@ reload = function(packing, filter, more) {
 //	getUnitcell(1);
 }
 
-loadUser = function(packing, filter) {
+var loadUser = function(packing, filter) {
 	loadFile("?", packing, filter);
 }
 
-loadFile = function(fileName, packing, filter, more) {
+var loadFile = function(fileName, packing, filter, more) {
 	packing || (packing = "");
 	filter = (filter ? " FILTER '" + filter + "'" : "");
 	more || (more = "");
@@ -432,7 +429,7 @@ loadFile = function(fileName, packing, filter, more) {
 	runJmolScript("load '" + fileName + "' " + packing + filter + ";" + more);
 }
 
-function setDefaultJmolSettings() {
+var setDefaultJmolSettings = function() {
 	runJmolScriptWait('select all; wireframe 0.15; spacefill 20% ;cartoon off; backbone off;');
 	_slider.radii.setValue(20);
 	_slider.bond.setValue(15);
@@ -459,7 +456,7 @@ function setDefaultJmolSettings() {
 	// getbyID('Perspective').innerHTML = 3;
 }
 
-function onChangeLoad(load) {
+var onChangeLoad = function(load) {
 //	formResetAll();
 	switch (load) {
 	case "loadC":
@@ -506,7 +503,7 @@ function file_loadedCallback(filePath) {
 	_file = {
 			cell        : {},
 			fileType    : jmolEvaluate("_fileType").toLowerCase(), 
-			energyUnits : ENERGY_EV,
+			energyUnits : _constant.ENERGY_EV,
 			strUnitEnergy : "e",
 			hasInputModel : false,
 			symmetry    : null,
@@ -540,11 +537,11 @@ function file_loadedCallback(filePath) {
 	file_method("loadDone", loadDone);
 }
 
-loadDone = function() {
+var loadDone = function() {
 	setTitleEcho();
 }
 
-function cleanAndReloadForm() {
+var cleanAndReloadForm = function() {
 	// this method was called for castep, dmol, molden, quantumespresso, vasp loading	
 	setDefaultJmolSettings();
 	document.fileGroup.reset();
@@ -559,7 +556,7 @@ function cleanAndReloadForm() {
 	setTitleEcho();
 }
 
-setFlags = function() {
+var setFlags = function() {
 	// BH TODO: missing xmlvasp?
 	switch (_file.fileType) {
 	default:
@@ -627,17 +624,17 @@ setFlags = function() {
 	}
 }
 
-function onChangeSave(save) {
+var onChangeSave = function(save) {
 	// see menu.js
 	switch (save) {
 	case "savePNG":
 		runJmolScript('write PNG "jice.png"');
 		break;
 	case "savePNGJ":
-		runJmoLScript('write PNGJ "jice.png"');
+		runJmolScript('write PNGJ "jice.png"');
 		break;
 	case "saveXYZ":
-		runJmoLScript('write COORDS XYZ jice.xyz');
+		runJmolScript('write COORDS XYZ jice.xyz');
 		break;
 	case "saveFrac":
 		saveFractionalCoordinate();
@@ -661,13 +658,13 @@ function onChangeSave(save) {
 		exportGULP();
 		break;
 	case "savePOV":
-		runJmoLScript('write POVRAY jice.pov');
+		runJmolScript('write POVRAY jice.pov');
 		break;
 	case "savepdb":
-		runJmoLScript('write PDB jice.pdb');
+		runJmolScript('write PDB jice.pdb');
 		break;
 	case "saveState":
-		runJmoLScript('write STATE jice.spt');
+		runJmolScript('write STATE jice.spt');
 		break;
 	case "savefreqHtml":
 		newAppletWindowFreq();
@@ -677,33 +674,33 @@ function onChangeSave(save) {
 }
 
 
-function printFileContent() {
+var printFileContent = function() {
 	runJmolScript("console; getProperty fileContents;");
 }
 
 
-function setTitleEcho() {
+var setTitleEcho = function() {
 // BH this is not a generally useful thing to do. Crystal only?
 	var titleFile = extractInfoJmolString("fileHeader").split("\n")[0];
 	runJmolScriptWait('set echo top right; echo "' + titleFile + ' ";');
 }
 
 
-function setFileName() {
+var setFileName = function() {
 	setStatus(jmolEvaluate("_modelFile"));
 }
 
-function saveStateAndOrientation_a() {
+var saveStateAndOrientation_a = function() {
 	// used in castep, gulp, and vasp output methods, and in symmetry#figureOutSpacegroup
 	runJmolScriptWait("save ORIENTATION orienta; save STATE status;");
 }
 
-function restoreStateAndOrientation_a() {
+var restoreStateAndOrientation_a = function() {
 	runJmolScriptWait("restore ORIENTATION orienta; restore STATE status;");
 }
 
 
-function createFileGrp() { // Here the order is crucial
+var createFileGrp = function() { // Here the order is crucial
 	var elOptionArr = new Array("default", "loadC", "reload", "loadcif",
 			"loadxyz", "loadOutcastep", "loadcrystal", "loadDmol",
 			"loadaimsfhi", "loadgauss", "loadgromacs", "loadGulp",
@@ -719,19 +716,19 @@ function createFileGrp() { // Here the order is crucial
 			"ShelX (*.*)", "VASP (OUTCAR, POSCAR)", "VASP (*.xml)",
 			"WIEN2k (*.struct)", "Xcrysden (*.xtal)", "Jmol state (*.spt,*.png)");
 
-	var strFile = "<form autocomplete='nope'  id='fileGroup' name='fileGroup' style='display:inline' class='contents'>\n";
-	strFile += "<h2>File manager</h2>\n";
-	strFile += "<table><tr><td>Drag-drop a file into JSmol or use the menu below.<br>\n";
-	strFile += createSelectmenu('Load File', 'onChangeLoad(value)', 0, 1,
+	var str = "<form autocomplete='nope'  id='fileGroup' name='fileGroup' style='display:inline' class='contents'>\n";
+	str += "<h2>File manager</h2>\n";
+	str += "<table><tr><td>Drag-drop a file into JSmol or use the menu below.<br>\n";
+	str += createSelectmenu('Load File', 'onChangeLoad(value)', 0, 1,
 			elOptionArr, elOptionText);
-	strFile += "</td><td><div style=display:none>model #" +
+	str += "</td><td><div style=display:none>model #" +
 		createText2("modelNo", "", 7, "")
 		+ "</div></td></tr><tr><td>\n";
-	strFile += "Sample Files<BR>\n";
-	strFile += createSelectmenu('Sample Files', 'onChangeLoadSample(value)', 0, 1,
+	str += "Sample Files<BR>\n";
+	str += createSelectmenu('Sample Files', 'onChangeLoadSample(value)', 0, 1,
 			sampleOptionArr);
-	strFile += "</td></tr></table><BR><BR>\n";
-	strFile += "Export/Save File<BR>\n";
+	str += "</td></tr></table><BR><BR>\n";
+	str += "Export/Save File<BR>\n";
 	// Save section
 	var elSOptionArr = new Array("default", "saveCASTEP", "saveCRYSTAL",
 			"saveGULP", "saveGROMACS", "saveQuantum", "saveVASP", "saveXYZ",
@@ -744,37 +741,36 @@ function createFileGrp() { // Here the order is crucial
 			// "save Frequencies HTML (*.HTML)",
 			"image PNG (*.png)", "coordinates PDB (*.PDB)",
 			"image POV-ray (*.pov)", "current state (*.spt)", "image+state (PNGJ)");
-	strFile += createSelectmenu('Export File', 'onChangeSave(value)', 0, 1,
+	str += createSelectmenu('Export File', 'onChangeSave(value)', 0, 1,
 			elSOptionArr, elSOptionText);
-	strFile += "<p ><img src='images/j-ice.png' alt='logo'/></p>";
-	strFile += "<div style='margin-top:50px;width:350px'><p style='color:#000'> <b style='color:#f00'>Please DO CITE:</b>";
-	strFile += createCitations();
-	strFile += "</p></div>";
-	strFile += "</form>\n";
-	return strFile;
+	str += "<p ><img src='images/j-ice.png' alt='logo'/></p>";
+	str += "<div style='margin-top:50px;width:350px'><p style='color:#000'> <b style='color:#f00'>Please DO CITE:</b>";
+	str += createCitations();
+	str += "</p></div>";
+	str += "</form>\n";
+	return str;
 }
 
- 	createCitations = function() {
-		var citations = _global.citations; 
-		var s = "";
-		for (var i = 0; i < citations.length; i++) {
-			var cite = citations[i];
-			s += "<blockquote><b>";
-			s += cite.title;
-			s += "</b><br>";
-			s += cite.authors.join(", ");
-			s += " <br>";  
-			s+= cite.journal;
-			s += " <a href='" + cite.link + "' target='_blank'>[doi]</a>";
-			s += "</blockquote>"; 
-		};
-		return s
-	}
-
+var createCitations = function() {
+	var citations = _global.citations; 
+	var s = "";
+	for (var i = 0; i < citations.length; i++) {
+		var cite = citations[i];
+		s += "<blockquote><b>";
+		s += cite.title;
+		s += "</b><br>";
+		s += cite.authors.join(", ");
+		s += " <br>";  
+		s+= cite.journal;
+		s += " <a href='" + cite.link + "' target='_blank'>[doi]</a>";
+		s += "</blockquote>"; 
+	};
+	return s
+}
 
 function enterCell() {
 	getUnitcell(_file.frameValue);
-//	getSymInfo();
+//	//getSymInfo();
 }
 
 function exitCell() {
@@ -816,11 +812,11 @@ function getUnitcell(i) {
 	case 1:
 		_file.cell.b = 0.000;
 		_file.cell.c = 0.000;
-		makeEnable("par_a");
+		enableElement("par_a");
 		setValue("par_a", "");
-		makeDisable("par_b");
+		disableElement("par_b");
 		setValue("par_b", "1");
-		makeDisable("par_c");
+		disableElement("par_c");
 		setValue("par_c", "1");
 		setValue("bovera", "0");
 		setValue("covera", "0");
@@ -829,11 +825,11 @@ function getUnitcell(i) {
 	case 2:
 		_file.cell.c = 0.000;
 		_file.cell.typeSystem = "slab";
-		makeEnable("par_a");
+		enableElement("par_a");
 		setValue("par_a", "");
-		makeEnable("par_b");
+		enableElement("par_b");
 		setValue("par_b", "");
-		makeDisable("par_c");
+		disableElement("par_c");
 		setValue("par_c", "1");
 		setValue("bovera", bOvera);
 		setValue("covera", "0");
@@ -843,11 +839,11 @@ function getUnitcell(i) {
 		_file.cell.alpha = cellparam[3];
 		_file.cell.beta = cellparam[4];
 		_file.cell.gamma = cellparam[5];
-		makeEnable("par_a");
+		enableElement("par_a");
 		setValue("par_a", "");
-		makeEnable("par_b");
+		enableElement("par_b");
 		setValue("par_b", "");
-		makeEnable("par_c");
+		enableElement("par_c");
 		setValue("par_c", "");
 		setValue("bovera", bOvera);
 		setValue("covera", cOvera);
@@ -921,7 +917,7 @@ function setCellDotted() {
 	}
 }
 
-getCurrentPacking = function() {
+var getCurrentPacking = function() {
 	// BH 2018
 	getValue("par_a") || setValue("par_a", 1);
 	getValue("par_b") || setValue("par_b", 1);
@@ -929,7 +925,7 @@ getCurrentPacking = function() {
 	return '{ ' + getValue("par_a") + ' ' + getValue("par_b") + ' ' + getValue("par_c") + '} ';
 }
 
-getCurrentUnitCell = function() {
+var getCurrentUnitCell = function() {
 	return '[ ' + parseFloat(getValue('a_frac')) + ' '
 		+ parseFloat(getValue('b_frac')) + ' '
 		+ parseFloat(getValue('c_frac')) + ' '
@@ -955,7 +951,7 @@ function setPackaging(packMode) {
 }
 
 
-getKindCell = function() {
+var getKindCell = function() {
 	var kindCell = getbyName("cella");
 	var kindCellfinal = null;
 	for (var i = 0; i < kindCell.length; i++)
@@ -967,7 +963,7 @@ getKindCell = function() {
 function setPackRangeAndReload(val) {
 	_cell.packRange = val;
 	reload("{1 1 1} RANGE " + val, getKindCell());
-	cellOperation();
+	//cellOperation();
 }
 
 function checkPack() {
@@ -993,12 +989,12 @@ function setCellType(value) {
 	} else {
 		reload(null, value);
 	}
-	cellOperation();
+	//cellOperation();
 }
 
 function applyPack(range) {
 	setPackRangeAndReload(parseFloat(range).toPrecision(2));
-	getbyID("slider.packMsg").innerHTML = packRange + " &#197";
+	getbyID("slider.packMsg").innerHTML = _cell.packRange + " &#197";
 }
 
 function setManualOrigin() {
@@ -1012,7 +1008,7 @@ function setManualOrigin() {
 		return false;
 	}
 	runJmolScriptWait("unitcell { " + x + " " + y + " " + z + " };");
-	cellOperation();
+	//cellOperation();
 }
 
 function setFashionAB(valueList) {
@@ -1495,7 +1491,7 @@ function connectAtom() {
 		return false;
 	}
 
-	if (radbondVal == "all") {
+	if (_edit.radbondVal == "all") {
 		if (_edit.radBondRange == "just") {
 			var bondRadFrom = getValue("radiuscoonectFrom");
 			if (bondRadFrom == "") {
@@ -1520,7 +1516,7 @@ function connectAtom() {
 					+ bondRadTo + " (all) (all) " + styleBond
 					+ " ModifyOrCreate;");
 		}
-	} else if (radbondVal == "atom") {
+	} else if (_edit.radbondVal == "atom") {
 		var atomFrom = getValue("connectbyElementList");
 		var atomTo = getValue("connectbyElementListone");
 		if (_edit.radBondRange == "just") {
@@ -1549,7 +1545,7 @@ function connectAtom() {
 					+ atomTo + ") " + styleBond + " ModifyOrCreate;");
 		}
 
-	} else if (radbondVal == "selection") {
+	} else if (_edit.radbondVal == "selection") {
 		runJmolScriptWait("connect (selected) (selected) " + styleBond + " ModifyOrCreate;");
 	}
 }
@@ -1557,7 +1553,7 @@ function connectAtom() {
 function deleteBond() {
 	var styleBond = getValue("setBondFashion");
 
-	if (radbondVal == "all") {
+	if (_edit.radbondVal == "all") {
 		if (_edit.radBondRange == "just") {
 			var bondRadFrom = getValue("radiuscoonectFrom");
 			if (bondRadFrom == "") {
@@ -1576,7 +1572,7 @@ function deleteBond() {
 			runJmolScriptWait("connect " + bondRadFrom + " " + bondRadTo
 					+ " (all) (all)  DELETE;");
 		}
-	} else if (radbondVal == "atom") {
+	} else if (_edit.radbondVal == "atom") {
 		var atomFrom = getValue("connectbyElementList");
 		var atomTo = getValue("connectbyElementListone");
 		if (_edit.radBondRange == "just") {
@@ -1599,15 +1595,15 @@ function deleteBond() {
 					+ ") (" + atomTo + ") DELETE;");
 		}
 
-	} else if (radbondVal == "selection") {
+	} else if (_edit.radbondVal == "selection") {
 		runJmolScriptWait("connect (selected) (selected) " + styleBond + " DELETE;");
 	}
 }
 
 function checkBondStatus(radval) {
 	runJmolScriptWait("select *; halos off; label off; select none;");
-	radbondVal = radval;
-	if (radbondVal == "selection") {
+	_edit.radbondVal = radval;
+	if (_edit.radbondVal == "selection") {
 		for (var i = 0; i < document.editGroup.range.length; i++)
 			document.editGroup.range[i].disabled = true;
 		runJmolScriptWait('showSelections TRUE; select none; set picking identify; halos on;');
@@ -1622,7 +1618,7 @@ function checkBondStatus(radval) {
 		getbyID("connectbyElementList").disabled = true;
 		getbyID("connectbyElementListone").disabled = true;
 
-		if (radbondVal == "atom") {
+		if (_edit.radbondVal == "atom") {
 			getbyID("connectbyElementList").disabled = false;
 			getbyID("connectbyElementListone").disabled = false;
 		}
@@ -1744,7 +1740,7 @@ function createEditGrp() {
 	strEdit += "Rename atom/s<br>";
 	strEdit += "Element Name ";
 	strEdit += createSelect('renameEle', 'changeElement(value)', 0, 1,
-			eleSymb);
+			_constant.ELEM_SYM);
 	strEdit += createLine('blue', '');
 	strEdit += "</td></tr>\n";
 	strEdit += "<tr><td colspan='2'>\n";
@@ -1804,33 +1800,33 @@ function createEditGrp() {
 	return strEdit;
 }
 
-_measure = {
+var _measure = {
 	kindCoord: "",
-	measureCoord : false,
-	unitMeasure : "",
-	mesCount : 0
+	coord : false,
+	unit : "",
+	count : 0
 }
 
-function enterMeasure() {
+function enter() {
 
 }
 
-function exitMeasure() {
-	measureCoord = false;
+function exit() {
+	_measure.coord = false;
 }
 
-function viewCoord(value) {
+_measure.viewCoord = function(value) {
 	_measure.kindCoord = value;
-	measureCoord = true;
+	_measure.coord = true;
 	messageMsg("Pick the atom you are interested in, please.");
-	setPickingCallbackFunction(showCoord);
+	setPickingCallbackFunction(_measure.showCoord);
 	runJmolScriptWait("select *; label off;"
 			+ 'set defaultDistanceLabel "%2.7VALUE %UNITS";'
 			+ 'showSelections TRUE; select none; set picking ON;set picking LABEL; set picking SELECT atom; halos on; set LABEL on;');
 }
 
-function showCoord() {
-	if (measureCoord) {
+_measure.showCoord = function() {
+	if (_measure.coord) {
 		if (_measure.kindCoord == "fractional") {
 			runJmolScriptWait('Label "%a: %.2[fX] %.2[fY] %.2[fZ]"');
 		} else {
@@ -1839,79 +1835,75 @@ function showCoord() {
 	}
 }
 
-function setMeasureUnit(value) {
-	unitMeasure = value;
+_measure.setUnit = function(value) {
+	_measure.unit = value;
 	runJmolScriptWait("set measurements " + value);
 }
 
-function setMeasurement() {
+_measure.set = function() {
 	runJmolScriptWait("set measurements ON");
 }
 
-function checkMeasure(value) {
+_measure.check = function(value) {
 	var radiobutton = value;
 	var unit = getbyID('measureDist').value;
-	mesReset();
-	runJmolScriptWait('set pickingStyle MEASURE ON; set MeasureCallback "measuramentCallback";');
+	_measure.reset();
+	runJmolScriptWait('set pickingStyle MEASURE ON;');
 	if (radiobutton == "distance") {
 		if (unit == 'select') {
-			measureHint('Select the desired measure unit.');
+			_measure.hint('Select the desired measure unit.');
 			uncheckRadio("distance");
 			return false;
 		}
-		measureHint('Pick two atoms');
+		_measure.hint('Pick two atoms');
 		runJmolScriptWait('set defaultDistanceLabel "%2.3VALUE %UNITS";'
 				+ 'showSelections TRUE; select none;  label on ; set picking on; set picking LABEL; set picking SELECT atom; set picking DISTANCE;'
-				+ "measure ON; set measurements ON; set showMeasurements ON; set measurements ON; set measurementUnits "
+				+ "measure ON; set measurements ON; set showments ON; set measurements ON; set measurementUnits "
 				+ unit + ";set picking MEASURE DISTANCE;" + "set measurements "
 				+ unit + ";" + 'label ON;');
 
 	} else if (radiobutton == "angle") {
-		measureHint('Pick three atoms');
+		_measure.hint('Pick three atoms');
 		runJmolScriptWait('set defaultAngleLabel "%2.3VALUE %UNITS";'
 				+ 'showSelections TRUE; select none;  label on ; set picking on; set picking LABEL; set picking SELECT atom; set picking ANGLE;'
-				+ "measure ON; set measurements ON; set showMeasurements ON; set picking MEASURE ANGLE;"
-				+ 'set measurements ' + unitMeasure + ';label ON');
+				+ "measure ON; set measurements ON; set showments ON; set picking MEASURE ANGLE;"
+				+ 'set measurements ' + unit + ';label ON');
 	} else if (radiobutton == "torsional") {
-		measureHint('Pick four atoms');
+		_measure.hint('Pick four atoms');
 		runJmolScriptWait('set defaultTorsionLabel "%2.3VALUE %UNITS";'
 				+ 'showSelections TRUE; select none;  label on ; set picking on; set picking TORSION; set picking SELECT atom; set picking ANGLE;'
-				+ 'measure ON; set measurements ON; set showMeasurements ON; set picking MEASURE TORSION;label ON');
+				+ 'measure ON; set measurements ON; set showments ON; set picking MEASURE TORSION;label ON');
 	}
-	setMeasureText()
+	_measure.setText()
 
 }
 
-var measureHint = function(msg) {
+_measure.hint = function(msg) {
 	// BH 2018
-	document.measureGroup.textMeasure.value = msg + "...";
+	document.measureGroup.text.value = msg + "...";
 }
 
-function setMeasureSize(value) {
+_measure.setSize = function(value) {
 	runJmolScriptWait("select *; font label " + value + " ; font measure "
 			+ value + " ; select none;");
 }
 
-function setMeasureText(value) {
+_measure.setText = function(value) {
 	runJmolScriptWait("show measurements");
 	var init = "\n";
 	// BH 2018
-	if (mesCount == 0)
-		document.measureGroup.textMeasure.value = init = '';
-	document.measureGroup.textMeasure.value += init + ++mesCount + " " + value;
+	if (_measure.count == 0)
+		document.measureGroup.text.value = init = '';
+	document.measureGroup.text.value += init + ++_measure.count + " " + value;
 }
 
-function mesReset() {
-	mesCount = 0;
-	getbyID("textMeasure").value = "";
-	runJmolScriptWait('set pickingStyle MEASURE OFF; select *; label off; halos OFF; selectionHalos OFF; measure OFF; set measurements OFF; set showMeasurements OFF;  measure DELETE;');
+_measure.reset = function() {
+	_measure.count = 0;
+	getbyID("text").value = "";
+	runJmolScriptWait('set pickingStyle MEASURE OFF; select *; label off; halos OFF; selectionHalos OFF; measure OFF; set measurements OFF; set showments OFF;  measure DELETE;');
 }
 
-function measuramentCallback(a, b, c, d, e) {
-	setMeasureText(b);
-}
-
-function createMeasureGrp() {
+var createMeasureGrp = function() {
 	var measureName = new Array("select", "Angstroms", "Bohr", "nanometers",
 	"picometers");
 	var measureValue = new Array("select", "angstroms", "BOHR", "nm", "pm");
@@ -1919,50 +1911,50 @@ function createMeasureGrp() {
 	var textText = new Array("select", "6 pt", "8 pt", "10 pt", "12 pt",
 			"16 pt", "20 pt", "24 pt", "30 pt");
 	
-	var strMeas = "<form autocomplete='nope'  id='measureGroup' name='measureGroup' style='display:none'>";
-	strMeas += "<table class='contents'><tr><td > \n";
-	strMeas += "<h2>Measure and _file.info</h2>\n";
-	strMeas += "</td></tr>\n";
-	strMeas += "<tr><td colspan='2'>\n";
-	strMeas += "Measure<br>\n";
-	strMeas += createRadio("distance", "distance", 'checkMeasure(value)', '',
+	var str = "<form autocomplete='nope'  id='measureGroup' name='measureGroup' style='display:none'>";
+	str += "<table class='contents'><tr><td > \n";
+	str += "<h2> and _file.info</h2>\n";
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "<br>\n";
+	str += createRadio("distance", "distance", '_measure.check(value)', '',
 			0, "", "distance");
-	strMeas += createSelectFunc('measureDist', 'setMeasureUnit(value)',
-			'setTimeout("setMeasureUnit(value) ",50)', 0, 1, measureValue,
+	str += createSelectFunc('measureDist', '_measure.setUnit(value)',
+			'setTimeout(function(){_measure.setUnit(value)},50)', 0, 1, measureValue,
 			measureName)
 			+ " ";
-	strMeas += createRadio("distance", "angle", 'checkMeasure(value)', '', 0,
+	str += createRadio("distance", "angle", '_measure.check(value)', '', 0,
 			"", "angle");
-	strMeas += createRadio("distance", "torsional", 'checkMeasure(value)', '',
+	str += createRadio("distance", "torsional", '_measure.check(value)', '',
 			0, "", "torsional");
-	strMeas += "<br><br> Measure value: <br>"
-		+ createTextArea("textMeasure", "", 10, 60, "");
-	strMeas += "<br>"
-		+ createButton('resetMeasure', 'Delete Measure/s', 'mesReset()', '')
+	str += "<br><br>  value: <br>"
+		+ createTextArea("text", "", 10, 60, "");
+	str += "<br>"
+		+ createButton('reset', 'Delete /s', '_measure.reset()', '')
 		+ "<br>";
-	strMeas += "</td></tr>\n";
-	strMeas += "<tr><td>Measure colour: "
-		+ createButton("colorMeasure", "Default colour",
+	str += "</td></tr>\n";
+	str += "<tr><td> colour: "
+		+ createButton("color", "Default colour",
 				'runJmolScriptWait("color measures none")', 0) + "</td><td >\n";
-	strMeas += "<script align='left'>jmolColorPickerBox([setColorWhat, 'measures'],[255,255,255],'measureColorPicker')</script>";
-	strMeas += "</td></tr>";
-	strMeas += "<tr><td colspan='2'>";
-	strMeas += createLine('blue', '');
-	strMeas += "</td></tr>";
-	strMeas += "<tr><td colspan='2'>";
-	strMeas += "View coordinates: ";
-	strMeas += createRadio("coord", "fractional", 'viewCoord(value)', '', 0, "", "fractional");
-	strMeas += createRadio("coord", "cartesian", 'viewCoord(value)', '', 0, "", "cartesian");
-	strMeas += createLine('blue', '');
-	strMeas += "</td></tr>";
-	strMeas += "<tr><td colspan='2'>";
-	strMeas += "Font size ";
-	strMeas += createSelect("fSize", "setMeasureSize(value)", 0, 1,
+	str += "<script align='left'>jmolColorPickerBox([setColorWhat, 'measures'],[255,255,255],'measureColorPicker')</script>";
+	str += "</td></tr>";
+	str += "<tr><td colspan='2'>";
+	str += createLine('blue', '');
+	str += "</td></tr>";
+	str += "<tr><td colspan='2'>";
+	str += "View coordinates: ";
+	str += createRadio("coord", "fractional", '_measure.viewCoord(value)', '', 0, "", "fractional");
+	str += createRadio("coord", "cartesian", '_measure.viewCoord(value)', '', 0, "", "cartesian");
+	str += createLine('blue', '');
+	str += "</td></tr>";
+	str += "<tr><td colspan='2'>";
+	str += "Font size ";
+	str += createSelect("fSize", "_measure.setSize(value)", 0, 1,
 			textValue, textText);
-	strMeas += createLine('blue', '');
-	strMeas += "</td></tr>";
-	strMeas += "</table></FORM>  \n";
-	return strMeas;
+	str += createLine('blue', '');
+	str += "</td></tr>";
+	str += "</table></FORM>  \n";
+	return str;
 }
 
 _orient = {
@@ -2024,8 +2016,8 @@ function setMotion(axis) {
 		return false;
 	}
 
-	// /(_orient.motion == "translate" )? (makeDisable("-z") + makeDisable("z")) :
-	// (makeEnable("-z") + makeEnable("z"))
+	// /(_orient.motion == "translate" )? (disableElement("-z") + disableElement("z")) :
+	// (enableElement("-z") + enableElement("z"))
 
 	if (magnitudeMotion == "") {
 		errorMsg("Please, check value entered in the textbox");
@@ -2191,12 +2183,11 @@ function exitPolyhedra() {
 
 function createPolyedra() {
 
-	var vertNo, from, to, distance, style, selected, face;
-	vertNo = getValue("polyEdge");
-	from = getValue('polybyElementList');
-	to = getValue("poly2byElementList");
-	style = getValue("polyVert");
-	face =  getValue("polyFace");
+	var vertNo = getValue("polyEdge");
+	var from = getValue('polybyElementList');
+	var to = getValue("poly2byElementList");
+	var style = getValue("polyVert");
+	var face =  getValue("polyFace");
 	if (face.equals("0.0") && !style.equals("collapsed"))
 		face = "";
 	runJmolScriptWait("polyhedra DELETE");
@@ -2206,7 +2197,7 @@ function createPolyedra() {
 	// return false;
 	// }
 
-	distance = getValue("polyDistance");
+	var distance = getValue("polyDistance");
 
 	if (distance == "") {
 		runJmolScriptWait("polyhedra 4, 6" + face + " " + style);
@@ -2236,13 +2227,13 @@ function createPolyedra() {
 }
 
 function checkPolyValue(value) {
-	(value == "collapsed") ? (makeEnable("polyFace"))
-			: (makeDisable("polyFace"));
+	(value == "collapsed") ? (enableElement("polyFace"))
+			: (disableElement("polyFace"));
 }
 
-function setPolyString(value) {
-	runJmolScriptWait("polyhedra 4, 6" + "  faceCenterOffset " + face + " " + value);
-}
+//function setPolyString(face, value) {
+//	runJmolScriptWait("polyhedra 4, 6" + "  faceCenterOffset " + face + " " + value);
+//}
 
 function setPolybyPicking(element) {
 	setPicking(element);
@@ -2258,85 +2249,85 @@ function createPolyGrp() {
 	var polyStyleValue = new Array("NOEDGES", "noedges", "collapsed",
 			"noedges", "edges", "frontedges");
 	var polyFaceName = new Array("0.0", "0.25", "0.5", "0.9", "1.2");
-	var strPoly = "<form autocomplete='nope'  id='polyGroup' name='polyGroup' style='display:none'>\n";
-	strPoly += "<table class='contents'>\n";
-	strPoly += "<tr><td>\n";
-	strPoly += "<h2>Polyhedron</h2>\n";
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += "Make polyhedra: \n";
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td  colspan='2'>\n";
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += "&nbsp;a) Select central atom:  <br>\n";
-	strPoly += "&nbsp;&nbsp;  by element "
+	var str = "<form autocomplete='nope'  id='polyGroup' name='polyGroup' style='display:none'>\n";
+	str += "<table class='contents'>\n";
+	str += "<tr><td>\n";
+	str += "<h2>Polyhedron</h2>\n";
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "Make polyhedra: \n";
+	str += "</td></tr>\n";
+	str += "<tr><td  colspan='2'>\n";
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "&nbsp;a) Select central atom:  <br>\n";
+	str += "&nbsp;&nbsp;  by element "
 		+ createSelect2('polybyElementList', "", false, 0);
-	// strPoly+=createCheck("byselectionPoly", "&nbsp;by picking &nbsp;",
+	// str+=createCheck("byselectionPoly", "&nbsp;by picking &nbsp;",
 	// 'setPolybyPicking(this)', 0, 0, "set picking") + "<br>\n";
-	strPoly += "<br>&nbsp;&nbsp;just central atom"
+	str += "<br>&nbsp;&nbsp;just central atom"
 		+ createCheck("centralPoly", "",
 				'checkBoxStatus(this, "poly2byElementList")', 0, 0, "");
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += "&nbsp; b) select vertex atoms:  <br>\n";
-	strPoly += "&nbsp;&nbsp;  by element "
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "&nbsp; b) select vertex atoms:  <br>\n";
+	str += "&nbsp;&nbsp;  by element "
 		+ createSelect2('poly2byElementList', "", false, 0) + "\n";
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += "&nbsp; c) based on <br>";
-	strPoly += "&nbsp;"
-		+ createRadio("bondPoly", "bond", 'makeDisable("polyDistance") ',
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "&nbsp; c) based on <br>";
+	str += "&nbsp;"
+		+ createRadio("bondPoly", "bond", 'disableElement("polyDistance") ',
 				0, 0, "bondPoly", "off");
-	strPoly += createRadio("bondPoly", " max distance ",
-			' makeEnable("polyDistance")', 0, 0, "bondPoly1", "on");
-	strPoly += createText2("polyDistance", "2.0", "3", "") + " &#197;";
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += "&nbsp;d) number of vertices "
+	str += createRadio("bondPoly", " max distance ",
+			' enableElement("polyDistance")', 0, 0, "bondPoly1", "on");
+	str += createText2("polyDistance", "2.0", "3", "") + " &#197;";
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "&nbsp;d) number of vertices "
 		+ createSelect('polyEdge', '', 0, 0, polyEdgeName) + "\n";
-	strPoly += createLine('blue', '');
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += "Polyedra style:<br>\n";
-	strPoly += "</td></tr><tr><td > &nbsp;a) colour polyhedra\n";
-	strPoly += createButton("polyColor", "Default colour",
+	str += createLine('blue', '');
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "Polyedra style:<br>\n";
+	str += "</td></tr><tr><td > &nbsp;a) colour polyhedra\n";
+	str += createButton("polyColor", "Default colour",
 			'runJmolScriptWait("set defaultColors Jmol")', 0);
-	strPoly += "</td><td align='left'><script>\n";
-	strPoly += "jmolColorPickerBox([setColorWhat,'polyhedra'],'','polyColorPicker');";
-	strPoly += "</script> </td></tr>";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += createButton('advancePoly', '+',
+	str += "</td><td align='left'><script>\n";
+	str += "jmolColorPickerBox([setColorWhat,'polyhedra'],'','polyColorPicker');";
+	str += "</script> </td></tr>";
+	str += "<tr><td colspan='2'>\n";
+	str += createButton('advancePoly', '+',
 			'toggleDivValue(true,"advancePolyDiv",this)', '')
 			+ " Advanced style options"
-			strPoly += "<div id='advancePolyDiv' style='display:none; margin-top:20px'>"
-				strPoly += "<br> &nbsp;b)"
+			str += "<div id='advancePolyDiv' style='display:none; margin-top:20px'>"
+				str += "<br> &nbsp;b)"
 					+ createRadio("polyFashion", "opaque",
 							'runJmolScriptWait("color polyhedra opaque") ', 0, 1, "opaque", "opaque")
 							+ "\n";
-	strPoly += createRadio("polyFashion", "translucent",
+	str += createRadio("polyFashion", "translucent",
 			'runJmolScriptWait("color polyhedra translucent") ', 0, 0, "translucent",
 	"translucent")
 	+ "\n<br><br>";
-	strPoly += "&nbsp;c) style edges\n"
+	str += "&nbsp;c) style edges\n"
 		+ createSelect('polyVert', 'checkPolyValue(this.value)', 0, 0,
 				polyStyleValue, polyStyleName) + "\n";
-	strPoly += "<br>"
-		strPoly += "&nbsp;&nbsp;collapsed faces Offset \n"
+	str += "<br>"
+		str += "&nbsp;&nbsp;collapsed faces Offset \n"
 			+ createSelect('polyFace', '', 0, 0, polyFaceName) + "\n";
-	strPoly += "</div>";
-	strPoly += createLine('blue', '');
-	strPoly += "</td></tr>\n";
-	strPoly += "<tr><td colspan='2'>\n";
-	strPoly += createButton('createPoly', 'create', 'createPolyedra()', '');
-	strPoly += createButton('createpoly', 'create auto',
+	str += "</div>";
+	str += createLine('blue', '');
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += createButton('createPoly', 'create', 'createPolyedra()', '');
+	str += createButton('createpoly', 'create auto',
 			'runJmolScriptWait("polyhedra 4,6 " + getValue("polyVert"))', '');
-	strPoly += createButton('deletePoly', 'delete', 'runJmolScriptWait("polyhedra DELETE")',
+	str += createButton('deletePoly', 'delete', 'runJmolScriptWait("polyhedra DELETE")',
 	'');
-	strPoly += "</td></tr>\n";
-	strPoly += "</table>\n";
-	strPoly += "</FORM>\n";
-	return strPoly;
+	str += "</td></tr>\n";
+	str += "</table>\n";
+	str += "</FORM>\n";
+	return str;
 }
 
 /*  J-ICE library 
@@ -2363,6 +2354,14 @@ function createPolyGrp() {
  *  02111-1307  USA.
  */
 
+var _surface = {		
+	SURFACE_VDW   			 : "isosurface VDW", // BH Q: Why was this VDW + 2.0 ?
+	SURFACE_VDW_PERIODIC     : "isosurface lattice _CELL_ VDW"
+	//SURFACE_VDW_MEP			 = "isosurface resolution 7 VDW map MEP"; // why SOLVENT, which is VDW + 1.2?
+	//SURFACE_VDW_MEP_PERIODIC = "isosurface lattice _CELL_ resolution 7 VDW map MEP";
+};
+
+
 function enterSurface() {
 	selectListItem(document.isoGroup.createIso, '');
 }
@@ -2371,51 +2370,43 @@ function exitSurface() {
 	cancelPicking();
 }
 
-var SURFACE_VDW   			 = "isosurface VDW"; // BH Q: Why was this VDW + 2.0 ?
-var SURFACE_VDW_PERIODIC     = "isosurface lattice _CELL_ VDW";
-//SURFACE_VDW_MEP			 = "isosurface resolution 7 VDW map MEP"; // why SOLVENT, which is VDW + 1.2?
-//SURFACE_VDW_MEP_PERIODIC = "isosurface lattice _CELL_ resolution 7 VDW map MEP";
-
-function onClickCreateIso(value) {
+_surface.onClickCreateIso = function(value) {
 	if (!value)
 		return;
 	if (value.indexOf("?") >= 0)
 		messageMsg("Select or drag-drop your density cube or JVXL file onto the 'browse' button, then press the 'load' button.");
-	createSurface(value, true);
+	_surface.createSurface(value, true);
 }
 
-var canMapIsosurface = function() {
+_surface.canMapIsosurface = function() {
 	if (jmolEvaluate("isosurface list").trim())
 		return true;	
 	messageMsg("First create an isosurface.")
 	return false;
 }
-function onClickMapCube() {
-	if (!canMapIsosurface())
+
+_surface.onClickMapCube = function() {
+	if (!_surface.canMapIsosurface())
 		return;
 	messageMsg("Select or drag-drop your potential cube file onto the 'browse' button, then press the 'load' button.");
-	createSurface("isosurface map '?'", false);	
+	_surface.createSurface("isosurface map '?'", false);	
 }
 
-function onClickMapMEP() {
-	if (!canMapIsosurface())
+_surface.onClickMapMEP = function() {
+	if (!_surface.canMapIsosurface())
 		return;
-	createSurface("isosurface map mep;isosurface cache;", false)
+	_surface.createSurface("isosurface map mep;isosurface cache;", false)
 }
 
-function onClickMapPlane() {
-	pickPlane(null, surfacePickPlaneCallback);
+_surface.surfacePickPlaneCallback = function() {
+	_surface.createSurface('isosurface PLANE $plane1 MAP color range 0.0 2.0 "?";', true);
 }
 
-function surfacePickPlaneCallback() {
-	createSurface('isosurface PLANE $plane1 MAP color range 0.0 2.0 "?";', true);
-}
-
-var createSurface = function(cmd, doClear) {
+_surface.createSurface = function(cmd, doClear) {
 	if (cmd.indexOf("_CELL_") >= 0)
-		cmd = cmd.replace("_CELL_", getCurrentCell()); 
+		cmd = cmd.replace("_CELL_", getCurrentUnitCell()); 
 	runJmolScript((doClear ? "isosurface delete;" : "") 
-			+ "set echo top left; echo creating ISOSURFACE...; refresh;" + cmd + '; echo;javascript getIsoInfo()');
+			+ "set echo top left; echo creating ISOSURFACE...; refresh;" + cmd + '; echo;javascript _surface.getIsoInfo()');
 }
 
 //function sendSurfaceMessage() {
@@ -2427,7 +2418,7 @@ var createSurface = function(cmd, doClear) {
 //	runJmolScript("write crystal_map.jvxl;");
 //}
 
-function getIsoInfo() {
+_surface.getIsoInfo = function() {
 	if (!jmolEvaluate("isosurface list").trim())
 		return;
 	
@@ -2445,11 +2436,11 @@ function getIsoInfo() {
 	setValue("dataMax", dataMaximum);
 }
 
-function setIsoColorscheme() {
+_surface.setIsoColorscheme = function() {
 	runJmolScriptWait('color $isosurface1 "' + getValue("isoColorScheme") + '"');
 }
 
-function setIsoColorRange() {
+_surface.setIsoColorRange = function() {
 	if (getbyID("dataMin") == "" || getbyID("dataMax") == "") {
 		errorMsg("Please, check values entered in the textboxes");
 		return false;
@@ -2465,7 +2456,7 @@ function setIsoColorRange() {
 	}
 }
 
-function setIsoColorReverse() {
+_surface.setIsoColorReverse = function() {
 	if (getbyID("dataMin") == "" || getbyID("dataMax") == "") {
 		errorMsg("Please, check values entered in the textboxes");
 		return false;
@@ -2479,7 +2470,7 @@ function setIsoColorReverse() {
 			+ ' ' + max);
 }
 
-function pickIsoValue() {
+_surface.pickIsoValue = function() {
 	var check = isChecked("measureIso");
 	if (check) {
 		messageMsg("Value are shown by hovering on the surface. Values are in e- *bohr^-3. Make sure your isosurface is completely opaque.");
@@ -2489,7 +2480,7 @@ function pickIsoValue() {
 	}
 }
 
-function removeStructure() {
+_surface.removeStructure = function() {
 	var check = isChecked("removeStr");
 	if (!check) {
 		runJmolScriptWait("select *; hide selected");
@@ -2498,7 +2489,7 @@ function removeStructure() {
 	}
 }
 
-function removeCellIso() {
+_surface.removeCellIso = function() {
 	var check = isChecked("removeCellI");
 	if (!check) {
 		runJmolScriptWait("unitcell OFF");
@@ -2507,7 +2498,7 @@ function removeCellIso() {
 	}
 }
 
-function setIsoPack() {
+_surface.setIsoPack = function() {
 	if (getValue("iso_a") == "" || getValue("iso_b") == ""
 			|| getValue("iso_c") == "") {
 		errorMsg("Please, check values entered in the textboxes");
@@ -2535,8 +2526,8 @@ function createIsoGrp() {
 			'isosurface "?"',
 			'isosurface OFF',
 			'isosurface ON',
-			SURFACE_VDW, 
-			SURFACE_VDW_PERIODIC,
+			_surface.SURFACE_VDW, 
+			_surface.SURFACE_VDW_PERIODIC,
 //			SURFACE_VDW_MEP,
 //			SURFACE_VDW_MEP_PERIODIC,
 			'isosurface SASURFACE',
@@ -2555,95 +2546,93 @@ function createIsoGrp() {
 	 * http://chemapps.stolaf.edu/jmol/docs/examples-11/new.htm isosurface /
 	 * lattice {a b c}
 	 */
-	var strIso = "<form autocomplete='nope'  id='isoGroup' name='isoGroup' style='display:none'>\n";
-	strIso += "<table class='contents'>\n";
-	strIso += "<tr><td colspan='2'>\n";
-	strIso += "<h2>IsoSurface</h2>\n";
-	strIso += "</td></tr>\n";
-	strIso += "<tr><td colspan='2'>\n";
-	//strIso += "Molecular (classic) isoSurfaces: \n <br>";
-	strIso += createSelect('createIso', 'onClickCreateIso(this.value)', 0, 0,
+	var str = "<form autocomplete='nope'  id='isoGroup' name='isoGroup' style='display:none'>\n";
+	str += "<table class='contents'>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "<h2>IsoSurface</h2>\n";
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	//str += "Molecular (classic) isoSurfaces: \n <br>";
+	str += createSelect('createIso', '_surface.onClickCreateIso(this.value)', 0, 0,
 			isoValue, isoName)
 			+ "&nbsp;";
-	strIso += createButton('removeIso', 'remove iso', 'runJmolScriptWait("isosurface OFF")','');
-	strIso += createLine('blue', '');
-	strIso += "</td></tr><tr><td colspan='2'>\n";
-	strIso += createButton('mapMEP', 'map charges', 'onClickMapMEP()','');
-	strIso += createButton('mapCube', 'map from CUBE file', 'onClickMapCube()','');
-	strIso += createButton('mapPlane', 'map plane', 'onClickPickPlane(null, surfacePickPlaneCallback)','');
-	strIso += "<br>Color map settings<br>\n ";
-	strIso += "<img src='images/band.png'><br><br>";
-	strIso += "- " + createText2("dataMin", "", "12", 0) + " + "
+	str += createButton('removeIso', 'remove iso', 'runJmolScriptWait("isosurface OFF")','');
+	str += createLine('blue', '');
+	str += "</td></tr><tr><td colspan='2'>\n";
+	str += createButton('mapMEP', 'map charges', '_surface.onClickMapMEP()','');
+	str += createButton('mapCube', 'map from CUBE file', '_surface.onClickMapCube()','');
+	str += createButton('mapPlane', 'map plane', 'onClickPickPlane(null, _surface.surfacePickPlaneCallback)','');
+	str += "<br>Color map settings<br>\n ";
+	str += "<img src='images/band.png'><br><br>";
+	str += "- " + createText2("dataMin", "", "12", 0) + " + "
 	+ createText2("dataMax", "", "12", 0) + " e- *bohr^-3<br>";
-	strIso += "<br> Colour-scheme "
-		+ createSelect('isoColorScheme', 'setIsoColorscheme()', 0, 0,
+	str += "<br> Colour-scheme "
+		+ createSelect('isoColorScheme', '_surface.setIsoColorscheme()', 0, 0,
 				colSchemeValue, colSchemeName) + "&nbsp<br>";
-	strIso += createButton('up', 'Update map', 'setIsoColorRange()', '');
-	// + createButton('reverseColor', 'Reverse colour', 'setIsoColorReverse()',
+	str += createButton('up', 'Update map', '_surface.setIsoColorRange()', '');
+	// + createButton('reverseColor', 'Reverse colour', '_surface.setIsoColorReverse()',
 	// '');
-	strIso += createLine('blue', '');
-	strIso += "<td><tr>\n";
-	// strIso+="Volume isoSurface<br>"
-	// strIso+=createButton('volIso', 'calculate', 'runJmolScriptWait('isosurface
+	str += createLine('blue', '');
+	str += "<td><tr>\n";
+	// str+="Volume isoSurface<br>"
+	// str+=createButton('volIso', 'calculate', 'runJmolScriptWait('isosurface
 	// VOLUME')', '') + " \n";
-	// strIso+=createText3('isoVol','','','',"");
-	// strIso+=createLine('blue' , '');
-	// strIso+="</td></tr>\n";
-	strIso += "<tr><td colspan='2'>\n";
-	strIso += "Expand isoSurface periodically <br>";
-	strIso += "<i>a: </i>";
-	strIso += "<input type='text'  name='iso_a' id='iso_a' size='1' class='text'>";
-	strIso += "<i> b: </i>";
-	strIso += "<input type='text'  name='iso_b' id='iso_b' size='1' class='text'>";
-	strIso += "<i> c: </i>";
-	strIso += "<input type='text'  name='iso_c' id='iso_c' size='1' class='text'>";
-	strIso += createButton('set_Isopack', 'packIso', 'setIsoPack()', '')
+	// str+=createText3('isoVol','','','',"");
+	// str+=createLine('blue' , '');
+	// str+="</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "Expand isoSurface periodically <br>";
+	str += "<i>a: </i>";
+	str += "<input type='text'  name='iso_a' id='iso_a' size='1' class='text'>";
+	str += "<i> b: </i>";
+	str += "<input type='text'  name='iso_b' id='iso_b' size='1' class='text'>";
+	str += "<i> c: </i>";
+	str += "<input type='text'  name='iso_c' id='iso_c' size='1' class='text'>";
+	str += createButton('set_Isopack', 'packIso', '_surface.setIsoPack()', '')
 	+ " \n";
-	strIso += createLine('blue', '');
-	strIso += "</td></tr>\n";
-	strIso += "<tr><td colspan='2'>\n";
-	strIso += "Style isoSurface:<br>";
-	strIso += "</td></tr>\n";
-	strIso += "<tr><td colspan='2'>\n";
-	strIso += createRadio("isofashion", "opaque",
+	str += createLine('blue', '');
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "Style isoSurface:<br>";
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += createRadio("isofashion", "opaque",
 			'runJmolScriptWait("color isosurface opaque") ', 0, 1, "", "");
-	strIso += createRadio("isofashion", "translucent",
+	str += createRadio("isofashion", "translucent",
 			'runJmolScriptWait("color isosurface translucent") ', 0, 0, "", "")
 			+ "<br>";
-	strIso += createRadio("isofashion", "dots", 'runJmolScriptWait("isosurface  dots;") ',
+	str += createRadio("isofashion", "dots", 'runJmolScriptWait("isosurface  dots;") ',
 			0, 0, "", "");
-	strIso += createRadio("isofashion", "no-fill mesh",
+	str += createRadio("isofashion", "no-fill mesh",
 			'runJmolScriptWait("isosurface nofill mesh") ', 0, 0, "", "");
-	strIso += "</td></tr>\n";
-	strIso += "<tr><td>\n";
-	strIso += "Color Isosurface:\n";
-	strIso += "</td><td><script>\n";
-	strIso += "jmolColorPickerBox([setColorWhat,'isosurface'], '','surfaceColorPicker');";
-	strIso += "</script>";
-	strIso += "</td></tr>";
-	strIso += "<tr><td>\n";
-	strIso += createLine('blue', '');
-	strIso += createCheck("measureIso", "Measure value", "pickIsoValue()", 0,
+	str += "</td></tr>\n";
+	str += "<tr><td>\n";
+	str += "Color Isosurface:\n";
+	str += "</td><td><script>\n";
+	str += "jmolColorPickerBox([setColorWhat,'isosurface'], '','surfaceColorPicker');";
+	str += "</script>";
+	str += "</td></tr>";
+	str += "<tr><td>\n";
+	str += createLine('blue', '');
+	str += createCheck("measureIso", "Measure value", "_surface.pickIsoValue()", 0,
 			0, "measureIso")
 			+ "\n";
-	// strIso += "<input type='text' name='isoMeasure' id='isoMeasure' size='5'
+	// str += "<input type='text' name='isoMeasure' id='isoMeasure' size='5'
 	// class='text'> a.u.\n";
-	strIso += "</td></tr>\n";
-	strIso += "<tr><td colspan='2'>\n";
-	strIso += createCheck("removeStr", "Show structure beneath",
-			"removeStructure()", 0, 1, "")
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += createCheck("removeStr", "Show structure beneath",
+			"_surface.removeStructure()", 0, 1, "")
 			+ " \n";
-	strIso += createCheck("removeCellI", "Show cell", "removeCellIso()", 0, 1,
+	str += createCheck("removeCellI", "Show cell", "_surface.removeCellIso()", 0, 1,
 	"")
 	+ " \n";
-	strIso += createLine('blue', '');
-	strIso += "</td></tr>\n";
-	strIso += "</table>\n";
-	strIso += "</FORM>\n";
-	return strIso;
+	str += createLine('blue', '');
+	str += "</td></tr>\n";
+	str += "</table>\n";
+	str += "</FORM>\n";
+	return str;
 }
-
-
 function enterOptimize() {
 	plotEnergies();		
 }
@@ -2655,76 +2644,76 @@ function doConvertPlotUnits(unitEnergy) {
 	switch (unitEnergy) {
 	case "h": // Hartree
 		switch (_file.energyUnits) {
-		case ENERGY_RYDBERG:
-			convertGeomData(fromRydbergtohartree, "Hartree");
+		case _constant.ENERGY_RYDBERG:
+			convertGeomData(fromRydbergToHartree, "Hartree");
 			break;
-		case ENERGY_EV:
-			convertGeomData(fromevToHartree, "Hartree");
+		case _constant.ENERGY_EV:
+			convertGeomData(fromEVToHartree, "Hartree");
 			break;
-		case ENERGY_HARTREE:
-			convertGeomData(fromHartreetoHartree, "Hartree");
+		case _constant.ENERGY_HARTREE:
+			convertGeomData(fromHartreeToHartree, "Hartree");
 			break;
 		}
 		break;
 	case "e": // eV
 		switch (_file.energyUnits) {
-		case ENERGY_RYDBERG:
-			convertGeomData(fromRydbergtoEV, "eV");
+		case _constant.ENERGY_RYDBERG:
+			convertGeomData(fromRydbergToEV, "eV");
 			break;
-		case ENERGY_EV:
-			convertGeomData(fromevToev, "eV");
+		case _constant.ENERGY_EV:
+			convertGeomData(fromEVToEV, "eV");
 			break;
-		case ENERGY_HARTREE:
-			convertGeomData(fromHartreetoEv, "eV");
+		case _constant.ENERGY_HARTREE:
+			convertGeomData(fromHartreeToEV, "eV");
 			break;
 		}
 		break;
 
 	case "r": // Rydberg
 		switch (_file.energyUnits) {
-		case ENERGY_RYDBERG:
-			convertGeomData(fromRydbergtorydberg, "Ry");
+		case _constant.ENERGY_RYDBERG:
+			convertGeomData(fromRydbergToRydberg, "Ry");
 			break;
-		case ENERGY_EV:
-			convertGeomData(fromevTorydberg, "Ry");
+		case _constant.ENERGY_EV:
+			convertGeomData(fromEVToRydberg, "Ry");
 			break;
-		case ENERGY_HARTREE:
-			convertGeomData(fromHartreetoRydberg, "Ry");
+		case _constant.ENERGY_HARTREE:
+			convertGeomData(fromHartreeToRydberg, "Ry");
 			break;
 		}
 		break;
 
 	case "kj": // Kj/mol
 			switch (_file.energyUnits) {
-			case ENERGY_RYDBERG:
-				convertGeomData(fromRydbergtoKj, "kJ/mol");
+			case _constant.ENERGY_RYDBERG:
+				convertGeomData(fromRydbergToKJ, "kJ/mol");
 				break;
-			case ENERGY_EV:
-				convertGeomData(fromevTokJ, "kJ/mol");
+			case _constant.ENERGY_EV:
+				convertGeomData(fromEVToKJ, "kJ/mol");
 				break;
-			case ENERGY_HARTREE:
-				convertGeomData(fromHartreetoKj, "kJ/mol");
+			case _constant.ENERGY_HARTREE:
+				convertGeomData(fromHartreeToKJ, "kJ/mol");
 				break;
 			}
 		break;
 
 	case "kc": // Kcal*mol
 		switch (_file.energyUnits) {
-		case ENERGY_RYDBERG:
-			convertGeomData(fromRydbergtokcalmol, "kcal/mol");
+		case _constant.ENERGY_RYDBERG:
+			convertGeomData(fromRydbergToKcalmol, "kcal/mol");
 			break;
-		case ENERGY_EV:
-			convertGeomData(fromevTokcalmol, "kcal/mol");
+		case _constant.ENERGY_EV:
+			convertGeomData(fromEVToKcalmol, "kcal/mol");
 			break;
-		case ENERGY_HARTREE:
-			convertGeomData(fromHartreetokcalmol, "kcal/mol");
+		case _constant.ENERGY_HARTREE:
+			convertGeomData(fromHartreeToKcalmol, "kcal/mol");
 			break;
 		}
 		break;
 	}
 }
 
-function convertGeomData(f, toUnits) {
+var convertGeomData = function(f, toUnits) {
 	
 	var geom = getbyID('geom');
 	if (geom != null)
@@ -2734,16 +2723,16 @@ function convertGeomData(f, toUnits) {
 	
 	var u = _file.unitGeomEnergy;
 	switch (_file.energyUnits) {
-	case ENERGY_RYDBERG:
+	case _constant.ENERGY_RYDBERG:
 		u = "R";
 		break;
-	case ENERGY_EV:
+	case _constant.ENERGY_EV:
 		u = "e";
 		break;
-	case ENERGY_HARTREE:
+	case _constant.ENERGY_HARTREE:
 		u = "H";
 		break;
-//	case ENERGY_KJ_PER_MOLE:
+//	case _constant.ENERGY_KJ_PER_MOLE:
 //		u = "k";
 //		break;
 	}
@@ -2809,7 +2798,7 @@ function createOptimizeGrp() {
 			+ "\n";
 	strGeom += "<br>"
 		+ createSelect("framepersec", "runJmolScriptWait(value)", 0, 1, vecAnimValue,
-				vecAnimText) + " _orient.motion speed | ";
+				vecAnimText) + " motion speed";
 // this is problematic in JavaScript -- too many files created
 //	strGeom += createCheck('saveFrames', ' save video frames', 'saveFrame()',
 //			0, 0, "");
@@ -2868,6 +2857,11 @@ function enterSpectra() {
 		setValue("nMax", _file.specData.maxX);
 		setValue("nMin", _file.specData.minX);
 	}
+	setSpectraEvents();
+	setTimeout(fixColorPicker,10);
+}
+
+var setSpectraEvents = function() {
 	$("#nMin").keypress(function(event) {
 		if (event.which == 13) {
 			event.preventDefault();
@@ -2886,6 +2880,13 @@ function enterSpectra() {
 		onClickModSpec(false, true);
 		}
 	});
+}
+
+var fixColorPicker = function() {
+	var d = getbyID('vectorColorPicker')
+	var table = d.children[0];
+	table.border="0";
+	d.style.width = d.style.height = "12px";
 }
 
 function exitSpectra() {
@@ -3531,7 +3532,8 @@ function updateJmolForFreqParams(isVibClick) {
 					+ ";vectors " + vectorsON
 					+ ";" + getValueSel("vecsamplitude")
 					+ ";" + getValueSel("vecscale")
-					+ ";color vectors " + (isChecked("vibVectcolor") ? "none" : "white");
+					+ ";color vectors " + c;				
+//					(isChecked("vibVectcolor") ? "none" : "white");
 	if (vectorsON)
 		script += ";" + getValueSel("widthvec");	
 	var label = getTextSel('vib');
@@ -3596,54 +3598,47 @@ function createFreqGrp() {
 		+ "&nbsp;" + "&nbsp;" + "&nbsp;"
 		+ "<br>" + createButton("simSpectra", "New Window", "doSpectraNewWindow()", 0));
 
-	var strFreq = "<form autocomplete='nope'  id='freqGroup' name='modelsVib' style='display:none'>";
-		strFreq += "<table border=0 class='contents'><tr><td valign='bottom'>";
-			strFreq += "<h2>IR-Raman Frequencies</h2>\n";
-			strFreq += createRadio("modSpec", "Both", "onClickModSpec()", 0, 1, "", "all");
-			strFreq += createRadio("modSpec", "IR", "onClickModSpec()", 0, 0, "", "ir");
-			strFreq += createRadio("modSpec", "Raman", "onClickModSpec()", 0, 0, "", "raman");
-			strFreq += "<BR>\n";
-			strFreq += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Symmetry <select id='sym' name='vibSym' onchange='onClickSymmetry()' onkeyup='onClickSymmetry()' CLASS='select' >";
-			strFreq += "</select> ";
-			strFreq += "<BR>\n";
-			strFreq += "<select id='vib' name='models' OnClick='onClickSelectVib()' onkeyup='onClickSelectVib()' class='selectmodels' size=9 style='width:200px; overflow: auto;'></select>";	
-		strFreq += "</td>"; // end of the first column
-		strFreq += "<td valign='bottom'>";
-		strFreq += "<BR>\n" + "<BR>\n";
-			strFreq += "vibration ";
-			strFreq += createRadio("vibration", "on", 'onClickFreqParams()', 0, 1, "radVibrationOn", "on");
-			strFreq += createRadio("vibration", "off", 'onClickFreqParams()', 0, 0, "radVibrationOff", "off");
-			strFreq += "<BR>\n";
-			strFreq += "view vectors ";
-			strFreq += createRadio("vectors", "on", 'onClickFreqParams()', 0, 1, "vectorsON", "on");
-			strFreq += createRadio("vectors", "off", 'onClickFreqParams()', 0,0, "vectorsOFF", "off");
-			strFreq += "<BR>\n";
-			strFreq += createSelect("vecsamplitude", "onClickFreqParams()", 0, 1,
-					vibAmplitudeValue, vibAmplitudeText,[0,1])
-					+ " vib. amplitude"; 
-			strFreq += "<BR>\n";
-			strFreq += createSelect("vecscale", "onClickFreqParams()", 0, 1, vecscaleValue, vecscaleText, [0,0,1]) + " vector scale"; 																									// scale
-			strFreq += "<BR>\n";
-			strFreq += createSelect("widthvec", "onClickFreqParams()", 0, 1, vecwidthValue, vecscaleText,[0,0,0,1]) + " vector width";
-			strFreq += "<BR>\n";
-			strFreq += "<table border=0 class='contents'> <tr>";
-				strFreq += "<td>vector color</td> <td><script>jmolColorPickerBox([setColorWhat,'vectors'],[255,255,255],'vectorColorPicker')</script></td>";
-				strFreq += "</tr><tr><td>" + createButton("vibVectcolor", "Default color", 'onClickFreqParams()', 0) + "</td>";
-			strFreq += "</tr></table>";					
-		strFreq += "</td></tr>";
-		strFreq += "<tr><td colspan=2>";
-		strFreq += createDiv("graphfreqdiv", // making small graph
-				"width:320px;height:200px;background-color:#EFEFEF;margin-left:5px;display:inline", 
-				
-				
-				smallGraphAndButtons 
-				
-				
-				+ simPanel);
-		strFreq += "</td></tr>";
-	strFreq += "</table></form> ";
+	var str = "<form autocomplete='nope'  id='freqGroup' name='modelsVib' style='display:none'>";
+		str += "<table border=0 class='contents'><tr><td valign='bottom'>";
+			str += "<h2>IR-Raman Frequencies</h2>\n";
+			str += createRadio("modSpec", "Both", "onClickModSpec()", 0, 1, "", "all");
+			str += createRadio("modSpec", "IR", "onClickModSpec()", 0, 0, "", "ir");
+			str += createRadio("modSpec", "Raman", "onClickModSpec()", 0, 0, "", "raman");
+			str += "<BR>\n";
+			str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Symmetry <select id='sym' name='vibSym' onchange='onClickSymmetry()' onkeyup='onClickSymmetry()' CLASS='select' >";
+			str += "</select> ";
+			str += "<BR>\n";
+			str += "<select id='vib' name='models' OnClick='onClickSelectVib()' onkeyup='onClickSelectVib()' class='selectmodels' size=9 style='width:200px; overflow: auto;'></select>";	
+		str += "</td>"; // end of the first column
+		str += "<td valign='bottom'>";		
+		str += "<table>";
+			str += "<tr><td>vibration</td><td>";
+			str += createRadio("vibration", "on", 'onClickFreqParams()', 0, 1, "radVibrationOn", "on");
+			str += createRadio("vibration", "off", 'onClickFreqParams()', 0, 0, "radVibrationOff", "off");
+			str += "</td></tr><tr><td>view vectors</td><td>";
+			str += createRadio("vectors", "on", 'onClickFreqParams()', 0, 1, "vectorsON", "on");
+			str += createRadio("vectors", "off", 'onClickFreqParams()', 0,0, "vectorsOFF", "off");
+			str += "</td></tr><tr><td>amplitude</td><td>";
+			str += createSelect("vecsamplitude", "onClickFreqParams()", 0, 1,
+					vibAmplitudeValue, vibAmplitudeText,[0,1]);
+			str += "</td></tr><tr><td>scale</td><td>";
+			str += createSelect("vecscale", "onClickFreqParams()", 0, 1, vecscaleValue, vecscaleText, [0,0,1]); 
+			str += "</td></tr><tr><td>width</td><td>";
+			str += createSelect("widthvec", "onClickFreqParams()", 0, 1, vecwidthValue, vecscaleText,[0,0,0,1]);
+			str += "</td></tr><tr><td>color</td>";
+			str += "<td><table><tr><td><script>jmolColorPickerBox([setColorWhat,'vectors'],[255,255,255],'vectorColorPicker')</script>";
+//??				str +="&nbsp;&nbsp;" + createButton("vibVectcolor", "def", 'onClickFreqParams()', 0);
+			str += "</td></tr></table>";
+		str += "</td></tr></table>";
+		str += "</td></tr>";
+		str += "<tr><td colspan=2>";
+		str += createDiv("graphfreqdiv", // making small graph
+			"width:320px;height:200px;background-color:#EFEFEF;margin-left:5px;display:inline", 
+			smallGraphAndButtons + simPanel);
+		str += "</td></tr>";
+	str += "</table></form> ";
 
-	return strFreq;
+	return str;
 }
 
 function getFreqForClick(p) {
@@ -3891,34 +3886,97 @@ function createOtherGrp() {
 //crystal and .cif files. 
 //A. Salij 5.23.2018 (andrewsalij@gmail.com) 
 
+var _symmetry = {
+		CLICK_ENABLE : "Enable Editing",		  
+		CLICK_DISABLE : "Disable Editing", 
+		DEFAULT_ATOM_TIP : "Click on atom to fill",
+		CENTER_TIP : "Click on a ref. atom",
+	    CLICK_POINT_TIP : "Click on the sphere to add a point",
+	    SYM_NONE : "clear",
+		intervalID : ""
+};
+
 //initialization upon entry into symmetry tab 
 function enterSymmetry() {
-	if (! _file.symmetry){
+	if (!_file.symmetry){
 		_file.symmetry = {
-			operationList     : createSymopSet(),
+			operationList     : [],
+			xyz2optionMap      : {},
+			symInvariantCache : {},
 			symopInvariantList  : [],
 			chosenSymElement  : "", 
 			chosenSymop       : "",
 			symOffset         : "{0/1,0/1,0/1}",
 			errorDistance     : 0.1 
 		}; 
-	 	var symopSelection = createSelect('addSymSymop', 'doSymopSelection(value)', 0, 1, _file.symmetry.operationList);
-		getbyID("symmetryOperationSet").innerHTML = symopSelection;
+		getbyID('symmetryGroup').reset();
+		_symmetry.createSymopSet();
 	}
-	_symmetry = {
-			intervalID : "",
-			symInvariantCache : [],
-			symopInvariantAlreadyCalculated : [] //collection of points for which symop invariants are already calculated
-		}; 
-	runJmolScriptWait("select {};set picking select atom; selectionhalos on");
+	runJmolScriptWait("select none;set picking select atom; selectionhalos on");
+	_symmetry.updateFields();
+	_symmetry.addJmolEvents();
+}
+
+function exitSymmetry() {
+	runJmolScriptWait("select none;set picking select atom; selectionhalos off");
+}
+
+//_symmetry.resetPage = function(){
+//	_symmetry.doSelectNone();
+//}
+
+_symmetry.addJmolEvents = function() {
+	if (_symmetry.hasEvents)
+		return;
+	_symmetry.hasEvents = true;
+	$('.japplet').on('click', function( event ) {
+		  console.log('Applet Clicked');
+			  _symmetry.onClick();
+	});
+	$('.japplet').on('mouseenter', function( event ) {
+		  console.log('Applet Entered');
+		  _symmetry.onHoverStart();
+	});
+	$('.japplet').on('mouseleave', function( event ) {
+		  console.log('Applet Left');
+		  _symmetry.onHoverEnd();
+	});
+	$('.rightframe').on('mouseenter', function( event ) {
+		  console.log('Right Frame Entered');
+		  _symmetry.onHoverEnd();
+	});
+}
+
+_symmetry.doSymBtnClick = function(btn) {
+	var text = btn.value;
+	switch(text) {
+	case _symmetry.SYM_NONE:
+		_symmetry.doSelectNone();
+		break;
+	case _symmetry.CLICK_ENABLE:
+		_symmetry.doEnableVoidClicking();
+		_symmetry.doEnableVoidDragging();
+		btn.value = _symmetry.CLICK_DISABLE;
+		break;
+	case _symmetry.CLICK_DISABLE:
+		_symmetry.doDisableVoidClicking();
+		_symmetry.doDisableVoidDragging();
+		btn.value = _symmetry.CLICK_ENABLE;
+		break;
+	}	
+}
+
+_symmetry.updateFields = function() {
+	_symmetry.updateSymInvariantSelect();
+	_symmetry.setOpacity();
 //	var activateSymmetry = createButton("activateSymmetryButton", "Activate applied symmetry:", 'setSymClickStatus("radiusBindAdd")', 0);
 //	getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
 //	var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'setSymClickStatus("radiusBindAddAll")', 0); 
 //	getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
-	var symInvariantsSelect = createSelect('addSymInvariantsSymop', 'doSymopSelection(value)', 0, _file.symmetry.symopInvariantList.length , _file.symmetry.symopInvariantList);
-	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect; 
-//	var voidClicking = createButton("enableVoidClickingButton", "Enable Clicking", 'doEnableVoidClicking()', 0)+"\n"+
-//						createButton("disableVoidClickingButton", "Disable Clicking", 'doDisableVoidClicking()', 0);
+	//var symInvariantsSelect = createSelect('addSymInvariantsSymop', '_symmetry.doSymopSelection(value)', 0, _file.symmetry.symopInvariantList.length , _file.symmetry.symopInvariantList);
+	//getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect; 
+//	var voidClicking = createButton("enableVoidClickingButton", "Enable Clicking", '_symmetry.doEnableVoidClicking()', 0)+"\n"+
+//						createButton("disableVoidClickingButton", "Disable Clicking", '_symmetry.doDisableVoidClicking()', 0);
 //	getbyID("voidClickingDiv").innerHTML = voidClicking; 
 //	var corePointDragging = createButton("corePointDraggingButton", "Enable Dragging", 'doEnableCorePointDragging()', 0)
 //	getbyID("corePointDraggingDiv").innerHTML = corePointDragging; 
@@ -3926,32 +3984,13 @@ function enterSymmetry() {
 	//	  console.log('Applet Clicked');
 	//	  onSymmetryClick();
 	//});
-	document.getElementById("jmolApplet0_appletinfotablediv").addEventListener('click', function( event ) {
-		  console.log('Applet Clicked');
-		  onSymmetryClick();
-	});
-	$('.japplet').on('mouseenter', function( event ) {
-		  console.log('Applet Entered');
-		  onSymmetryHoverStart();
-	});
-	$('.japplet').on('mouseleave', function( event ) {
-		  console.log('Applet Left');
-		  onSymmetryHoverEnd();
-	});
+
 }
 
-//upon exiting symmetry tab-currently blank 
-function exitSymmetry() {
-}
-
-
-
-//todo upon clicking on the japplet
-
-function onSymmetryHover(){
+_symmetry.onHover = function(){
 	console.log("hov check");
-	var clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
-	var symClickStatus = Jmol.evaluateVar(jmolApplet0,"symClickStatus");
+	var clickedPoint = getJmolValue("clickedPoint");
+	var symClickStatus = getJmolValue("symClickStatus");
 	switch(symClickStatus){
 		case "corePointDragging":
 			var cP = getValue("centerPoint");
@@ -3962,56 +4001,44 @@ function onSymmetryHover(){
 					rA = 1; //default value 
 				} 
 			runJmolScriptWait("clickedPoint = bindToSphereConstraint("+cP+","+rA+",clickedPoint)");
-			clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
-			doActivateSymmetry(clickedPoint);
+			runJmolScriptWait("appendNewAtomPoint('corepoint',"+_file.symmetry.chosenSymElement+", clickedPoint)");
+			clickedPoint = getJmolValue("clickedPoint");
+			_symmetry.doActivate(clickedPoint);
 			break;
 		default:
 			break;
 	}
 } 
 
-function onSymmetryHoverStart(){
+_symmetry.onHoverStart = function(){
 	if (! _symmetry.intervalID){
-		_symmetry.intervalID = window.setInterval(function(){onSymmetryHover();},200);
+		_symmetry.intervalID = window.setInterval(_symmetry.onHover,200);
 	}
 }
 
-function onSymmetryHoverEnd(){
+_symmetry.onHoverEnd = function(){
 	window.clearInterval(_symmetry.intervalID);
 	_symmetry.intervalID = "";
 }
 
-function onSymmetryClick(){
-	var currentSelection = Jmol.evaluateVar(jmolApplet0,"{selected}")
-	var selectionFoundIndex = -1;
-	for (i = 0;i<_symmetry.symopInvariantAlreadyCalculated.length;i++){
-		if (currentSelection == _symmetry.symopInvariantAlreadyCalculated[i]){
-			selectionFoundIndex = i; 
-		}
-	}
-	updateSymInvariants(selectionFoundIndex);
-	updateInputValues();
-	if (_file.symmetry){
-	var symInvariantsSelect = createSelect('addSymInvariantsSymop', 'doSymopSelection(value)', 0,_file.symmetry.symopInvariantList.length, _file.symmetry.symopInvariantList);
-	getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect;
-	createSymmetryGrp();
-	var messageCallback = "";//how do I get message from Jmol? 
-	var symClickStatus = Jmol.evaluateVar(jmolApplet0,"symClickStatus");
-	var clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
-	}
+//todo upon clicking on the japplet
+_symmetry.onClick = function(){
+	_symmetry.updateSymInvariantSelect();
+	var symClickStatus = getJmolValue("symClickStatus");
+	var clickedPoint = getJmolValue("clickedPoint");
 	switch(symClickStatus){
 		case "radiusBindAdd":
-			doActivateSymmetry(getValue("voidClickPoint")); 
+			_symmetry.doActivate(getValue("voidClickPoint")); 
 			break;
 		case "radiusBindAddAll":
-			doActivateAllSymmetry(); 
+			_symmetry.doActivateAll(); 
 			break;
 		//case "vectorBindAdd": //to test 
 			//var newClickedPoint = bindToVectorConstraint("sym_axis1",
 			//											clickedPoint,
 			//											_file.symmetry.errorDistance);
 			//clickedPoint = newClickedPoint;
-			//doActivateSymmetry(getValue("voidClickPoint"));
+			//doActivate(getValue("voidClickPoint"));
 			//break; 
 		case "corePointDragging":
 			var cP = getValue("centerPoint");
@@ -4019,9 +4046,9 @@ function onSymmetryClick(){
 				if(!rA){
 					rA = 1; //default value 
 				} 
-			runJmolScriptWait("clickedPoint = bindToSphereConstraint("+cP+","+rA+",clickedPoint)");
-			clickedPoint = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
-			doActivateSymmetry(clickedPoint);
+			runJmolScriptWait("clickedPoint = bindToSphereConstraint({"+cP+"},"+rA+",clickedPoint)");
+			runJmolScriptWait("appendNewAtomPoint('corepoint',"+_file.symmetry.chosenSymElement+", clickedPoint)");
+			_symmetry.doActivate(getJmolValue("clickedPoint"));
 			break;
 		case "showAllInvariantSymops":
 			var centerPoint = getValue("initPoint");
@@ -4036,74 +4063,84 @@ function onSymmetryClick(){
 }
 
 //Updates global sym invariant list with current  symops of selection 
-function updateSymInvariants(cacheValue){ //-1 means that symInvariant is not yet cached
-	if (cacheValue == -1){
-		runJmolScript("symopInvariantListJmol = findInvariantSymOps({selected},readSymmetryVectors().size)");
-		if (_file.symmetry){
-			_file.symmetry.symopInvariantList = Jmol.evaluateVar(jmolApplet0,"symopInvariantListJmol");
-			addSymInvariantsSymop.length = _file.symmetry.symopInvariantList.size; 
-			_symmetry.symInvariantCache.push(_file.symmetry.symopInvariantList);
-			var currentSelection = Jmol.evaluateVar(jmolApplet0,"{selected}");
-			_symmetry.symopInvariantAlreadyCalculated.push(currentSelection);
+_symmetry.updateSymInvariantSelect = function(){
+	if (!_file.symmetry)
+		return;	
+	var atoms = getJmolValue("{selected}");
+	var list;
+	if (atoms.length) {
+		list = _file.symmetry.symInvariantCache[atoms];
+		if (!list) {
+			runJmolScriptWait("symopInvariantListJmol = findInvariantSymOps({selected},readSymmetryVectors().size)");
+			list= getJmolValue("symopInvariantListJmol");
+			_file.symmetry.symInvariantCache[atoms] = list;
+		}
+	} else {
+		list = [];
+	}
+	_file.symmetry.symopInvariantList = list;
+	var len = list.length;
+	var map = _file.symmetry.xyz2optionMap;
+	var d = getbyID('addSymSymop');
+	for (var i = d.options.length; --i >= 0;) {
+		if (len == 0)
+			enableElement(d.options[i]);
+		else
+			disableElement(d.options[i]);
+	}
+	if (len == 0) {
+		setValue("initPoint", "");
+		setValue("centerPoint", "");
+		setValue("voidClickPoint", "");		
+	} else {
+		for (var i = 0; i < len; i++)
+			enableElement(map[list[i]]);
+		//Changes input tables to current selection in JSmol
+		var selectionPoint = getJmolValue("{selected}.xyz");
+		if (selectionPoint != -1){
+			setValue("initPoint", pointStringToFixed(selectionPoint,4));
+			setValue("centerPoint", pointStringToFixed(selectionPoint,4));
+		}
+		var clickedPointString = getJmolValue("clickedPoint");
+		if (clickedPointString){
+			setValue("voidClickPoint", pointStringToFixed(clickedPointString,4));
 		}
 	}
-	else{
-		if (_file.symmetry){
-			_file.symmetry.symopInvariantList = _symmetry.symInvariantCache[cacheValue];
-			addSymInvariantsSymop.length = _file.symmetry.symopInvariantList.size; 
-		}
-	}
-}
-
-//Changes 
-function updateInputValues(){
-	var selectionPoint = Jmol.evaluateVar(jmolApplet0,"{selected}.xyz");
-	if (selectionPoint != -1){
-		setValue("initPoint", selectionPoint);
-		setValue("centerPoint", selectionPoint); 
-	}
-	var clickedPointString = Jmol.evaluateVar(jmolApplet0,"clickedPoint");
-	if (clickedPointString){
-		setValue("voidClickPoint", clickedPointString[0].toFixed(4)+","+clickedPointString[1].toFixed(4)+","+clickedPointString[2].toFixed(4));
-	}
-}
-
-function toFixedPointArray(pointArray,decimalPlaces){
 }
 
 //this appends new atoms by chosen symop
-function doActivateSymmetry(clickedPoint){
+_symmetry.doActivate = function(clickedPoint){
 	if (clickedPoint[0] != "{"){
 		clickedPoint = "{"+clickedPoint+"}";
 	}
 	if (_file.symmetry){
-		appendSymmetricAtoms(_file.symmetry.chosenSymElement,clickedPoint,_file.symmetry.chosenSymop,getValue("symIterations"));
+		_symmetry.appendSymmetricAtoms(_file.symmetry.chosenSymElement,clickedPoint,_file.symmetry.chosenSymop,getValue("symIterations"));
 	}
 }
 
 //this only shows every point for a given point for all symops 
-function doActivateAllSymmetry(){
+_symmetry.doActivateAll = function(){
 	var clickedPoint =  getValue("voidClickPoint");
 	if (clickedPoint[0] != "{"){
 		clickedPoint = "{"+clickedPoint+"}";
 	}
-	drawAllSymmetricPoints(clickedPoint);
+	_symmetry.drawAllSymmetricPoints(clickedPoint);
 }
 
 
-function doSymopSelection(symop){
-	setSymop(symop);
-	displaySymmetryDrawObjects(symop,getValue("initPoint"));
+_symmetry.doSymopSelection = function(symop){
+	_symmetry.setSymop(symop);
+	_symmetry.displayDrawObjects(symop,getValue("initPoint"));
 }
 
 //Enables clicking upon blank space in java applet 
-function doEnableVoidClicking(){
+_symmetry.doEnableVoidClicking = function(){
 	var cP = getValue("centerPoint");
 	if (cP[0] != "{"){
 		cP = "{"+cP+"}";
 	}
 	if(!cP){
-		cP = Jmol.evaluateVar(jmolApplet0,"{selected}.xyz");// BH needed quotes
+		cP = getJmolValue("{selected}.xyz");// BH needed quotes
 	}
 	if (!cP || cP == "{}"){
 		alert("No center point selected");
@@ -4119,57 +4156,61 @@ function doEnableVoidClicking(){
 	}
 }
 
-function doDisableVoidClicking(){
+_symmetry.doDisableVoidClicking = function(){
 	runJmolScriptWait("unbind");
 	runJmolScriptWait("symClickStatus = 'default'");
 	runJmolScriptWait("draw 'symClickShow' delete");
 }
 
-function doEnableVoidDragging(){
+_symmetry.doEnableVoidDragging = function(){
 	runJmolScriptWait("set picking draw");
 	runJmolScriptWait("bind 'LEFT+drag+shift' '+:clickedPoint = $corePoint'");
 	runJmolScriptWait("symClickStatus = 'corePointDragging'");
 }
 
-function doDisableVoidDragging(){
+_symmetry.doDisableVoidDragging = function(){
 	runJmolScriptWait("unbind");
 	runJmolScriptWait("set picking identify");
 	runJmolScriptWait("symClickStatus = 'corePointDragging'");
 }
 
-function setSymClickStatus(status){
+_symmetry.setSymClickStatus = function(status){
 	runJmolScript("symClickStatus = '"+status+"'");
 }
 
-function setSymElement(elementName){
+_symmetry.setSymElement = function(elementName){
 	_file.symmetry.chosenSymElement = elementName;
 }
 
-function setSymop(symop){
+_symmetry.setSymop = function(symop){
 	_file.symmetry.chosenSymop = symop;
 }
 
 //figures out from file data all of the symmetry operations as Jones faithful representations 
-function createSymopSet(){
-	var symopSet = [];
+_symmetry.createSymopSet = function(){
+	var list = [];
 	runJmolScriptWait("getProperty spacegroupInfo.symmetryInfo");
 	runJmolScriptWait("symVectors = readSymmetryVectors()");
-	symopSet = Jmol.evaluateVar(jmolApplet0,"symVectors"); 
-	return symopSet
+	_file.symmetry.operationList = list = getJmolValue("symVectors"); 
+	var d = getbyID("symmetryOperationSet");
+	d.innerHTML = createSelect('addSymSymop', '_symmetry.doSymopSelection(value)', 0, Math.min(20, list.length), list);
+	var options = d.firstChild.options;
+	for (var i = list.length; --i >= 0;)
+		_file.symmetry.xyz2optionMap[list[i]] = options[i];		
 }
 
-function setOpacity(){
+_symmetry.setOpacity = function(){
 	var opacityString = getbyID("selopacity2");
 	var opacity = parseFloat(opacityString[opacityString.selectedIndex].value);
 	if (opacity < 0){
 		opacity = 1;
 	}
-	var opacityScript = "select *;color atoms translucent " + (1 - opacity)
+	var opacityScript = "color {*} translucent " + (1 - opacity)
 	runJmolScript(opacityScript);
 }
 
 //Changes global variable offset added to symmetry operation
-function updateSymOffset(dimension,offset){
+_symmetry.updateSymOffset = function(dimension,offset){
 	var symOffsetString = _file.symmetry.symOffset;
 	symOffsetString = symOffsetString.substring(1);
 	var symOffsetArray = symOffsetString.split(",");
@@ -4186,125 +4227,11 @@ function updateSymOffset(dimension,offset){
 		zValue = offset+"/1";
 	}
 	_file.symmetry.symOffset = "{"+xValue+","+yValue+","+zValue+"}"; 
-	displaySymmetryDrawObjects(_file.symmetry.chosenSymop,getValue("initPoint"));
-}
-
-//creates symmetry menu 
-//HTML is here 
-function createSymmetryGrp() {
-	var strSymmetry = "<form autocomplete='nope'  id='symmetryGroup' name='symmetryGroup' style='display:none'>\n";
-	strSymmetry += "<tr><td>\n";
-	//strSymmetry += "Write points in the form '{x y z}'";
-	strSymmetry += "Symmetry Visualization:"; 
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "Selected point:";
-	strSymmetry += "<input type='text' name='initPoint' placeholder='Click on atom to fill' id='initPoint' size='25' class='text'>";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "Choose symmetry operation:";
-	strSymmetry += "<div id='symmetryOperationSet'></div>";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "&nbsp&nbsp&nbsp-1 &nbsp&nbsp&nbsp&nbsp&nbsp 0 &nbsp&nbsp&nbsp&nbsp +1&nbsp&nbsp&nbsp(Offset)";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "a";
-	strSymmetry += createRadio("xOffset"," ",'updateSymOffset("x",-1)',0,0,"x-1","x-1");
-	strSymmetry += createRadio("xOffset"," ",'updateSymOffset("x",0)',0,1,"x+0","x+0");
-	strSymmetry += createRadio("xOffset"," ",'updateSymOffset("x",1)',0,0,"x+1","x+1");
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "b";
-	strSymmetry += createRadio("yOffset"," ",'updateSymOffset("y",-1)',0,0,"y-1","z-1");
-	strSymmetry += createRadio("yOffset"," ",'updateSymOffset("y",0)',0,1,"y+0","z+0");
-	strSymmetry += createRadio("yOffset"," ",'updateSymOffset("y",1)',0,0,"y+1","z+1");
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "c";
-	strSymmetry += createRadio("zOffset"," ",'updateSymOffset("z",-1)',0,0,"z-1","z-1");
-	strSymmetry += createRadio("zOffset"," ",'updateSymOffset("z",0)',0,1,"z+0","z+0");
-	strSymmetry += createRadio("zOffset"," ",'updateSymOffset("z",1)',0,0,"z+1","z+1");
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += createLine('blue', '');
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "set opacity:<select id=selopacity2 onchange=setOpacity() onkeypress=\"setTimeout('setOpacity()',50)\"  class='select'>"
-			+ "<option value=0.2 selected>20%</option>"
-			+ "<option value=0.4>40%</option>"
-			+ "<option value=0.6>60%</option>"
-			+ "<option value=1.0>100%</option>" + "</select>";
-	strSymmetry += "<BR>\n";	
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "Enter center point:";
-	strSymmetry += "<input type='text'  name='centerPoint'  placeholder='Click on atom to fill' id='centerPoint'   size='25' class='text'>";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<tr><td>\n";	
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "Enter radius (angstroms):";
-	strSymmetry += "<input type='text'  name='radiusAngstroms' id='radiusAngstroms' size='10' class='text'>";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "<BR>\n";	
-	strSymmetry += "<div id='voidClickingDiv'></div>";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "Clicked Point:";
-	strSymmetry +=  "<input type='text'  name='voidClickPoint'  placeholder='Click on position close to center point to fill' id='voidClickPoint'   size='40' class='text'>";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "Invariant Symmetry Operations of Selection:";		
-	strSymmetry += "<div id='symInvariantsDiv'></div>";//currently shows all symops, will soon only show invariant symops 
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += createCheck('setStatusAllInvariantSymops', 'Show All Invariants', 'setSymClickStatus("showAllInvariantSymops")', 0,0,0);
-	strSymmetry += "</td></tr>\n";	
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<div id='corePointDraggingDiv'></div>"
-	strSymmetry += "</td></tr>\n";
-		strSymmetry += "<tr><td>\n";
-	strSymmetry += "Add element:"
-	strSymmetry += createSelect('addSymEle', 'setSymElement(value)', 0, 1,
-			eleSymb);
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "Symmetry Iterations:"; 
-	strSymmetry += "<input type='text'  name='symIterations' id='symIterations'  value = '1' size='2' class='text'>";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<BR>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "<div id='activateSymmetryDiv'></div>";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += "<div id='activateAllSymmetryDiv'></div>";
-	strSymmetry += "</td></tr>\n";
-	strSymmetry += "<tr><td>\n";
-	strSymmetry += createButton("resetSymmetryButton", "Reset Symmetry Page:", 'resetSymmetryPage()', 0); 
-	strSymmetry += "</td></tr>\n"
-	strSymmetry += "</form>\n";
-	return strSymmetry
+	_symmetry.displayDrawObjects(_file.symmetry.chosenSymop,getValue("initPoint"));
 }
 
 // draws the axis lines for rotation axes and mirror planes for mirror symops
-function displaySymmetryDrawObjects(symop,pointt){
+_symmetry.displayDrawObjects = function(symop,pointt){
 	if (pointt == ""){
 		var pointt = "";
 	}
@@ -4323,16 +4250,12 @@ function displaySymmetryDrawObjects(symop,pointt){
 	var xSymopValue = eval(symopArray[0].substring(1));
 	var ySymopValue = eval(symopArray[1].substring(1));
 	var zSymopValue = eval(symopArray[2].substring(1));
-	if (xSymopValue){
-		var xOffsetUpdated = xOffsetValue+xSymopValue;}
-	else{ var xOffsetUpdated = xOffsetValue;}
-	if (ySymopValue){
-		var yOffsetUpdated = yOffsetValue+ySymopValue;}
-	else{ var yOffsetUpdated = yOffsetValue;}
-	if (zSymopValue){
-		var zOffsetUpdated = zOffsetValue+zSymopValue;}
-	else{ var zOffsetUpdated = zOffsetValue;}	
-	var symopWithOffset = symopArray[0].substring(0,1)+"+"+xOffsetUpdated+"/1,"+symopArray[1].substring(0,1)+"+"+yOffsetUpdated+"/1,"+symopArray[2].substring(0,1)+"+"+zOffsetUpdated+"/1";
+	var xOffsetUpdated = xOffsetValue + (xSymopValue ? xSymopValue : 0);
+	var yOffsetUpdated = yOffsetValue + (ySymopValue ? ySymopValue : 0);
+	var zOffsetUpdated = zOffsetValue + (zSymopValue ? zSymopValue : 0);
+	var symopWithOffset = symopArray[0].substring(0,1)+"+"+xOffsetUpdated
+			+","+symopArray[1].substring(0,1)+"+"+yOffsetUpdated
+			+","+symopArray[2].substring(0,1)+"+"+zOffsetUpdated+"/1";
 	console.log("finalSymop:"+symopWithOffset);
 	runJmolScriptWait("draw symop '"+symopWithOffset+"' "+pointt+"");
 	var axisFactor = 3;
@@ -4342,7 +4265,7 @@ function displaySymmetryDrawObjects(symop,pointt){
 // takes a given point and add the elements provided to it by a symmetry operation
 // symmetry operations with multiple outputs (e.g. C3) will produce multiple symmetry atoms 
 
-function appendSymmetricAtoms(elementName,point,symopSelected,iterations){
+_symmetry.appendSymmetricAtoms = function(elementName,point,symopSelected,iterations){
 	if (elementName == ""){
 		console.log("ERROR: empty element name");
 	}
@@ -4354,14 +4277,16 @@ function appendSymmetricAtoms(elementName,point,symopSelected,iterations){
 	}
 	else {
 		runJmolScriptWait("appendNewAtomPoint('corePoint','"+elementName+"',"+point+")");
-		var newAtomArray = Jmol.evaluateVar(jmolApplet0,"getSymmetricAtomArray('"+symopSelected+"', "+point+","+iterations+")") ;
+		var newAtomArray = getJmolValue("getSymmetricAtomArray('"+symopSelected+"', "+point+","+iterations+")") ;
 		var numberOfNewAtoms = newAtomArray.length; 
 		for (i = 1; i <= numberOfNewAtoms; i++){
 			runJmolScriptWait("appendNewAtomPoint('"+elementName+i+"','"+elementName+"', {"+newAtomArray[i-1]+"})"); //this is a jmol script in functions.spt
 		}
 	}
 }
-function drawAllSymmetricPoints(point){
+
+//For a given point, applies all symmetry operations to that point and draws points (small yellow dots) for each symop
+_symmetry.drawAllSymmetricPoints = function(point){
 	var pointValue = point;
 	runJmolScriptWait("draw pointValue"); //check
 	runJmolScriptWait("allSymPoints = getSymmetryAtomArrayAllSymops("+pointValue+")");
@@ -4369,19 +4294,14 @@ function drawAllSymmetricPoints(point){
 	runJmolScriptWait("draw points @allSymPoints");
 }
 
-function resetSymmetryPage(){
-	enterSymmetry();
-	document.getElementById('symmetryGroup').reset();
-}
-
 //Additional functions: yet unused 
 
 //checks to see if there is a symmetry axis currently drawn
 //function hasAxis(symop){
 //	runJmolScriptWait("firstPoint = $sym_rotvector1[0]");
-//	if (Jmol.evaluateVar(jmolApplet0,"firstPoint")){
+//	if (getJmolValue("firstPoint")){
 //		runJmolScriptwait("secondPoint = $sym_rotvector2[0]");
-//		if (Jmol.evaluateVar(jmolApplet0,"secondPoint")){
+//		if (getJmolValue("secondPoint")){
 //			return true 
 //		}
 //		else { 
@@ -4393,38 +4313,123 @@ function resetSymmetryPage(){
 //	}
 //}
 
-//function displaySymmetryDrawObjects(symop){
-//	centerPoint = 	getValue("symCenterPoint") ;
-//	if (! centerPoint){
-//		centerPoint= "{0 0 0}"; 
-//	}
-//	runJmolScriptWait("draw symop '"+symop+"' "+centerPoint); 
-//	if(hasAxis(symop)){
-//		runJmolScriptWait("select *;color opaque;draw sym_* delete");
-//		runJmolScriptWait("drawCleanSymmetryAxisVectors('"+symop+"', 3)");
-//	}
-//} 
-//function createSymopSet(){
-//	var symopSet = [];
-//	var allSymopsString = jmolEvaluate('script("print readSymmetryVectors()")'); 
-//	var totalSymops = allSymopsString.match(/\n/g).length-1; //this should work in all cases
-//	for (var i = 1; i<= totalSymops;i++){
-//		var symopInt = parseInt(i)+"";
-//		var scriptToRun = 'script("var infor = readSymmetryVectors();print infor['+symopInt+']")';
-//		var symopString = jmolEvaluate(scriptToRun);
-//		symopString = symopString.trim();
-//		symopSet[i-1] = symopString;
-//	}
-//	return symopSet
-//}
+//creates symmetry menu 
+//HTML is here 
+var createSymmetryGrp = function() {
+
+	
+	//  + "Write points in the form '{x y z}'"
+	
+	var topleft =  "<table><tr><td valign='top'><h2>Symmtry Visualization</h2>" 
+		  + "</td></tr><tr><td>1) Select an atom:"
+		  + "<br><input type='text' name='initPoint' placeholder='"+ _symmetry.DEFAULT_ATOM_TIP + "' id='initPoint' size='20' class='text'/>"
+		  
+		  
+		  + createButton("none", _symmetry.SYM_NONE, '_symmetry.doSymBtnClick(this)', 0) 
+		  + "</td></tr><tr><td>2) Choose an operation"
+		  + "</td></tr><tr><td>3) Set an offset:<br>"
+			  + "<table><tr><td></td><td>&nbsp;&nbsp;&nbsp;&nbsp;-1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+1"
+			  + "</td></tr><tr><td>a"
+			  + "</td><td>" + createRadio("xOffset"," ",'_symmetry.updateSymOffset("x",-1)',0,0,"x-1","x-1")
+			  + "</td><td>" + createRadio("xOffset"," ",'_symmetry.updateSymOffset("x",0)',0,1,"x+0","x+0")
+			  + "</td><td>" + createRadio("xOffset"," ",'_symmetry.updateSymOffset("x",1)',0,0,"x+1","x+1")
+			  + "</td></tr><tr><td>b"
+			  + "</td><td>" + createRadio("yOffset"," ",'_symmetry.updateSymOffset("y",-1)',0,0,"y-1","z-1")
+			  + "</td><td>" + createRadio("yOffset"," ",'_symmetry.updateSymOffset("y",0)',0,1,"y+0","z+0")
+			  + "</td><td>" + createRadio("yOffset"," ",'_symmetry.updateSymOffset("y",1)',0,0,"y+1","z+1")
+			  + "</td></tr><tr><td>c"
+			  + "</td><td>" + createRadio("zOffset"," ",'_symmetry.updateSymOffset("z",-1)',0,0,"z-1","z-1")
+			  + "</td><td>" + createRadio("zOffset"," ",'_symmetry.updateSymOffset("z",0)',0,1,"z+0","z+0")
+			  + "</td><td>" + createRadio("zOffset"," ",'_symmetry.updateSymOffset("z",1)',0,0,"z+1","z+1")
+			  + "</td></tr></table>"
+			  + "</td></tr><tr><td>set opacity <select id=selopacity2 onchange=_symmetry.setOpacity() onkeypress=\"setTimeout('_symmetry.setOpacity()',50)\"  class='select'>"
+				+ "<option value=0.2>20%</option>"
+				+ "<option value=0.4>40%</option>"
+				+ "<option value=0.6>60%</option>"
+				+ "<option value=1.0 selected>100%</option></select>"
+				
+		  + "</td></tr></table>";
+
+	var right = "<div id='symmetryOperationSet'></div>";
+
+	var bottomleft =  "<table><tr><td valign='top'><h2>Symmetry-Based Editing</h2>" 
+	  + "</td></tr><tr><td>1) Select a center point: "
+	  + "<input type='text'  name='centerPoint'  placeholder='" +  _symmetry.CENTER_TIP + "' id='centerPoint'   size='20' class='text'>"
+	  + "</td></tr></tr><td>2) Enter a radius constraint (Angstroms):"
+	  + "<input type='text'  name='radiusAngstroms' id='radiusAngstroms' size='3' class='text' value='1.0'>"
+	  + "</td></tr></tr><td>3) Select an element:"
+	  + createSelect('addSymEle', '_symmetry.setSymElement(value)', 0, 1, _constant.ELEM_SYM)
+	  + "</td></tr></tr><td>" + createButton("enableVoidClickingButton", _symmetry.CLICK_ENABLE, '_symmetry.doSymBtnClick(this)', 0)
+	  + "</td></tr></tr><td>4) Select a center atom invariant operation"		
+	  + "</td></tr></tr><td>5) Click and drag on the sphere:"
+	  + "</td></tr></tr><td><input type='text'  name='voidClickPoint'  placeholder='" + _symmetry.CLICK_POINT_TIP +"' id='voidClickPoint'   size='40' class='text'>"
+
+	  
+//		var activateSymmetry = createButton("activateSymmetryButton", "Activate applied symmetry:", 'setSymClickStatus("radiusBindAdd")', 0);
+//		getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
+//		var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'setSymClickStatus("radiusBindAddAll")', 0); 
+//		getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
+//		var symInvariantsSelect = createSelect('addSymInvariantsSymop', 'doSymopSelection(value)', 0, _file.symmetry.symopInvariantList.length , _file.symmetry.symopInvariantList);
+//		getbyID("symInvariantsDiv").innerHTML = symInvariantsSelect; 
+
+//		var corePointDragging = createButton("corePointDraggingButton", "Enable Dragging", 'doEnableCorePointDragging()', 0)
+//		getbyID("corePointDraggingDiv").innerHTML = corePointDragging; 
+		//$('.japplet').on('click', function( event ) {
+		//	  console.log('Applet Clicked');
+		//	  onSymmetryClick();
+		//});
+
+
+	  //	  + "</td></tr>\n"
+//	+ "<tr><td>\n"
+//	+ "<BR>\n"
+//	+ createCheck('setStatusAllInvariantSymops', 'Show All Invariants', 'setSymClickStatus("showAllInvariantSymops")', 0,0,0)
+//	+ "</td></tr>\n"	
+//	+ "<tr><td>\n"
+//	+ "<BR>\n"
+//	+ "<div id='corePointDraggingDiv'></div>"
+//	+ "</td></tr>\n"
+//		+ "<tr><td>\n"
+	+ "</td></tr></tr><td>Symmetry Iterations:" 
+	+ "</td></tr></tr><td><input style='display:none' type='text'  name='symIterations' id='symIterations'  value = '1' size='2' class='text'>"
+	+ "</td></tr></tr><td><div id='activateSymmetryDiv'></div>"
+	+ "</td></tr></tr><td><div id='activateAllSymmetryDiv'></div>"
+//	+ "</td></tr></tr><td>" + createButton("resetSymmetryButton", "Reset Symmetry Page	", '_symmetry.resetPage()', 0) 
+	+ "</td></tr></table>"
+	;	
+	
+	var str = "<form autocomplete='nope'  id='symmetryGroup' name='symmetryGroup' style='display:none'>\n";
+	str += "<table class='contents'>";
+	str += "<tr><td valign=top>" + topleft + "<br>" + bottomleft + "</td><td valign=top>" + right + "</td></tr>"
+	str += "</table></form>\n";
+
+	return str
+}
+
+_symmetry.doSelectNone = function() {
+	getbyID('symmetryGroup').reset();
+	runJmolScriptWait("select none;draw delete;");
+	_symmetry.updateSymInvariantSelect();
+	enterSymmetry();
+}
+
+function pointStringToFixed(pointString,decimalPlaces){
+	if (!pointString){
+		return "";
+	}
+	var pointStringUpdated = pointString[0].toFixed(decimalPlaces)
+		+","+pointString[1].toFixed(decimalPlaces)
+		+","+pointString[2].toFixed(decimalPlaces);
+	return pointStringUpdated
+}
+
 // BH 2018
 
 var _callback = {
 	fPick : null
 }
 
-getCallbackSettings = function() {
-//	return  "set messageCallback 'myMessageCallback';" +
+var getCallbackSettings = function() {
 	return	"set errorCallback 'myErrorCallback';" +
 			"set loadStructCallback 'myLoadStructCallback';" +
 			"set measureCallback 'myMeasurementCallback';" +
@@ -4432,36 +4437,36 @@ getCallbackSettings = function() {
 			"set minimizationCallback 'myMinimizationCallback';"
 }
 
-function myMeasuramentCallback(app, msg, type, state, value) {
+var myMeasurementCallback = function(app, msg, type, state, value) {
 	// BH 2018
 	if (state == "measurePicked")
-		setMeasureText(msg);
+		_measure.setMeasureText(msg);
 }
 
-myLoadStructCallback = function(applet,filePath,c,d) {
+var myLoadStructCallback = function(applet,filePath,c,d) {
 	if (filePath)
 		file_loadedCallback(filePath);
 }
 
-myErrorCallback = function(applet, b, msg, d) {
+var myErrorCallback = function(applet, b, msg, d) {
 	errorMsg(msg);
 }
 
 
 
-setPickingCallbackFunction = function(f) {
+var setPickingCallbackFunction = function(f) {
 	_callback.fPick = f;
 }
 
-myPickCallback = function(applet, b, c, d) {
+var myPickCallback = function(applet, b, c, d) {
 	_callback.fPick && _callback.fPick(b,c,d);
 }
 
-setMinimizationCallbackFunction = function(f) {
+var setMinimizationCallbackFunction = function(f) {
 	_file.fMinim = f;
 }
 
-myMinimizationCallback = function(applet,b,c,d) {
+var myMinimizationCallback = function(applet,b,c,d) {
 	_file.fMinim && _file.fMinim(b, c, d);
 }
 
@@ -4492,115 +4497,215 @@ myMinimizationCallback = function(applet,b,c,d) {
 
 
 
-var ENERGY_EV      = 0;
-var ENERGY_HARTREE = 1;
-var ENERGY_RYDBERG = 2;
+_constant.ENERGY_EV      = 0;
+_constant.ENERGY_HARTREE = 1;
+_constant.ENERGY_RYDBERG = 2;
 
-
-var eleSymb = [];
-eleSymb[0] = "select";
-eleSymb[1] = "H";
-eleSymb[2] = "He";
-eleSymb[3] = "Li";
-eleSymb[4] = "Be";
-eleSymb[5] = "B";
-eleSymb[6] = "C";
-eleSymb[7] = "N";
-eleSymb[8] = "O";
-eleSymb[9] = "F";
-eleSymb[10] = "Ne";
-eleSymb[11] = "Na";
-eleSymb[12] = "Mg";
-eleSymb[13] = "Al";
-eleSymb[14] = "Si";
-eleSymb[15] = "P";
-eleSymb[16] = "S";
-eleSymb[17] = "Cl";
-eleSymb[18] = "Ar";
-eleSymb[19] = "K";
-eleSymb[20] = "Ca";
-eleSymb[21] = "Sc";
-eleSymb[22] = "Ti";
-eleSymb[23] = "V";
-eleSymb[24] = "Cr";
-eleSymb[25] = "Mn";
-eleSymb[26] = "Fe";
-eleSymb[27] = "Co";
-eleSymb[28] = "Ni";
-eleSymb[29] = "Cu";
-eleSymb[30] = "Zn";
-eleSymb[31] = "Ga";
-eleSymb[32] = "Ge";
-eleSymb[33] = "As";
-eleSymb[34] = "Se";
-eleSymb[35] = "Br";
-eleSymb[36] = "No";
-eleSymb[37] = "Rb";
-eleSymb[38] = "Sr";
-eleSymb[39] = "Y";
-eleSymb[40] = "Zr";
-eleSymb[41] = "Nb";
-eleSymb[42] = "Mo";
-eleSymb[43] = "Tc";
-eleSymb[44] = "Ru";
-eleSymb[45] = "Rh";
-eleSymb[46] = "Pd";
-eleSymb[47] = "Ag";
-eleSymb[48] = "Cd";
-eleSymb[49] = "In";
-eleSymb[50] = "Sn";
-eleSymb[51] = "Sb";
-eleSymb[52] = "Te";
-eleSymb[53] = "I";
-eleSymb[54] = "Xe";
-eleSymb[55] = "Cs";
-eleSymb[56] = "Ba";
-eleSymb[57] = "La";
-eleSymb[58] = "Ce";
-eleSymb[59] = "Lr";
-eleSymb[60] = "Md";
-eleSymb[61] = "Pr";
-eleSymb[62] = "Sm";
-eleSymb[63] = "Eu";
-eleSymb[64] = "Gd";
-eleSymb[65] = "Tb";
-eleSymb[66] = "Dy";
-eleSymb[67] = "Ho";
-eleSymb[68] = "Er";
-eleSymb[69] = "Tm";
-eleSymb[70] = "Yb";
-eleSymb[71] = "Lu";
-eleSymb[72] = "Hf";
-eleSymb[73] = "Ta";
-eleSymb[74] = "W";
-eleSymb[75] = "Re";
-eleSymb[76] = "Os";
-eleSymb[77] = "Ir";
-eleSymb[78] = "Pt";
-eleSymb[79] = "Au";
-eleSymb[80] = "Hg";
-eleSymb[81] = "Tl";
-eleSymb[82] = "Pb";
-eleSymb[83] = "Bi";
-eleSymb[84] = "Po";
-eleSymb[85] = "At";
-eleSymb[86] = "Rd";
-eleSymb[87] = "Fr";
-eleSymb[88] = "Rn";
-eleSymb[89] = "Ac";
-eleSymb[90] = "Th";
-eleSymb[91] = "Pa";
-eleSymb[92] = "Sg";
-eleSymb[93] = "Np";
-eleSymb[94] = "Pu";
-eleSymb[95] = "Am";
-eleSymb[96] = "Cm";
-eleSymb[97] = "Bk";
-eleSymb[98] = "Cf";
-eleSymb[99] = "Es";
+_constant.ELEM_SYM = [
+	//0
+	 "select",
+	//1
+	 "H",
+	//2
+	 "He",
+	//3
+	 "Li",
+	//4
+	 "Be",
+	//5
+	 "B",
+	//6
+	 "C",
+	//7
+	 "N",
+	//8
+	 "O",
+	//9
+	 "F",
+	//10
+	 "Ne",
+	//11
+	 "Na",
+	//12
+	 "Mg",
+	//13
+	 "Al",
+	//14
+	 "Si",
+	//15
+	 "P",
+	//16
+	 "S",
+	//17
+	 "Cl",
+	//18
+	 "Ar",
+	//19
+	 "K",
+	//20
+	 "Ca",
+	//21
+	 "Sc",
+	//22
+	 "Ti",
+	//23
+	 "V",
+	//24
+	 "Cr",
+	//25
+	 "Mn",
+	//26
+	 "Fe",
+	//27
+	 "Co",
+	//28
+	 "Ni",
+	//29
+	 "Cu",
+	//30
+	 "Zn",
+	//31
+	 "Ga",
+	//32
+	 "Ge",
+	//33
+	 "As",
+	//34
+	 "Se",
+	//35
+	 "Br",
+	//36
+	 "No",
+	//37
+	 "Rb",
+	//38
+	 "Sr",
+	//39
+	 "Y",
+	//40
+	 "Zr",
+	//41
+	 "Nb",
+	//42
+	 "Mo",
+	//43
+	 "Tc",
+	//44
+	 "Ru",
+	//45
+	 "Rh",
+	//46
+	 "Pd",
+	//47
+	 "Ag",
+	//48
+	 "Cd",
+	//49
+	 "In",
+	//50
+	 "Sn",
+	//51
+	 "Sb",
+	//52
+	 "Te",
+	//53
+	 "I",
+	//54
+	 "Xe",
+	//55
+	 "Cs",
+	//56
+	 "Ba",
+	//57
+	 "La",
+	//58
+	 "Ce",
+	//59
+	 "Lr",
+	//60
+	 "Md",
+	//61
+	 "Pr",
+	//62
+	 "Sm",
+	//63
+	 "Eu",
+	//64
+	 "Gd",
+	//65
+	 "Tb",
+	//66
+	 "Dy",
+	//67
+	 "Ho",
+	//68
+	 "Er",
+	//69
+	 "Tm",
+	//70
+	 "Yb",
+	//71
+	 "Lu",
+	//72
+	 "Hf",
+	//73
+	 "Ta",
+	//74
+	 "W",
+	//75
+	 "Re",
+	//76
+	 "Os",
+	//77
+	 "Ir",
+	//78
+	 "Pt",
+	//79
+	 "Au",
+	//80
+	 "Hg",
+	//81
+	 "Tl",
+	//82
+	 "Pb",
+	//83
+	 "Bi",
+	//84
+	 "Po",
+	//85
+	 "At",
+	//86
+	 "Rd",
+	//87
+	 "Fr",
+	//88
+	 "Rn",
+	//89
+	 "Ac",
+	//90
+	 "Th",
+	//91
+	 "Pa",
+	//92
+	 "Sg",
+	//93
+	 "Np",
+	//94
+	 "Pu",
+	//95
+	 "Am",
+	//96
+	 "Cm",
+	//97
+	 "Bk",
+	//98
+	 "Cf",
+	//99
+	 "Es"
+	 ];
 
 ////Arrays elements : 594
-var spaceGroupName = new Array("select", "1, P1", "2, P-1", "3:b, P121",
+_constant.SPACE_GROUP_NAME = ["select", "1, P1", "2, P-1", "3:b, P121",
 		"3:b, P2", "3:c, P112", "3:a, P211", "4:b, P1211", "4:b, P21",
 		"4:b*, P1211*", "4:c, P1121", "4:c*, P1121*", "4:a, P2111",
 		"4:a*, P2111*", "5:b1, C121", "5:b1, C2", "5:b2, A121", "5:b3, I121",
@@ -4741,9 +4846,10 @@ var spaceGroupName = new Array("select", "1, P1", "2, P-1", "3:b, P121",
 		"222:02:00, Pn-3n", "223, Pm-3n", "224:01:00, Pn-3m",
 		"224:02:00, Pn-3m", "225, Fm-3m", "226, Fm-3c", "227:01:00, Fd-3m",
 		"227:02:00, Fd-3m", "228:01:00, Fd-3c", "228:02:00, Fd-3c",
-		"229, Im-3m", "230, Ia-3d");
+		"229, Im-3m", "230, Ia-3d"
+		];
 
-var spaceGroupValue = new Array("select", "1", "2", "3:b", "3:b", "3:c", "3:a",
+_constant.SPACE_GROUP_VALUE = ["select", "1", "2", "3:b", "3:b", "3:c", "3:a",
 		"4:b", "4:b", "4:b*", "4:c", "4:c*", "4:a", "4:a*", "5:b1", "5:b1",
 		"5:b2", "5:b3", "5:c1", "5:c2", "5:c3", "5:a1", "5:a2", "5:a3", "6:b",
 		"6:b", "6:c", "6:a", "7:b1", "7:b1", "7:b2", "7:b2", "7:b3", "7:b3",
@@ -4819,109 +4925,212 @@ var spaceGroupValue = new Array("select", "1", "2", "3:b", "3:b", "3:c", "3:a",
 		"208", "209", "210", "211", "212", "213", "214", "215", "216", "217",
 		"218", "219", "220", "221", "222:01:0", "222:02:0", "223", "224:01:0",
 		"224:02:0", "225", "226", "227:01:0", "227:02:0", "228:01:0",
-		"228:02:0", "229", "230");
+		"228:02:0", "229", "230"
+		];
 
-var eleSymbMass = [];
-eleSymbMass[0] = "select";
-eleSymbMass[1] = 1.00;
-eleSymbMass[2] = 4.00;
-eleSymbMass[3] = 6.94;
-eleSymbMass[4] = 9.01;
-eleSymbMass[5] = 10.81;
-eleSymbMass[6] = 12.01;
-eleSymbMass[7] = 14.01;
-eleSymbMass[8] = 16.00;
-eleSymbMass[9] = 19.00;
-eleSymbMass[10] = 20.18;
-eleSymbMass[11] = 22.99;
-eleSymbMass[12] = 24.31;
-eleSymbMass[13] = 26.98;
-eleSymbMass[14] = 28.09;
-eleSymbMass[15] = 30.97;
-eleSymbMass[16] = 32.06;
-eleSymbMass[17] = 35.45;
-eleSymbMass[18] = 39.95;
-eleSymbMass[19] = 39.10;
-eleSymbMass[20] = 40.08;
-eleSymbMass[21] = 44.96;
-eleSymbMass[22] = 47.88;
-eleSymbMass[23] = 50.94;
-eleSymbMass[24] = 52.00;
-eleSymbMass[25] = 54.94;
-eleSymbMass[26] = 55.85;
-eleSymbMass[27] = 58.93;
-eleSymbMass[28] = 58.69;
-eleSymbMass[29] = 63.55;
-eleSymbMass[30] = 65.38;
-eleSymbMass[31] = 69.72;
-eleSymbMass[32] = 72.59;
-eleSymbMass[33] = 74.92;
-eleSymbMass[34] = 78.96;
-eleSymbMass[35] = 79.90;
-eleSymbMass[36] = 83.80;
-eleSymbMass[37] = 85.47;
-eleSymbMass[38] = 87.62;
-eleSymbMass[39] = 88.91;
-eleSymbMass[40] = 91.22;
-eleSymbMass[41] = 92.91;
-eleSymbMass[42] = 95.94;
-eleSymbMass[43] = 98.00;
-eleSymbMass[44] = 101.07;
-eleSymbMass[45] = 102.91;
-eleSymbMass[46] = 106.42;
-eleSymbMass[47] = 107.87;
-eleSymbMass[48] = 112.41;
-eleSymbMass[49] = 114.82;
-eleSymbMass[50] = 118.69;
-eleSymbMass[51] = 121.75;
-eleSymbMass[52] = 127.60;
-eleSymbMass[53] = 126.90;
-eleSymbMass[54] = 131.29;
-eleSymbMass[55] = 132.91;
-eleSymbMass[56] = 137.34;
-eleSymbMass[57] = 138.91;
-eleSymbMass[58] = 140.12;
-eleSymbMass[59] = 140.91;
-eleSymbMass[60] = 144.24;
-eleSymbMass[61] = 145.00;
-eleSymbMass[62] = 150.36;
-eleSymbMass[63] = 151.96;
-eleSymbMass[64] = 157.25;
-eleSymbMass[65] = 158.93;
-eleSymbMass[66] = 162.50;
-eleSymbMass[67] = 164.93;
-eleSymbMass[68] = 167.26;
-eleSymbMass[69] = 168.93;
-eleSymbMass[70] = 173.04;
-eleSymbMass[71] = 174.97;
-eleSymbMass[72] = 178.49;
-eleSymbMass[73] = 180.95;
-eleSymbMass[74] = 183.85;
-eleSymbMass[75] = 186.21;
-eleSymbMass[76] = 190.20;
-eleSymbMass[77] = 192.22;
-eleSymbMass[78] = 195.09;
-eleSymbMass[79] = 196.97;
-eleSymbMass[80] = 200.59;
-eleSymbMass[81] = 204.38;
-eleSymbMass[82] = 207.19;
-eleSymbMass[83] = 208.98;
-eleSymbMass[84] = 209.00;
-eleSymbMass[85] = 210.00;
-eleSymbMass[86] = 222.00;
-eleSymbMass[87] = 223.00;
-eleSymbMass[88] = 226.00;
-eleSymbMass[89] = 227.00;
-eleSymbMass[90] = 232.04;
-eleSymbMass[91] = 231.04;
-eleSymbMass[92] = 238.04;
-eleSymbMass[93] = 237.05;
-eleSymbMass[94] = 244.00;
-eleSymbMass[95] = 243.00;
-eleSymbMass[96] = 247.00;
-eleSymbMass[97] = 247.00;
-eleSymbMass[98] = 251.00;
-eleSymbMass[99] = 252.00;
+_constant.ELEM_MASS = [
+	
+	//0
+	 "select",
+	//1
+	 1.00,
+	//2
+	 4.00,
+	//3
+	 6.94,
+	//4
+	 9.01,
+	//5
+	 10.81,
+	//6
+	 12.01,
+	//7
+	 14.01,
+	//8
+	 16.00,
+	//9
+	 19.00,
+	//10
+	 20.18,
+	//11
+	 22.99,
+	//12
+	 24.31,
+	//13
+	 26.98,
+	//14
+	 28.09,
+	//15
+	 30.97,
+	//16
+	 32.06,
+	//17
+	 35.45,
+	//18
+	 39.95,
+	//19
+	 39.10,
+	//20
+	 40.08,
+	//21
+	 44.96,
+	//22
+	 47.88,
+	//23
+	 50.94,
+	//24
+	 52.00,
+	//25
+	 54.94,
+	//26
+	 55.85,
+	//27
+	 58.93,
+	//28
+	 58.69,
+	//29
+	 63.55,
+	//30
+	 65.38,
+	//31
+	 69.72,
+	//32
+	 72.59,
+	//33
+	 74.92,
+	//34
+	 78.96,
+	//35
+	 79.90,
+	//36
+	 83.80,
+	//37
+	 85.47,
+	//38
+	 87.62,
+	//39
+	 88.91,
+	//40
+	 91.22,
+	//41
+	 92.91,
+	//42
+	 95.94,
+	//43
+	 98.00,
+	//44
+	 101.07,
+	//45
+	 102.91,
+	//46
+	 106.42,
+	//47
+	 107.87,
+	//48
+	 112.41,
+	//49
+	 114.82,
+	//50
+	 118.69,
+	//51
+	 121.75,
+	//52
+	 127.60,
+	//53
+	 126.90,
+	//54
+	 131.29,
+	//55
+	 132.91,
+	//56
+	 137.34,
+	//57
+	 138.91,
+	//58
+	 140.12,
+	//59
+	 140.91,
+	//60
+	 144.24,
+	//61
+	 145.00,
+	//62
+	 150.36,
+	//63
+	 151.96,
+	//64
+	 157.25,
+	//65
+	 158.93,
+	//66
+	 162.50,
+	//67
+	 164.93,
+	//68
+	 167.26,
+	//69
+	 168.93,
+	//70
+	 173.04,
+	//71
+	 174.97,
+	//72
+	 178.49,
+	//73
+	 180.95,
+	//74
+	 183.85,
+	//75
+	 186.21,
+	//76
+	 190.20,
+	//77
+	 192.22,
+	//78
+	 195.09,
+	//79
+	 196.97,
+	//80
+	 200.59,
+	//81
+	 204.38,
+	//82
+	 207.19,
+	//83
+	 208.98,
+	//84
+	 209.00,
+	//85
+	 210.00,
+	//86
+	 222.00,
+	//87
+	 223.00,
+	//88
+	 226.00,
+	//89
+	 227.00,
+	//90
+	 232.04,
+	//91
+	 231.04,
+	//92
+	 238.04,
+	//93
+	 237.05,
+	//94
+	 244.00,
+	//95
+	 243.00,
+	//96
+	 247.00,
+	//97
+	 247.00,
+	//98
+	 251.00,
+	//99
+	 252.00
+];
 /*  J-ICE library 
 
     based on:
@@ -4948,7 +5157,7 @@ eleSymbMass[99] = 252.00;
 
 //////////////////////////////////////VALUE conversion AND ROUNDOFF
 
-function substringEnergyToFloat(value) {
+var substringEnergyToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(
 				value.substring(value.indexOf('=') + 1, value.indexOf('H') - 1))
@@ -4959,7 +5168,7 @@ function substringEnergyToFloat(value) {
 	return grab;
 }
 
-function substringEnergyGulpToFloat(value) {
+var substringEnergyGulpToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(
 				value.substring(value.indexOf('=') + 1, value.indexOf('e') - 1))
@@ -4971,7 +5180,7 @@ function substringEnergyGulpToFloat(value) {
 	return grab;
 }
 
-function substringEnergyVaspToFloat(value) {
+var substringEnergyVaspToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(
 				value.substring(value.indexOf('=') + 1, value.indexOf('e') - 1))
@@ -4984,7 +5193,7 @@ function substringEnergyVaspToFloat(value) {
 }
 
 
-function substringEnergyCastepToFloat(value) {
+var substringEnergyCastepToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(
 				value.substring(value.indexOf('=') + 1, value.indexOf('e') - 1))
@@ -4997,7 +5206,7 @@ function substringEnergyCastepToFloat(value) {
 	return grab;
 }
 
-function substringEnergyQuantumToFloat(value) {
+var substringEnergyQuantumToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(
 				value.substring(value.indexOf('=') + 1, value.indexOf('R') - 1))
@@ -5009,7 +5218,7 @@ function substringEnergyQuantumToFloat(value) {
 	return grab;
 }
 
-function substringFreqToFloat(value) {
+var substringFreqToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value.substring(0, value.indexOf('c') - 1));
 		// BH 2018 looking out for "F 300.2" in frequencies
@@ -5023,7 +5232,7 @@ function substringFreqToFloat(value) {
 	return grab;
 }
 
-function substringIntGaussToFloat(value) {
+var substringIntGaussToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value.substring(0, value.indexOf('K') - 1))
 		.toPrecision(8);
@@ -5032,7 +5241,7 @@ function substringIntGaussToFloat(value) {
 	return grab;
 }
 
-function substringIntFreqToFloat(value) {
+var substringIntFreqToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value.substring(0, value.indexOf('k') - 1))
 		.toPrecision(5);
@@ -5041,50 +5250,40 @@ function substringIntFreqToFloat(value) {
 	return grab;
 }
 
-function cosRounded(value) {
+var cosRounded = function(value) {
 	if (value != null) {
 		var angle = parseFloat(value).toPrecision(7);
-		angle = cos(value * Math.PI/180);
-		angle = Math.round(angle * 10000000) / 10000000;
+		angle = Math.round(cosDeg(value) * 10000000) / 10000000;
 	}
 	return angle;
 }
 
-function cosDeg(angle) {
+var cosDeg = function(angle) {
 	return Math.cos(angle * Math.PI/180);
 }
 
-function sinDeg(angle) {
+var sinDeg = function(angle) {
 	return Math.sin(angle * Math.PI/180);
 }
 
-roundNumber = function(v) { //BH 2018 was 10000000
+var roundNumber = function(v) { //BH 2018 was 10000000
 	return Math.round(v * 10000) / 10000;
 }
 
-function roundoff(value, precision) {
+var roundoff = function(value, precision) {
 	value = "" + value
 	precision = parseInt(precision)
 
-	var whole = "" + Math.round(value * Math.pow(10, precision))
-	var decPoint = whole.length - precision;
-
-	if (decPoint != 0) {
-		result = whole.substring(0, decPoint);
-		result += "."
-			result += whole.substring(decPoint, whole.length);
-	} else {
-		result = whole;
-	}
-
-	return result;
+	var result = "" + Math.round(value * Math.pow(10, precision))
+	var decPoint = result.length - precision;
+	return (decPoint == 0 ? result : result.substring(0, decPoint) + "." + result.substring(decPoint, result.length));
 }
 
 
 ////////////////////////////////ENERGY CONV
 
 ///Hartree
-function fromHartreetoEv(value) { // 1 Hartree = 27.211396132eV
+var fromHartreeToEV = function(value) { // 1 Hartree = 27.211396132eV
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = grab * 27.211396132;
@@ -5093,7 +5292,7 @@ function fromHartreetoEv(value) { // 1 Hartree = 27.211396132eV
 	return grab;
 }
 
-function fromHartreetoHartree(value) {
+var fromHartreeToHartree = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = Math.round(grab * 1000000000000) / 1000000000000;
@@ -5101,7 +5300,7 @@ function fromHartreetoHartree(value) {
 	return grab;
 }
 
-function fromHartreetokJ(value) { // From hartree to kJmol-1
+var fromHartreeToKJ = function(value) { // From hartree to kJmol-1
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = grab * 2625.50;
@@ -5110,7 +5309,7 @@ function fromHartreetokJ(value) { // From hartree to kJmol-1
 	return grab;
 }
 
-function fromHartreetoRydberg(value) {
+var fromHartreeToRydberg = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = grab * 2;
@@ -5119,7 +5318,7 @@ function fromHartreetoRydberg(value) {
 	return grab;
 }
 
-function fromHartreetokcalmol(value) { // 1Hartree == 627.509 kcal*mol-1
+var fromHartreeToKcalmol = function(value) { // 1Hartree == 627.509 kcal*mol-1
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = grab * 627.509;
@@ -5132,26 +5331,26 @@ function fromHartreetokcalmol(value) { // 1Hartree == 627.509 kcal*mol-1
 
 ////ev
 
-function fromevTokJ(value) {
+var fromEVToKJ = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromevToHartree(grab);
-		grab = fromHartreetokJ(grab)
+		grab = fromEVToHartree(grab);
+		grab = fromHartreeToKJ(grab)
 		grab = Math.round(grab * 1000) / 1000;
 	}
 	return grab;
 }
 
-function fromevToHartree(value) {
+var fromEVToHartree = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromHartreetoEv(1 / grab);
+		grab = fromHartreeToEV(1 / grab);
 		grab = Math.round(grab * 1000000000000) / 1000000000000;
 	}
 	return grab;
 }
 
-function fromevTorydberg(value) {
+var fromEVToRydberg = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = grab * 0.073498618;
@@ -5160,7 +5359,7 @@ function fromevTorydberg(value) {
 	return grab;
 }
 
-function fromevtoev(value) {
+var fromEVToEV = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = Math.round(grab * 1000000000000) / 1000000000000;
@@ -5168,11 +5367,11 @@ function fromevtoev(value) {
 	return grab;
 }
 
-function fromevtokcalmol(value) {
+var fromEVToKcalmol = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromevToHartree(grab);
-		grab = fromHartreetokcalmol(grab);
+		grab = fromEVToHartree(grab);
+		grab = fromHartreeToKcalmol(grab);
 		grab = Math.round(grab * 1000) / 1000;
 	}
 	return grab;
@@ -5182,45 +5381,45 @@ function fromevtokcalmol(value) {
 
 //rydberg
 
-function fromRydbergtohartree(value) {
+var fromRydbergToHartree = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromHartreetoRydberg(1 / grab);
+		grab = fromHartreeToRydberg(1 / grab);
 		grab = Math.round(grab * 1000000000000) / 1000000000000;
 	}
 	return grab;
 }
 
-function fromRydbergtoEv(value) {
+var fromRydbergToEV = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromevTorydberg(1 / grab);
+		grab = fromEVToRydberg(1 / grab);
 		grab = Math.round(grab * 1000000000000) / 1000000000000;
 	}
 	return grab;
 
 }
 
-function fromRydbergToKj(value) {
+var fromRydbergToKJ = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromHartreetokJ(grab / 2);
+		grab = fromHartreeToKJ(grab / 2);
 		grab = Math.round(grab * 1000) / 1000;
 	}
 	return grab;
 }
 
-function fromRytokcalmol(value) {
+var fromRydbergToKcalmol = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromRydbergtohartree(grab);
-		grab = fromHartreetokcalmol(grab);
+		grab = fromRydbergToHartree(grab);
+		grab = fromHartreeToKcalmol(grab);
 		grab = Math.round(grab * 1000) / 1000;
 	}
 	return grab;
 }
 
-function fromRydbergTorydberg(value) {
+var fromRydbergToRydberg = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = Math.round(grab * 1000000000000) / 1000000000000;
@@ -5229,7 +5428,7 @@ function fromRydbergTorydberg(value) {
 }
 
 //1 Angstrom = 1.889725989 Bohr
-function fromAngstromtoBohr(value) {
+var fromAngstromToBohr = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(7);
 		grab = grab * 1.889725989;
@@ -5239,7 +5438,7 @@ function fromAngstromtoBohr(value) {
 }
 
 /////////////////////////////////END ENERGY conversion
-debugSay = function(script) {
+var debugSay = function(script) {
 	// the debug area at the bottom of each tab
 	var div = getbyID("debugdiv");
 	var area = getbyID("debugarea");
@@ -5259,15 +5458,15 @@ debugSay = function(script) {
 	area.scrollTop = area.scrollHeight;
 }
 
-debugShowCommands = function(isOn) {
+var debugShowCommands = function(isOn) {
 	getbyID("debugdiv").style.display = (isOn ? "block" : "none");
 }
 
-debugShowHistory = function() {
+var debugShowHistory = function() {
  	debugSay(jmolEvaluate("show('history')"));
 }
 
-addCommandBox = function() {
+var addCommandBox = function() {
 	// see debug.js
 	return "<div id='debugpanel'><hr>"
 		+ createCheck("debugMode", "Show Commands", "debugShowCommands(this.checked)", 0,
@@ -5310,7 +5509,7 @@ function setVacuum() {
 		newCell_c = (zMaxCoord * 2) + vacuum;
 		var factor = roundNumber(zMaxCoord + vacuum);
 		if (_file._exportFractionalCoord) { // from VASP only?
-			scaleModelCoordinates("z", "add", factor, "div", newcell_c);
+			scaleModelCoordinates("z", "add", factor, "div", newCell_c);
 		} else {
 			scaleModelCoordinates("z", "add", factor);
 		}
@@ -5427,7 +5626,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 		stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.b) + ", "
 				+ roundNumber(_file.cell.c) + ", " + roundNumber(_file.cell.alpha) + ", "
 				+ roundNumber(_file.cell.beta) + ", " + roundNumber(_file.cell.gamma);
-		cellDimString = " celdm(1) =  " + fromAngstromtoBohr(_file.cell.a)
+		cellDimString = " celdm(1) =  " + fromAngstromToBohr(_file.cell.a)
 				+ " \n celdm(2) =  " + roundNumber(_file.cell.b / _file.cell.a)
 				+ " \n celdm(3) =  " + roundNumber(_file.cell.c / _file.cell.a)
 				+ " \n celdm(4) =  " + cosRounded(_file.cell.alpha) + " \n celdm(5) =  "
@@ -5440,7 +5639,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 		stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.b) + ", "
 				+ roundNumber(_file.cell.c) + ", " + roundNumber(_file.cell.alpha);
 		if (quantumEspresso) {
-			cellDimString = " celdm(1) =  " + fromAngstromtoBohr(_file.cell.a)
+			cellDimString = " celdm(1) =  " + fromAngstromToBohr(_file.cell.a)
 					+ " \n celdm(2) =  " + roundNumber(_file.cell.b / _file.cell.a)
 					+ " \n celdm(3) =  " + roundNumber(_file.cell.c / _file.cell.a)
 					+ " \n celdm(4) =  " + (cosRounded(_file.cell.alpha))
@@ -5457,7 +5656,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 		stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.b) + ", "
 				+ roundNumber(_file.cell.c);
 		if (quantumEspresso) {
-			cellDimString = " celdm(1) = " + fromAngstromtoBohr(_file.cell.a)
+			cellDimString = " celdm(1) = " + fromAngstromToBohr(_file.cell.a)
 					+ " \n celdm(2) =  " + roundNumber(_file.cell.b / _file.cell.a)
 					+ " \n celdm(3) =  " + roundNumber(_file.cell.c / _file.cell.a) + " \n\n";
 			ibravQ = "8";
@@ -5481,7 +5680,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 
 		stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.c);
 		if (quantumEspresso) {
-			cellDimString = " celdm(1) = " + fromAngstromtoBohr(_file.cell.a)
+			cellDimString = " celdm(1) = " + fromAngstromToBohr(_file.cell.a)
 					+ " \n celdm(3) =  " + roundNumber(_file.cell.c / _file.cell.a) + " \n\n";
 			ibravQ = "6";
 			var question = confirm("Is this a Tetragonal I body centered (bct) lattice?");
@@ -5493,7 +5692,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 	case ((interNumber > 142) && (interNumber <= 167)): // Trigonal lattices
 		stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.alpha) + ", "
 				+ roundNumber(_file.cell.beta) + ", " + roundNumber(_file.cell.gamma);
-		cellDimString = " celdm(1) = " + fromAngstromtoBohr(_file.cell.a)
+		cellDimString = " celdm(1) = " + fromAngstromToBohr(_file.cell.a)
 				+ " \n celdm(4) =  " + (cosRounded(_file.cell.alpha))
 				+ " \n celdm(5) = " + (cosRounded(_file.cell.beta))
 				+ " \n celdm(6) =  " + (cosRounded(_file.cell.gamma));
@@ -5501,7 +5700,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 		var question = confirm("Is a romboheadral lattice?")
 		if (question) {
 			stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.c);
-			cellDimString = " celdm(1) = " + fromAngstromtoBohr(_file.cell.a)
+			cellDimString = " celdm(1) = " + fromAngstromToBohr(_file.cell.a)
 					+ " \n celdm(4) =  " + (cosRounded(_file.cell.alpha))
 					+ " \n celdm(5) = " + (cosRounded(_file.cell.beta))
 					+ " \n celdm(6) =  " + (cosRounded(_file.cell.gamma))
@@ -5512,7 +5711,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 	case ((interNumber > 167) && (interNumber <= 194)): // Hexagonal lattices
 		stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.c);
 		if (quantumEspresso) {
-			cellDimString = " celdm(1) = " + fromAngstromtoBohr(_file.cell.a)
+			cellDimString = " celdm(1) = " + fromAngstromToBohr(_file.cell.a)
 					+ " \n celdm(3) = " + roundNumber(_file.cell.c / _file.cell.a) + " \n\n";
 			ibravQ = "4";
 		}
@@ -5520,7 +5719,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 	case ((interNumber > 194) && (interNumber <= 230)): // Cubic lattices
 		stringCellParam = roundNumber(_file.cell.a);
 		if (quantumEspresso) {
-			cellDimString = " celdm(1) = " + fromAngstromtoBohr(_file.cell.a);
+			cellDimString = " celdm(1) = " + fromAngstromToBohr(_file.cell.a);
 			// alert("I am here");
 			ibravQ = "1";
 			var question = confirm("Is a face centered cubic lattice?")
@@ -5578,7 +5777,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
  */
 
 
-function updateElementLists(x) {
+var updateElementLists = function(x) {
 	for (var i = (getbyID('colourbyElementList').options.length - 1); i >= 0; i--)
 		getbyID('colourbyElementList').remove(i);
 	for (var i = (getbyID('polybyElementList').options.length - 1); i >= 0; i--)
@@ -5614,7 +5813,7 @@ function updateElementLists(x) {
 	}
 }
 
-function createShowList(colourbyElementList){
+var createShowList = function(colourbyElementList){
 	var showList = colourbyElementList.push('by picking')
 	showList = showList.push('by distance')
 	return showList
@@ -5622,7 +5821,7 @@ function createShowList(colourbyElementList){
 
 
 
-function formResetAll() {
+var formResetAll = function() {
 
 	setStatus("");
 	setUnitCell();
@@ -5641,11 +5840,11 @@ function formResetAll() {
 	// document.HistoryGroup.reset();
 	// this disables antialias option BH: NOT - or at least not generally. We need a switch for this
 	runJmolScriptWait('antialiasDisplay = true;set hermiteLevel 0');
-	resetFreq();
-	resetOptimize();
+	//resetFreq();
+	_uff.resetOptimize();
 }
 
-function createSlider(name, label) {
+var createSlider = function(name, label) {
 	var s = '<div tabIndex="1" class="slider" id="_-div" style="float:left;width:150px;" >'
 		+ '<input class="slider-input" id="_-input" name="_-input" />'
 	    + '</div>'
@@ -5655,20 +5854,20 @@ function createSlider(name, label) {
 	
 }
 
-function createButton(name, text, onclick, disab, style) {
+var createButton = function(name, text, onclick, disab, style) {
 	return createButton1(name, text, onclick, disab, "button", style);
 }
 
-function getButtonText(name) {
+var getButtonText = function(name) {
 	return getbyID(name).innerHTML;
 }
 
-function setButtonText(name, text) {
+var setButtonText = function(name, text) {
 	getbyID(name).innerHTML = text;
 }
 
 
-function createButtonB(name, text, onclick, disab, style) {
+var createButtonB = function(name, text, onclick, disab, style) {
 	var s = "<BUTTON type='button' ";
 	s += "NAME='" + name + "' ";
 	s += "ID='" + name + "' ";
@@ -5684,7 +5883,7 @@ function createButtonB(name, text, onclick, disab, style) {
 }
 
 //This includes the class
-function createButton1(name, text, onclick, disab, myclass, style) {
+var createButton1 = function(name, text, onclick, disab, myclass, style) {
 	var s = "<INPUT TYPE='BUTTON'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -5700,7 +5899,7 @@ function createButton1(name, text, onclick, disab, myclass, style) {
 }
 
 
-function createText(name, text, onclick, disab) {
+var createText = function(name, text, onclick, disab) {
 	var s = "<INPUT TYPE='TEXT'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -5712,7 +5911,8 @@ function createText(name, text, onclick, disab) {
 	s += "OnChange='" + onclick + "'> ";
 	return s;
 }
-function createCheck(name, text, onclick, disab, def, value) {
+
+var createCheck = function(name, text, onclick, disab, def, value) {
 	var s = "<INPUT TYPE='CHECKBOX' ";
 	s += " NAME='" + name + "' ";
 	s += " ID='" + name + "' ";
@@ -5732,7 +5932,8 @@ function createCheck(name, text, onclick, disab, def, value) {
 	// tabForm[i].def=def;
 	return s;
 }
-function createRadio(name, text, onclick, disab, def, id, value) {
+
+var createRadio = function(name, text, onclick, disab, def, id, value) {
 	var s = "<INPUT TYPE='RADIO' ";
 	s += " NAME='" + name + "' ";
 	s += " ID='" + id + "' ";
@@ -5753,7 +5954,7 @@ function createRadio(name, text, onclick, disab, def, id, value) {
 	return s;
 }
 
-function createSelect(name, onclick, disab, size, optionValue, optionText, optionCheck, type, onkey) {
+var createSelect = function(name, onclick, disab, size, optionValue, optionText, optionCheck, type, onkey) {
 	optionText || (optionText = optionValue);
 	optionCheck || (optionCheck = [1]);
 	if (optionValue.length != optionText.length)
@@ -5794,27 +5995,27 @@ function createSelect(name, onclick, disab, size, optionValue, optionText, optio
 	return s;
 }
 
-function createSelectFunc(name, onclick, onkey, disab, size, optionValue, optionText, optionCheck) {
+var createSelectFunc = function(name, onclick, onkey, disab, size, optionValue, optionText, optionCheck) {
 	return createSelect(name, onclick, disab, size, optionValue, optionText, optionCheck, "func", onkey);
 }
 
-function createSelectmenu(name, onclick, disab, size, optionValue, optionText, optionCheck) {
+var createSelectmenu = function(name, onclick, disab, size, optionValue, optionText, optionCheck) {
 	return createSelect(name, onclick, disab, size, optionValue, optionText, optionCheck, "menu");
 }
 
-function createSelect2(name, onclick, disab, size) {
+var createSelect2 = function(name, onclick, disab, size) {
 	return createSelect(name, onclick, disab, size, []);
 }
 
-function createSelectKey(name, onclick, onkey, disab, size) {
+var createSelectKey = function(name, onclick, onkey, disab, size) {
 	return createSelect(name, onclick, disab, size, [], [], [], "key", onkey)
 }
 
-function createSelectElement(name, onclick, onkey, disab, size) {
+var createSelectElement = function(name, onclick, onkey, disab, size) {
 	return createSelect(name, onclick, disab, size, [], [], [], "elem", onkey)
 }
 
-function createTextArea(name, text, rows, cols, disab) {
+var createTextArea = function(name, text, rows, cols, disab) {
 	var s = "<TEXTAREA ";
 	s += "NAME='" + name + "' ";
 	s += "ID='" + name + "' ";
@@ -5829,7 +6030,7 @@ function createTextArea(name, text, rows, cols, disab) {
 	return s;
 }
 
-function createText2(name, text, size, disab) {
+var createText2 = function(name, text, size, disab) {
 	var s = "<INPUT TYPE='TEXT'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -5842,7 +6043,7 @@ function createText2(name, text, size, disab) {
 	return s;
 }
 
-function createTextSpectrum(name, text, size, disab) {
+var createTextSpectrum = function(name, text, size, disab) {
 	var s = "<INPUT TYPE='TEXT'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -5855,7 +6056,7 @@ function createTextSpectrum(name, text, size, disab) {
 	return s;
 }
 
-function createText3(name, text, value, onchange, disab) {
+var createText3 = function(name, text, value, onchange, disab) {
 	var s = "<INPUT TYPE='TEXT'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -5869,7 +6070,7 @@ function createText3(name, text, value, onchange, disab) {
 	return s;
 }
 
-function createText4(name, text, size, value, onchange, disab) {
+var createText4 = function(name, text, size, value, onchange, disab) {
 	var s = "<INPUT TYPE='TEXT'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -5884,7 +6085,7 @@ function createText4(name, text, size, value, onchange, disab) {
 	return s;
 }
 
-function createText5(name, text, size, value, onchange, disab) {
+var createText5 = function(name, text, size, value, onchange, disab) {
 	var s = "<INPUT TYPE='TEXT'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -5899,50 +6100,50 @@ function createText5(name, text, size, value, onchange, disab) {
 	return s;
 }
 
-function createDiv(id, style, contents) {
+var createDiv = function(id, style, contents) {
 	return "<div id='" + id + "' style='" + style + "'>"
 		+ (contents == null ? "" : contents + "</div>");
 }
 
-function createLine(color, style) {
+var createLine = function(color, style) {
 	return "<hr color='#D8E4F8' style='" + style + "' >";
 }
 
 
-function getValue(id) {
+var getValue = function(id) {
 	return getbyID(id).value;
 }
 
-function setValue(id, val) {
+var setValue = function(id, val) {
 	getbyID(id).value = val;
 }
 
-function getValueSel(id) {
+var getValueSel = function(id) {
 	return getbyID(id)[getbyID(id).selectedIndex].value;
 }
 
-function getTextSel(id) {
+var getTextSel = function(id) {
 	return getbyID(id)[getbyID(id).selectedIndex].text;
 }
 
-function isChecked(id) {
+var isChecked = function(id) {
 	return getbyID(id).checked;
 }
 
-function checkBox(id) {
+var checkBox = function(id) {
 	getbyID(id).checked = true;
 }
 
-function uncheckBox(id) {
+var uncheckBox = function(id) {
 	getbyID(id).checked = false;
 }
 
-function resetValue(form) {
+var resetValue = function(form) {
 	var element = "document." + form + ".reset";
 	return element;
 }
 
-function getRadioSetValue(radios) {
+var getRadioSetValue = function(radios) {
 	// BH -- switched to top radios -- for frequency list as well as spectrum
 	for (var i = 0; i < radios.length; i++) {
 		if (radios[i].checked) {
@@ -5951,60 +6152,69 @@ function getRadioSetValue(radios) {
 	}
 }
 
-function makeDisable(element) {
+var disableElement = function(element) {
 	// BH 2018
-	var d = getbyID(element);
+	var d = (typeof element == "string" ? getbyID(element) : element);
 	if (d.type == "text")
 		d.readOnly = true;
-	else
+	else {
 		d.disabled = true;
+		if (d.tagName == "OPTION") {
+			d.style.background = d.style.color = "grey";
+		}
+	}
 }
 
-function makeEnable(element) {
+var enableElement = function(element) {
 	// BH 2018
-	var d = getbyID(element);
+	var d = (typeof element == "string" ? getbyID(element) : element);
 	if (d.type == "text")
 		d.readOnly = false;
-	else
+	else {
 		d.disabled = false;
+		if (d.tagName == "OPTION") {
+			d.style.background = "white";
+			d.style.color = "black";
+		}
+	}
 }
 
 
-function checkBoxStatus(form, element) {
+var checkBoxStatus = function(form, element) {
 	if (form.checked == true)
-		makeDisable(element);
+		disableElement(element);
 	if (form.checked == false)
-		makeEnable(element);
+		enableElement(element);
 }
 
-function checkBoxX(form) {
+var checkBoxX = function(form) {
 	var value = "";
 	var test = getbyID(form);
 	value = (test.checked) ? ("on") : ("off");
 	return value;
 }
 
-function setTextboxValue(nametextbox, valuetextbox) {
+var setTextboxValue = function(nametextbox, valuetextbox) {
 	var tbox = getbyID(nametextbox);
 	tbox.value = "";
 	if (tbox)
 		tbox.value = valuetextbox;
 }
 
-function uncheckRadio(radio) {
+var uncheckRadio = function(radio) {
 	var radioId = getbyName(radio);
 	for (var i = 0; i < radioId.length; i++)
 		radioId[i].checked = false;
 }
 
-function toggleDiv(form, me) {
+var toggleDiv = function(form, me) {
 	if (form.checked == true)
 		getbyID(me).style.display = "inline";
 	if (form.checked == false)
 		getbyID(me).style.display = "none";
 }
 
-function toggleDivValue(value, me,d) {
+var toggleDivValue = function(value, me,d) {
 	if (d.value == "+") {
 		d.value = "\u2212";
 		getbyID(me).style.display = "inline";
@@ -6014,14 +6224,14 @@ function toggleDivValue(value, me,d) {
 	}
 }
 
-function untoggleDiv(form, me) {
+var untoggleDiv = function(form, me) {
 	if (form.checked == true)
 		getbyID(me).style.display = "none";
 	if (form.checked == false)
 		getbyID(me).style.display = "inline";
 }
 
-function toggleDivRadioTrans(value, me) {
+var toggleDivRadioTrans = function(value, me) {
 	if (value == "off") {
 		getbyID(me).style.display = "inline";
 	} else {
@@ -6029,34 +6239,34 @@ function toggleDivRadioTrans(value, me) {
 	}
 }
 
-function setJmolFromCheckbox(box, value) {
+var setJmolFromCheckbox = function(box, value) {
 	runJmolScriptWait(value + " " + !!box.checked);
 }
 
-function getbyID(id) {
+var getbyID = function(id) {
 	return document.getElementById(id);
 }
 
-function getbyName(na) {
+var getbyName = function(na) {
 	return document.getElementsByName(na);
 }
 
 //This is meant to add new element to a list
-function addOption(selectbox, text, value) {
+var addOption = function(selectbox, text, value) {
 	var optn = document.createElement("OPTION");
 	optn.text = text;
 	optn.value = value;
 	selectbox.options.add(optn);
 }
 
-function cleanList(listname) {
+var cleanList = function(listname) {
 	var d = getbyID(listname)
 	if (d)
 		for (var i = d.options.length; --i >= 0;)
 			d.remove(i);
 }
 
-function selectListItem(list, itemToSelect) {
+var selectListItem = function(list, itemToSelect) {
 	// Loop through all the items
 	for (var i = 0; i < list.options.length; i++) {
 		if (list.options[i].value == itemToSelect) {
@@ -6073,11 +6283,11 @@ function selectListItem(list, itemToSelect) {
 //
 //	if (status == "on") {
 //		for (var i = 0; i < elements.length; i++)
-//			makeEnable(elements[i]);
+//			enableElement(elements[i]);
 //	}
 //	if (status == "off") {
 //		for (var i = 0; i < elements.length; i++)
-//			makeDisable(elements[i]);
+//			disableElement(elements[i]);
 //	}
 //
 //}
@@ -6114,7 +6324,7 @@ function extractInfoJmolString(whatToExtract) {
 function getElementList(arr) {
 	// BH 2018 using element.pivot.keys for easy array creation
 	arr || (arr = []);
-	var elements = Jmol.evaluateVar(jmolApplet0,"{*}.element.pivot.keys");
+	var elements = getJmolValue("{*}.element.pivot.keys");
 	for (var i = 0; i < elements.length; i++)
 		arr.push(elements[i]);
 	return arr;
@@ -6196,7 +6406,7 @@ function setPickingHide(form) {
  */
 
 
-function onClickPickPlane(checkbox, callback) {
+var onClickPickPlane = function(checkbox, callback) {
 	_pick.menuCallback = callback;
 	_pick.selectCheckbox = checkbox;
 	if (!checkbox || checkbox.checked) {
@@ -6254,7 +6464,7 @@ function setDistanceHide(checkbox) {
 function pickPlaneCallback() {
 	if (_pick.pickingEnabled) {
 		runJmolScriptWait("select pickedList");
-		var picklist = Jmol.evaluateVar(jmolApplet0, "pickedlist");
+		var picklist = getJmolValue( "pickedlist");
 		if (picklist.length < 3) {
 			setStatus('Select another atom.');
 			return false;
@@ -6448,10 +6658,10 @@ function plotEnergies(){
 			var modelnumber = _file.energy.length - 1;		
 			if(i > 0 && i < _file.info.length)
 				var previous = i - 1;
-			var e = fromHartreetokJ(name);
+			var e = fromHartreeToKJ(name);
 			var e1;
 //			if(i == 0 || (e1 = energyGauss[i - 1]) == null) {
-				energy = Math.abs(e - fromHartreetokJ(_file.energy[last]));
+				energy = Math.abs(e - fromHartreeToKJ(_file.energy[last]));
 //			} else if (previous > 0) {
 //				if (e != e1)
 //					energy = Math.abs(e - e1);
@@ -6723,7 +6933,7 @@ var _slider = {
 	slab 			: null,
 	depth			: null
 }	
-function applyBond(angstroms) {
+var applyBond = function(angstroms) {
 	if (_show.firstTimeBond) {
 		runJmolScriptWait("wireframe .2;");
 	} else {
@@ -6734,7 +6944,7 @@ function applyBond(angstroms) {
 }
 
 
-loadSliders = function() {
+var loadSliders = function() {
 	_slider.bond = new Slider(getbyID("slider.bond-div"), getbyID("slider.bond-input"), "horizontal");
 	_slider.bond.setMaximum(100);
 	_slider.bond.setMinimum(0);
@@ -6878,7 +7088,7 @@ var _uff = {
 	counterUff : 0
 }
 
-function minimizeStructure() {
+_uff.minimizeStructure = function() {
 	var optCriterion = parseFloat(getValue("optciteria"));
 	var optSteps = parseInt(getValue("maxsteps"));
 	var form = getbyID("fixstructureUff");
@@ -6892,19 +7102,19 @@ function minimizeStructure() {
 		return false;
 	} else if (!form.checked) {
 		_uff.counterUff = 0;
-		setMinimizationCallbackFunction(scriptUffCallback);
+		setMinimizationCallbackFunction(_uff.scriptUffCallback);
 		runJmolScript("set debugscript on ;set logLevel 5;set minimizationCriterion " + optCriterion + "; minimize STEPS "
 				+ optSteps + "; set minimizationRefresh TRUE;  minimize;");
 	} else if (form.checked) {
 		_uff.counterUff = 0;
-		setMinimizationCallbackFunction(scriptUffCallback);
+		setMinimizationCallbackFunction(_uff.scriptUffCallback);
 		runJmolScript("set debugscript on ;set logLevel 5;set minimizationCriterion " + optCriterion + "; minimize STEPS "
 				+ optSteps
 				+ "; set minimizationRefresh TRUE;  minimize FIX {selected};");
 	}
 }
 
-function fixFragmentUff(form) {
+_uff.fixFragmentUff = function(form) {
 	if (form.checked) {
 		messageMsg("Now select the fragment you would like to optimize by the following options");
 		//fragmentSelect
@@ -6913,18 +7123,18 @@ function fixFragmentUff(form) {
 	}
 }
 
-function stopOptimize() {
+_uff.stopOptimize = function() {
 	runJmolScriptWait('minimize STOP;');
 }
 
-function resetOptimize() {
+_uff.resetOptimize = function() {
 	runJmolScriptWait('minimize STOP;');
 	setValue("optciteria", "0.001");
 	setValue("maxsteps", "100");
 	setValue("textUff", "");
 }
 
-function scriptUffCallback(b, step, d, e, f, g) {
+_uff.scriptUffCallback = function(b, step, d, e, f, g) {
 	var text = ("s = " + _uff.counterUff + " E = " + parseFloat(d).toPrecision(10)
 			+ " kJ/mol, dE = " + parseFloat(e).toPrecision(6) + " kJ/mol")
 	getbyID("textUff").value = text
@@ -7006,8 +7216,8 @@ function newAppletWindowFeed() {
 
 // /// FUNCTION LOAD
 
-loadDone_castep = function() {
-	_file.energyUnits = ENERGY_EV;
+var loadDone_castep = function() {
+	_file.energyUnits = _constant.ENERGY_EV;
 	_file.counterFreq = 0;
 	_file.counterMD = 0;
 	for (var i = 0; i < _file.info.length; i++) {
@@ -7028,8 +7238,8 @@ loadDone_castep = function() {
 	}
 	getUnitcell("1");
 	setFrameValues("1");
-	disableFreqOpts();
-	getSymInfo();
+	//disableFreqOpts();
+	//getSymInfo();
 	loadDone();
 }
 
@@ -7108,8 +7318,8 @@ function exportCASTEP() {
 
 ///////////////////////// LOAD & ON LOAD functions
 
-loadDone_crystal = function() {
-	_file.energyUnits = ENERGY_HARTREE;
+var loadDone_crystal = function() {
+	_file.energyUnits = _constant.ENERGY_HARTREE;
 	_file.StrUnitEnergy = "H";
 	var vib = getbyID('vib');
 	for (var i = 0; i < _file.info.length; i++) {
@@ -7307,8 +7517,8 @@ function exportCRYSTAL() {
 
 //3rd-Sept-2010 CANEPA
 
-loadDone_dmol = function() {
-	_file.energyUnits = ENERGY_HARTREE;
+var loadDone_dmol = function() {
+	_file.energyUnits = _constant.ENERGY_HARTREE;
 	_file.StrUnitEnergy = "H";
 	for (var i = 0; i < _file.info.length; i++) {
 		var line = _file.info[i].name;
@@ -7329,7 +7539,7 @@ loadDone_dmol = function() {
 
 	getUnitcell("1");
 	setFrameValues("1");
-	getSymInfo();
+	//getSymInfo();
 	loadDone();
 }
 /*  J-ICE library 
@@ -7356,11 +7566,11 @@ loadDone_dmol = function() {
  *  02111-1307  USA.
  */
 
-loadDone_gaussian = function() {
+var loadDone_gaussian = function() {
 
 	warningMsg("This is a molecular reader. Therefore not all properties will be available.")
 
-	_file.energyUnits = ENERGY_HARTREE;
+	_file.energyUnits = _constant.ENERGY_HARTREE;
 	_file.StrUnitEnergy = "H";
 
 	setTitleEcho();
@@ -7473,8 +7683,8 @@ function exportGromacs() {
 
 // ////////////GULP READER
 
-loadDone_gulp = function() {
-	_file.energyUnits = ENERGY_EV;
+var loadDone_gulp = function() {
+	_file.energyUnits = _constant.ENERGY_EV;
 	_file.StrUnitEnergy = "e";
 	_file.counterFreq = 0;
 	for (var i = 0; i < _file.info.length; i++) {
@@ -7490,7 +7700,7 @@ loadDone_gulp = function() {
 	runJmolScriptWait("script scripts/gulp_name.spt"); 
 	getUnitcell("1");
 	setFrameValues("1");
-	getSymInfo();
+	//getSymInfo();
 	loadDone();
 }
 
@@ -7622,7 +7832,7 @@ function exportGULP() {
 				+ 'final = final.replace("\n\n","\n");'
 				+ 'WRITE VAR final "?.gin" ';
 	}
-	run(finalInputGulp);
+	runJmolScriptWait(finalInputGulp);
 	restoreStateAndOrientation_a();
 
 }
@@ -7652,9 +7862,9 @@ function exportGULP() {
  */
 
 
-loadDone_molden = function(msg) {
+var loadDone_molden = function(msg) {
 
-	_file.energyUnits = ENERGY_EV;
+	_file.energyUnits = _constant.ENERGY_EV;
 	_file.StrUnitEnergy = "e";
 	
 	for (var i = 0; i < _file.info.length; i++) {
@@ -7670,7 +7880,7 @@ loadDone_molden = function(msg) {
 		}
 	}
 
-	getSymInfo();
+	//getSymInfo();
 	loadDone();
 }
 /*  J-ICE library 
@@ -7699,9 +7909,9 @@ loadDone_molden = function(msg) {
 
 ///// QUANTUM ESPRESSO READER
 
-loadDone_espresso = function() {
+var loadDone_espresso = function() {
 	
-	_file.energyUnits = ENERGY_RYDBERG;
+	_file.energyUnits = _constant.ENERGY_RYDBERG;
 	_file.StrUnitEnergy = "R";
 	_file.hasInputModel = true;
 
@@ -7722,7 +7932,7 @@ loadDone_espresso = function() {
 	}
 	getUnitcell("1");
 	setFrameValues("1");
-	getSymInfo();
+	//getSymInfo();
 	loadDone();
 }
 
@@ -7843,7 +8053,7 @@ function prepareSystemblock() {
 		var flagsymmetry = confirm("Do you want to introduce symmetry ?")
 		if (!flagsymmetry) {
 			cellDimString = "           celldm(1) = "
-				+ roundNumber(fromAngstromtoBohr(_file.cell.a))
+				+ roundNumber(fromAngstromToBohr(_file.cell.a))
 				+ "  \n           celldm(2) =  "
 				+ roundNumber(_file.cell.b / _file.cell.a)
 				+ "  \n           celldm(3) =  "
@@ -7866,7 +8076,7 @@ function prepareSystemblock() {
 		setVacuum();
 		scaleModelCoordinates("z", "div", _file.cell.c);
 		cellDimString = "            celldm(1) = "
-			+ roundNumber(fromAngstromtoBohr(_file.cell.a))
+			+ roundNumber(fromAngstromToBohr(_file.cell.a))
 			+ "  \n            celldm(2) =  " + roundNumber(_file.cell.b / _file.cell.a)
 			+ "  \n            celldm(3) =  " + roundNumber(_file.cell.c / _file.cell.a)
 			+ "  \n            celldm(4) =  "
@@ -7880,7 +8090,7 @@ function prepareSystemblock() {
 		scaleModelCoordinates("z", "div", _file.cell.c);
 		scaleModelCoordinates("y", "div", _file.cell.b);
 		cellDimString = "            celldm(1) = "
-			+ roundNumber(fromAngstromtoBohr(_file.cell.a))
+			+ roundNumber(fromAngstromToBohr(_file.cell.a))
 			+ "  \n            celldm(2) =  " + roundNumber(_file.cell.b / _file.cell.a)
 			+ "  \n            celldm(3) =  " + roundNumber(_file.cell.b / _file.cell.a)
 			+ "  \n            celldm(4) =  " + (cosRounded(90))
@@ -7894,7 +8104,7 @@ function prepareSystemblock() {
 		scaleModelCoordinates("y", "div", _file.cell.b);
 		scaleModelCoordinates("z", "div", _file.cell.c);
 		cellDimString = "            celldm(1) = "
-			+ roundNumber(fromAngstromtoBohr(_file.cell.a))
+			+ roundNumber(fromAngstromToBohr(_file.cell.a))
 			+ "  \n            celldm(2) =  " + roundNumber(1.00000)
 			+ "  \n            celldm(3) =  " + roundNumber(1.00000)
 			+ "  \n            celldm(4) =  "
@@ -7978,7 +8188,7 @@ function prepareSpecieblock() {
 		var elemento = sortedElement[i];
 		var numeroAtom = jmolEvaluate('{' + _file.frameNum + ' and _' + elemento
 				+ '}[0].label("%l")'); //tobe changed in atomic mass
-		scriptEl = "'" + elemento + " " + eleSymbMass[parseInt(numeroAtom)]
+		scriptEl = "'" + elemento + " " +  _constant.ELEM_MASS[parseInt(numeroAtom)]
 		+ " #Here goes the psudopotential filename e.g.: " + elemento
 		+ ".pbe-van_ak.UPF '";
 		scriptEl = scriptEl.replace("\n", " ");
@@ -8043,12 +8253,12 @@ function prepareKpoint() {
 //24th May 2011 P. Canepa
 
 
-loadDone_siesta = function(msg) {
+var loadDone_siesta = function(msg) {
 	warningMsg("This is a molecular reader. Therefore not all properties will be available.")
 	// Reset program and set filename if available
 	// This also extract the auxiliary info
 
-	_file.energyUnits = ENERGY_RYDBERG;
+	_file.energyUnits = _constant.ENERGY_RYDBERG;
 	_file.StrUnitEnergy = "R";
 	for (var i = 0; i < _file.info.length; i++) {
 		var line = _file.info[i].name;
@@ -8100,8 +8310,8 @@ loadDone_siesta = function(msg) {
  */
 
 
-loadDone_vaspoutcar = function() {
-	_file.energyUnits = ENERGY_EV;
+var loadDone_vaspoutcar = function() {
+	_file.energyUnits = _constant.ENERGY_EV;
 	_file.StrUnitEnergy = "e";
 	_file.counterFreq = 1; 
 	for (var i = 0; i < _file.info.length; i++) {
@@ -8125,11 +8335,11 @@ loadDone_vaspoutcar = function() {
 
 	getUnitcell("1");
 	setFrameValues("1");
-	getSymInfo();
+	//getSymInfo();
 	loadDone();
 }
 
-loadDone_xmlvasp = function() {
+var loadDone_xmlvasp = function() {
 
 	warningMsg("This reader is limited in its own functionalities\n  It does not recognize between \n geometry optimization and frequency calculations.")
 
@@ -8240,6 +8450,6 @@ function exportVASP() {
 /////// END EXPORT VASP
 
 
-})();
+})($, Jmol);
 
 

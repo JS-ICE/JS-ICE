@@ -22,11 +22,11 @@
  *  02111-1307  USA.
  */
 
-loadDone_gaussian = function() {
+var loadDone_gaussian = function() {
 
 	warningMsg("This is a molecular reader. Therefore not all properties will be available.")
 
-	_file.energyUnits = ENERGY_HARTREE;
+	_file.energyUnits = _constant.ENERGY_HARTREE;
 	_file.StrUnitEnergy = "H";
 
 	setTitleEcho();

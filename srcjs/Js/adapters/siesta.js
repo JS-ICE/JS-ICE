@@ -25,12 +25,12 @@
 //24th May 2011 P. Canepa
 
 
-loadDone_siesta = function(msg) {
+var loadDone_siesta = function(msg) {
 	warningMsg("This is a molecular reader. Therefore not all properties will be available.")
 	// Reset program and set filename if available
 	// This also extract the auxiliary info
 
-	_file.energyUnits = ENERGY_RYDBERG;
+	_file.energyUnits = _constant.ENERGY_RYDBERG;
 	_file.StrUnitEnergy = "R";
 	for (var i = 0; i < _file.info.length; i++) {
 		var line = _file.info[i].name;

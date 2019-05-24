@@ -23,7 +23,7 @@
  */
 
 
-function updateElementLists(x) {
+var updateElementLists = function(x) {
 	for (var i = (getbyID('colourbyElementList').options.length - 1); i >= 0; i--)
 		getbyID('colourbyElementList').remove(i);
 	for (var i = (getbyID('polybyElementList').options.length - 1); i >= 0; i--)
@@ -59,7 +59,7 @@ function updateElementLists(x) {
 	}
 }
 
-function createShowList(colourbyElementList){
+var createShowList = function(colourbyElementList){
 	var showList = colourbyElementList.push('by picking')
 	showList = showList.push('by distance')
 	return showList
@@ -67,7 +67,7 @@ function createShowList(colourbyElementList){
 
 
 
-function formResetAll() {
+var formResetAll = function() {
 
 	setStatus("");
 	setUnitCell();
@@ -86,11 +86,11 @@ function formResetAll() {
 	// document.HistoryGroup.reset();
 	// this disables antialias option BH: NOT - or at least not generally. We need a switch for this
 	runJmolScriptWait('antialiasDisplay = true;set hermiteLevel 0');
-	resetFreq();
-	resetOptimize();
+	//resetFreq();
+	_uff.resetOptimize();
 }
 
-function createSlider(name, label) {
+var createSlider = function(name, label) {
 	var s = '<div tabIndex="1" class="slider" id="_-div" style="float:left;width:150px;" >'
 		+ '<input class="slider-input" id="_-input" name="_-input" />'
 	    + '</div>'
@@ -100,20 +100,20 @@ function createSlider(name, label) {
 	
 }
 
-function createButton(name, text, onclick, disab, style) {
+var createButton = function(name, text, onclick, disab, style) {
 	return createButton1(name, text, onclick, disab, "button", style);
 }
 
-function getButtonText(name) {
+var getButtonText = function(name) {
 	return getbyID(name).innerHTML;
 }
 
-function setButtonText(name, text) {
+var setButtonText = function(name, text) {
 	getbyID(name).innerHTML = text;
 }
 
 
-function createButtonB(name, text, onclick, disab, style) {
+var createButtonB = function(name, text, onclick, disab, style) {
 	var s = "<BUTTON type='button' ";
 	s += "NAME='" + name + "' ";
 	s += "ID='" + name + "' ";
@@ -129,7 +129,7 @@ function createButtonB(name, text, onclick, disab, style) {
 }
 
 //This includes the class
-function createButton1(name, text, onclick, disab, myclass, style) {
+var createButton1 = function(name, text, onclick, disab, myclass, style) {
 	var s = "<INPUT TYPE='BUTTON'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -145,7 +145,7 @@ function createButton1(name, text, onclick, disab, myclass, style) {
 }
 
 
-function createText(name, text, onclick, disab) {
+var createText = function(name, text, onclick, disab) {
 	var s = "<INPUT TYPE='TEXT'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -157,7 +157,8 @@ function createText(name, text, onclick, disab) {
 	s += "OnChange='" + onclick + "'> ";
 	return s;
 }
-function createCheck(name, text, onclick, disab, def, value) {
+
+var createCheck = function(name, text, onclick, disab, def, value) {
 	var s = "<INPUT TYPE='CHECKBOX' ";
 	s += " NAME='" + name + "' ";
 	s += " ID='" + name + "' ";
@@ -177,7 +178,8 @@ function createCheck(name, text, onclick, disab, def, value) {
 	// tabForm[i].def=def;
 	return s;
 }
-function createRadio(name, text, onclick, disab, def, id, value) {
+
+var createRadio = function(name, text, onclick, disab, def, id, value) {
 	var s = "<INPUT TYPE='RADIO' ";
 	s += " NAME='" + name + "' ";
 	s += " ID='" + id + "' ";
@@ -198,7 +200,7 @@ function createRadio(name, text, onclick, disab, def, id, value) {
 	return s;
 }
 
-function createSelect(name, onclick, disab, size, optionValue, optionText, optionCheck, type, onkey) {
+var createSelect = function(name, onclick, disab, size, optionValue, optionText, optionCheck, type, onkey) {
 	optionText || (optionText = optionValue);
 	optionCheck || (optionCheck = [1]);
 	if (optionValue.length != optionText.length)
@@ -239,27 +241,27 @@ function createSelect(name, onclick, disab, size, optionValue, optionText, optio
 	return s;
 }
 
-function createSelectFunc(name, onclick, onkey, disab, size, optionValue, optionText, optionCheck) {
+var createSelectFunc = function(name, onclick, onkey, disab, size, optionValue, optionText, optionCheck) {
 	return createSelect(name, onclick, disab, size, optionValue, optionText, optionCheck, "func", onkey);
 }
 
-function createSelectmenu(name, onclick, disab, size, optionValue, optionText, optionCheck) {
+var createSelectmenu = function(name, onclick, disab, size, optionValue, optionText, optionCheck) {
 	return createSelect(name, onclick, disab, size, optionValue, optionText, optionCheck, "menu");
 }
 
-function createSelect2(name, onclick, disab, size) {
+var createSelect2 = function(name, onclick, disab, size) {
 	return createSelect(name, onclick, disab, size, []);
 }
 
-function createSelectKey(name, onclick, onkey, disab, size) {
+var createSelectKey = function(name, onclick, onkey, disab, size) {
 	return createSelect(name, onclick, disab, size, [], [], [], "key", onkey)
 }
 
-function createSelectElement(name, onclick, onkey, disab, size) {
+var createSelectElement = function(name, onclick, onkey, disab, size) {
 	return createSelect(name, onclick, disab, size, [], [], [], "elem", onkey)
 }
 
-function createTextArea(name, text, rows, cols, disab) {
+var createTextArea = function(name, text, rows, cols, disab) {
 	var s = "<TEXTAREA ";
 	s += "NAME='" + name + "' ";
 	s += "ID='" + name + "' ";
@@ -274,7 +276,7 @@ function createTextArea(name, text, rows, cols, disab) {
 	return s;
 }
 
-function createText2(name, text, size, disab) {
+var createText2 = function(name, text, size, disab) {
 	var s = "<INPUT TYPE='TEXT'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -287,7 +289,7 @@ function createText2(name, text, size, disab) {
 	return s;
 }
 
-function createTextSpectrum(name, text, size, disab) {
+var createTextSpectrum = function(name, text, size, disab) {
 	var s = "<INPUT TYPE='TEXT'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -300,7 +302,7 @@ function createTextSpectrum(name, text, size, disab) {
 	return s;
 }
 
-function createText3(name, text, value, onchange, disab) {
+var createText3 = function(name, text, value, onchange, disab) {
 	var s = "<INPUT TYPE='TEXT'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -314,7 +316,7 @@ function createText3(name, text, value, onchange, disab) {
 	return s;
 }
 
-function createText4(name, text, size, value, onchange, disab) {
+var createText4 = function(name, text, size, value, onchange, disab) {
 	var s = "<INPUT TYPE='TEXT'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -329,7 +331,7 @@ function createText4(name, text, size, value, onchange, disab) {
 	return s;
 }
 
-function createText5(name, text, size, value, onchange, disab) {
+var createText5 = function(name, text, size, value, onchange, disab) {
 	var s = "<INPUT TYPE='TEXT'";
 	s += "NAME='" + name + "' ";
 	s += "VALUE='" + text + "' ";
@@ -344,50 +346,50 @@ function createText5(name, text, size, value, onchange, disab) {
 	return s;
 }
 
-function createDiv(id, style, contents) {
+var createDiv = function(id, style, contents) {
 	return "<div id='" + id + "' style='" + style + "'>"
 		+ (contents == null ? "" : contents + "</div>");
 }
 
-function createLine(color, style) {
+var createLine = function(color, style) {
 	return "<hr color='#D8E4F8' style='" + style + "' >";
 }
 
 
-function getValue(id) {
+var getValue = function(id) {
 	return getbyID(id).value;
 }
 
-function setValue(id, val) {
+var setValue = function(id, val) {
 	getbyID(id).value = val;
 }
 
-function getValueSel(id) {
+var getValueSel = function(id) {
 	return getbyID(id)[getbyID(id).selectedIndex].value;
 }
 
-function getTextSel(id) {
+var getTextSel = function(id) {
 	return getbyID(id)[getbyID(id).selectedIndex].text;
 }
 
-function isChecked(id) {
+var isChecked = function(id) {
 	return getbyID(id).checked;
 }
 
-function checkBox(id) {
+var checkBox = function(id) {
 	getbyID(id).checked = true;
 }
 
-function uncheckBox(id) {
+var uncheckBox = function(id) {
 	getbyID(id).checked = false;
 }
 
-function resetValue(form) {
+var resetValue = function(form) {
 	var element = "document." + form + ".reset";
 	return element;
 }
 
-function getRadioSetValue(radios) {
+var getRadioSetValue = function(radios) {
 	// BH -- switched to top radios -- for frequency list as well as spectrum
 	for (var i = 0; i < radios.length; i++) {
 		if (radios[i].checked) {
@@ -396,60 +398,69 @@ function getRadioSetValue(radios) {
 	}
 }
 
-function makeDisable(element) {
+var disableElement = function(element) {
 	// BH 2018
-	var d = getbyID(element);
+	var d = (typeof element == "string" ? getbyID(element) : element);
 	if (d.type == "text")
 		d.readOnly = true;
-	else
+	else {
 		d.disabled = true;
+		if (d.tagName == "OPTION") {
+			d.style.background = d.style.color = "grey";
+		}
+	}
 }
 
-function makeEnable(element) {
+var enableElement = function(element) {
 	// BH 2018
-	var d = getbyID(element);
+	var d = (typeof element == "string" ? getbyID(element) : element);
 	if (d.type == "text")
 		d.readOnly = false;
-	else
+	else {
 		d.disabled = false;
+		if (d.tagName == "OPTION") {
+			d.style.background = "white";
+			d.style.color = "black";
+		}
+	}
 }
 
 
-function checkBoxStatus(form, element) {
+var checkBoxStatus = function(form, element) {
 	if (form.checked == true)
-		makeDisable(element);
+		disableElement(element);
 	if (form.checked == false)
-		makeEnable(element);
+		enableElement(element);
 }
 
-function checkBoxX(form) {
+var checkBoxX = function(form) {
 	var value = "";
 	var test = getbyID(form);
 	value = (test.checked) ? ("on") : ("off");
 	return value;
 }
 
-function setTextboxValue(nametextbox, valuetextbox) {
+var setTextboxValue = function(nametextbox, valuetextbox) {
 	var tbox = getbyID(nametextbox);
 	tbox.value = "";
 	if (tbox)
 		tbox.value = valuetextbox;
 }
 
-function uncheckRadio(radio) {
+var uncheckRadio = function(radio) {
 	var radioId = getbyName(radio);
 	for (var i = 0; i < radioId.length; i++)
 		radioId[i].checked = false;
 }
 
-function toggleDiv(form, me) {
+var toggleDiv = function(form, me) {
 	if (form.checked == true)
 		getbyID(me).style.display = "inline";
 	if (form.checked == false)
 		getbyID(me).style.display = "none";
 }
 
-function toggleDivValue(value, me,d) {
+var toggleDivValue = function(value, me,d) {
 	if (d.value == "+") {
 		d.value = "\u2212";
 		getbyID(me).style.display = "inline";
@@ -459,14 +470,14 @@ function toggleDivValue(value, me,d) {
 	}
 }
 
-function untoggleDiv(form, me) {
+var untoggleDiv = function(form, me) {
 	if (form.checked == true)
 		getbyID(me).style.display = "none";
 	if (form.checked == false)
 		getbyID(me).style.display = "inline";
 }
 
-function toggleDivRadioTrans(value, me) {
+var toggleDivRadioTrans = function(value, me) {
 	if (value == "off") {
 		getbyID(me).style.display = "inline";
 	} else {
@@ -474,34 +485,34 @@ function toggleDivRadioTrans(value, me) {
 	}
 }
 
-function setJmolFromCheckbox(box, value) {
+var setJmolFromCheckbox = function(box, value) {
 	runJmolScriptWait(value + " " + !!box.checked);
 }
 
-function getbyID(id) {
+var getbyID = function(id) {
 	return document.getElementById(id);
 }
 
-function getbyName(na) {
+var getbyName = function(na) {
 	return document.getElementsByName(na);
 }
 
 //This is meant to add new element to a list
-function addOption(selectbox, text, value) {
+var addOption = function(selectbox, text, value) {
 	var optn = document.createElement("OPTION");
 	optn.text = text;
 	optn.value = value;
 	selectbox.options.add(optn);
 }
 
-function cleanList(listname) {
+var cleanList = function(listname) {
 	var d = getbyID(listname)
 	if (d)
 		for (var i = d.options.length; --i >= 0;)
 			d.remove(i);
 }
 
-function selectListItem(list, itemToSelect) {
+var selectListItem = function(list, itemToSelect) {
 	// Loop through all the items
 	for (var i = 0; i < list.options.length; i++) {
 		if (list.options[i].value == itemToSelect) {
@@ -518,11 +529,11 @@ function selectListItem(list, itemToSelect) {
 //
 //	if (status == "on") {
 //		for (var i = 0; i < elements.length; i++)
-//			makeEnable(elements[i]);
+//			enableElement(elements[i]);
 //	}
 //	if (status == "off") {
 //		for (var i = 0; i < elements.length; i++)
-//			makeDisable(elements[i]);
+//			disableElement(elements[i]);
 //	}
 //
 //}

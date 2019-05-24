@@ -27,7 +27,7 @@ var _uff = {
 	counterUff : 0
 }
 
-function minimizeStructure() {
+_uff.minimizeStructure = function() {
 	var optCriterion = parseFloat(getValue("optciteria"));
 	var optSteps = parseInt(getValue("maxsteps"));
 	var form = getbyID("fixstructureUff");
@@ -41,19 +41,19 @@ function minimizeStructure() {
 		return false;
 	} else if (!form.checked) {
 		_uff.counterUff = 0;
-		setMinimizationCallbackFunction(scriptUffCallback);
+		setMinimizationCallbackFunction(_uff.scriptUffCallback);
 		runJmolScript("set debugscript on ;set logLevel 5;set minimizationCriterion " + optCriterion + "; minimize STEPS "
 				+ optSteps + "; set minimizationRefresh TRUE;  minimize;");
 	} else if (form.checked) {
 		_uff.counterUff = 0;
-		setMinimizationCallbackFunction(scriptUffCallback);
+		setMinimizationCallbackFunction(_uff.scriptUffCallback);
 		runJmolScript("set debugscript on ;set logLevel 5;set minimizationCriterion " + optCriterion + "; minimize STEPS "
 				+ optSteps
 				+ "; set minimizationRefresh TRUE;  minimize FIX {selected};");
 	}
 }
 
-function fixFragmentUff(form) {
+_uff.fixFragmentUff = function(form) {
 	if (form.checked) {
 		messageMsg("Now select the fragment you would like to optimize by the following options");
 		//fragmentSelect
@@ -62,18 +62,18 @@ function fixFragmentUff(form) {
 	}
 }
 
-function stopOptimize() {
+_uff.stopOptimize = function() {
 	runJmolScriptWait('minimize STOP;');
 }
 
-function resetOptimize() {
+_uff.resetOptimize = function() {
 	runJmolScriptWait('minimize STOP;');
 	setValue("optciteria", "0.001");
 	setValue("maxsteps", "100");
 	setValue("textUff", "");
 }
 
-function scriptUffCallback(b, step, d, e, f, g) {
+_uff.scriptUffCallback = function(b, step, d, e, f, g) {
 	var text = ("s = " + _uff.counterUff + " E = " + parseFloat(d).toPrecision(10)
 			+ " kJ/mol, dE = " + parseFloat(e).toPrecision(6) + " kJ/mol")
 	getbyID("textUff").value = text

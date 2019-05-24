@@ -1,6 +1,6 @@
 function enterCell() {
 	getUnitcell(_file.frameValue);
-//	getSymInfo();
+//	//getSymInfo();
 }
 
 function exitCell() {
@@ -42,11 +42,11 @@ function getUnitcell(i) {
 	case 1:
 		_file.cell.b = 0.000;
 		_file.cell.c = 0.000;
-		makeEnable("par_a");
+		enableElement("par_a");
 		setValue("par_a", "");
-		makeDisable("par_b");
+		disableElement("par_b");
 		setValue("par_b", "1");
-		makeDisable("par_c");
+		disableElement("par_c");
 		setValue("par_c", "1");
 		setValue("bovera", "0");
 		setValue("covera", "0");
@@ -55,11 +55,11 @@ function getUnitcell(i) {
 	case 2:
 		_file.cell.c = 0.000;
 		_file.cell.typeSystem = "slab";
-		makeEnable("par_a");
+		enableElement("par_a");
 		setValue("par_a", "");
-		makeEnable("par_b");
+		enableElement("par_b");
 		setValue("par_b", "");
-		makeDisable("par_c");
+		disableElement("par_c");
 		setValue("par_c", "1");
 		setValue("bovera", bOvera);
 		setValue("covera", "0");
@@ -69,11 +69,11 @@ function getUnitcell(i) {
 		_file.cell.alpha = cellparam[3];
 		_file.cell.beta = cellparam[4];
 		_file.cell.gamma = cellparam[5];
-		makeEnable("par_a");
+		enableElement("par_a");
 		setValue("par_a", "");
-		makeEnable("par_b");
+		enableElement("par_b");
 		setValue("par_b", "");
-		makeEnable("par_c");
+		enableElement("par_c");
 		setValue("par_c", "");
 		setValue("bovera", bOvera);
 		setValue("covera", cOvera);
@@ -147,7 +147,7 @@ function setCellDotted() {
 	}
 }
 
-getCurrentPacking = function() {
+var getCurrentPacking = function() {
 	// BH 2018
 	getValue("par_a") || setValue("par_a", 1);
 	getValue("par_b") || setValue("par_b", 1);
@@ -155,7 +155,7 @@ getCurrentPacking = function() {
 	return '{ ' + getValue("par_a") + ' ' + getValue("par_b") + ' ' + getValue("par_c") + '} ';
 }
 
-getCurrentUnitCell = function() {
+var getCurrentUnitCell = function() {
 	return '[ ' + parseFloat(getValue('a_frac')) + ' '
 		+ parseFloat(getValue('b_frac')) + ' '
 		+ parseFloat(getValue('c_frac')) + ' '
@@ -181,7 +181,7 @@ function setPackaging(packMode) {
 }
 
 
-getKindCell = function() {
+var getKindCell = function() {
 	var kindCell = getbyName("cella");
 	var kindCellfinal = null;
 	for (var i = 0; i < kindCell.length; i++)
@@ -193,7 +193,7 @@ getKindCell = function() {
 function setPackRangeAndReload(val) {
 	_cell.packRange = val;
 	reload("{1 1 1} RANGE " + val, getKindCell());
-	cellOperation();
+	//cellOperation();
 }
 
 function checkPack() {
@@ -219,12 +219,12 @@ function setCellType(value) {
 	} else {
 		reload(null, value);
 	}
-	cellOperation();
+	//cellOperation();
 }
 
 function applyPack(range) {
 	setPackRangeAndReload(parseFloat(range).toPrecision(2));
-	getbyID("slider.packMsg").innerHTML = packRange + " &#197";
+	getbyID("slider.packMsg").innerHTML = _cell.packRange + " &#197";
 }
 
 function setManualOrigin() {
@@ -238,7 +238,7 @@ function setManualOrigin() {
 		return false;
 	}
 	runJmolScriptWait("unitcell { " + x + " " + y + " " + z + " };");
-	cellOperation();
+	//cellOperation();
 }
 
 function setFashionAB(valueList) {

@@ -6,27 +6,6 @@ var version = "3.0.0"; // BH 2018
 
 // _m_file.js
 
-var _file = {
-		specData: null,
-		plotFreq: null
-};
-
-var _fileIsReload = false;
-
-var _cell = {};
-
-// pick.js
-
-var _constant = {};
-
-var _pick = {};
-
-// plotgraph.js
-
-var _plot = {};
-
-// for citations:
-
 var _global = {
 	citations : [
 	   { title:				
@@ -39,10 +18,24 @@ var _global = {
 	 ]  
 };
 
-var _surface = {};
+var _file = {
+		specData: null,
+		plotFreq: null
+};
 
-var _orient = {};
-var _show = {};
+var _fileIsReload = false;
+
+var _cell = {};
+
+var _constant = {};
+
 var _edit = {};
 
-var _symmetry = {};
+var _orient = {};
+
+var _pick = {};
+
+var _plot = {};
+
+var _show = {};
+

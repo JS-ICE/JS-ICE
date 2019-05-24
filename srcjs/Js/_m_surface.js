@@ -22,6 +22,14 @@
  *  02111-1307  USA.
  */
 
+var _surface = {		
+	SURFACE_VDW   			 : "isosurface VDW", // BH Q: Why was this VDW + 2.0 ?
+	SURFACE_VDW_PERIODIC     : "isosurface lattice _CELL_ VDW"
+	//SURFACE_VDW_MEP			 = "isosurface resolution 7 VDW map MEP"; // why SOLVENT, which is VDW + 1.2?
+	//SURFACE_VDW_MEP_PERIODIC = "isosurface lattice _CELL_ resolution 7 VDW map MEP";
+};
+
+
 function enterSurface() {
 	selectListItem(document.isoGroup.createIso, '');
 }
@@ -30,51 +38,43 @@ function exitSurface() {
 	cancelPicking();
 }
 
-var SURFACE_VDW   			 = "isosurface VDW"; // BH Q: Why was this VDW + 2.0 ?
-var SURFACE_VDW_PERIODIC     = "isosurface lattice _CELL_ VDW";
-//SURFACE_VDW_MEP			 = "isosurface resolution 7 VDW map MEP"; // why SOLVENT, which is VDW + 1.2?
-//SURFACE_VDW_MEP_PERIODIC = "isosurface lattice _CELL_ resolution 7 VDW map MEP";
-
-function onClickCreateIso(value) {
+_surface.onClickCreateIso = function(value) {
 	if (!value)
 		return;
 	if (value.indexOf("?") >= 0)
 		messageMsg("Select or drag-drop your density cube or JVXL file onto the 'browse' button, then press the 'load' button.");
-	createSurface(value, true);
+	_surface.createSurface(value, true);
 }
 
-var canMapIsosurface = function() {
+_surface.canMapIsosurface = function() {
 	if (jmolEvaluate("isosurface list").trim())
 		return true;	
 	messageMsg("First create an isosurface.")
 	return false;
 }
-function onClickMapCube() {
-	if (!canMapIsosurface())
+
+_surface.onClickMapCube = function() {
+	if (!_surface.canMapIsosurface())
 		return;
 	messageMsg("Select or drag-drop your potential cube file onto the 'browse' button, then press the 'load' button.");
-	createSurface("isosurface map '?'", false);	
+	_surface.createSurface("isosurface map '?'", false);	
 }
 
-function onClickMapMEP() {
-	if (!canMapIsosurface())
+_surface.onClickMapMEP = function() {
+	if (!_surface.canMapIsosurface())
 		return;
-	createSurface("isosurface map mep;isosurface cache;", false)
+	_surface.createSurface("isosurface map mep;isosurface cache;", false)
 }
 
-function onClickMapPlane() {
-	pickPlane(null, surfacePickPlaneCallback);
+_surface.surfacePickPlaneCallback = function() {
+	_surface.createSurface('isosurface PLANE $plane1 MAP color range 0.0 2.0 "?";', true);
 }
 
-function surfacePickPlaneCallback() {
-	createSurface('isosurface PLANE $plane1 MAP color range 0.0 2.0 "?";', true);
-}
-
-var createSurface = function(cmd, doClear) {
+_surface.createSurface = function(cmd, doClear) {
 	if (cmd.indexOf("_CELL_") >= 0)
-		cmd = cmd.replace("_CELL_", getCurrentCell()); 
+		cmd = cmd.replace("_CELL_", getCurrentUnitCell()); 
 	runJmolScript((doClear ? "isosurface delete;" : "") 
-			+ "set echo top left; echo creating ISOSURFACE...; refresh;" + cmd + '; echo;javascript getIsoInfo()');
+			+ "set echo top left; echo creating ISOSURFACE...; refresh;" + cmd + '; echo;javascript _surface.getIsoInfo()');
 }
 
 //function sendSurfaceMessage() {
@@ -86,7 +86,7 @@ var createSurface = function(cmd, doClear) {
 //	runJmolScript("write crystal_map.jvxl;");
 //}
 
-function getIsoInfo() {
+_surface.getIsoInfo = function() {
 	if (!jmolEvaluate("isosurface list").trim())
 		return;
 	
@@ -104,11 +104,11 @@ function getIsoInfo() {
 	setValue("dataMax", dataMaximum);
 }
 
-function setIsoColorscheme() {
+_surface.setIsoColorscheme = function() {
 	runJmolScriptWait('color $isosurface1 "' + getValue("isoColorScheme") + '"');
 }
 
-function setIsoColorRange() {
+_surface.setIsoColorRange = function() {
 	if (getbyID("dataMin") == "" || getbyID("dataMax") == "") {
 		errorMsg("Please, check values entered in the textboxes");
 		return false;
@@ -124,7 +124,7 @@ function setIsoColorRange() {
 	}
 }
 
-function setIsoColorReverse() {
+_surface.setIsoColorReverse = function() {
 	if (getbyID("dataMin") == "" || getbyID("dataMax") == "") {
 		errorMsg("Please, check values entered in the textboxes");
 		return false;
@@ -138,7 +138,7 @@ function setIsoColorReverse() {
 			+ ' ' + max);
 }
 
-function pickIsoValue() {
+_surface.pickIsoValue = function() {
 	var check = isChecked("measureIso");
 	if (check) {
 		messageMsg("Value are shown by hovering on the surface. Values are in e- *bohr^-3. Make sure your isosurface is completely opaque.");
@@ -148,7 +148,7 @@ function pickIsoValue() {
 	}
 }
 
-function removeStructure() {
+_surface.removeStructure = function() {
 	var check = isChecked("removeStr");
 	if (!check) {
 		runJmolScriptWait("select *; hide selected");
@@ -157,7 +157,7 @@ function removeStructure() {
 	}
 }
 
-function removeCellIso() {
+_surface.removeCellIso = function() {
 	var check = isChecked("removeCellI");
 	if (!check) {
 		runJmolScriptWait("unitcell OFF");
@@ -166,7 +166,7 @@ function removeCellIso() {
 	}
 }
 
-function setIsoPack() {
+_surface.setIsoPack = function() {
 	if (getValue("iso_a") == "" || getValue("iso_b") == ""
 			|| getValue("iso_c") == "") {
 		errorMsg("Please, check values entered in the textboxes");
@@ -194,8 +194,8 @@ function createIsoGrp() {
 			'isosurface "?"',
 			'isosurface OFF',
 			'isosurface ON',
-			SURFACE_VDW, 
-			SURFACE_VDW_PERIODIC,
+			_surface.SURFACE_VDW, 
+			_surface.SURFACE_VDW_PERIODIC,
 //			SURFACE_VDW_MEP,
 //			SURFACE_VDW_MEP_PERIODIC,
 			'isosurface SASURFACE',
@@ -214,92 +214,90 @@ function createIsoGrp() {
 	 * http://chemapps.stolaf.edu/jmol/docs/examples-11/new.htm isosurface /
 	 * lattice {a b c}
 	 */
-	var strIso = "<form autocomplete='nope'  id='isoGroup' name='isoGroup' style='display:none'>\n";
-	strIso += "<table class='contents'>\n";
-	strIso += "<tr><td colspan='2'>\n";
-	strIso += "<h2>IsoSurface</h2>\n";
-	strIso += "</td></tr>\n";
-	strIso += "<tr><td colspan='2'>\n";
-	//strIso += "Molecular (classic) isoSurfaces: \n <br>";
-	strIso += createSelect('createIso', 'onClickCreateIso(this.value)', 0, 0,
+	var str = "<form autocomplete='nope'  id='isoGroup' name='isoGroup' style='display:none'>\n";
+	str += "<table class='contents'>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "<h2>IsoSurface</h2>\n";
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	//str += "Molecular (classic) isoSurfaces: \n <br>";
+	str += createSelect('createIso', '_surface.onClickCreateIso(this.value)', 0, 0,
 			isoValue, isoName)
 			+ "&nbsp;";
-	strIso += createButton('removeIso', 'remove iso', 'runJmolScriptWait("isosurface OFF")','');
-	strIso += createLine('blue', '');
-	strIso += "</td></tr><tr><td colspan='2'>\n";
-	strIso += createButton('mapMEP', 'map charges', 'onClickMapMEP()','');
-	strIso += createButton('mapCube', 'map from CUBE file', 'onClickMapCube()','');
-	strIso += createButton('mapPlane', 'map plane', 'onClickPickPlane(null, surfacePickPlaneCallback)','');
-	strIso += "<br>Color map settings<br>\n ";
-	strIso += "<img src='images/band.png'><br><br>";
-	strIso += "- " + createText2("dataMin", "", "12", 0) + " + "
+	str += createButton('removeIso', 'remove iso', 'runJmolScriptWait("isosurface OFF")','');
+	str += createLine('blue', '');
+	str += "</td></tr><tr><td colspan='2'>\n";
+	str += createButton('mapMEP', 'map charges', '_surface.onClickMapMEP()','');
+	str += createButton('mapCube', 'map from CUBE file', '_surface.onClickMapCube()','');
+	str += createButton('mapPlane', 'map plane', 'onClickPickPlane(null, _surface.surfacePickPlaneCallback)','');
+	str += "<br>Color map settings<br>\n ";
+	str += "<img src='images/band.png'><br><br>";
+	str += "- " + createText2("dataMin", "", "12", 0) + " + "
 	+ createText2("dataMax", "", "12", 0) + " e- *bohr^-3<br>";
-	strIso += "<br> Colour-scheme "
-		+ createSelect('isoColorScheme', 'setIsoColorscheme()', 0, 0,
+	str += "<br> Colour-scheme "
+		+ createSelect('isoColorScheme', '_surface.setIsoColorscheme()', 0, 0,
 				colSchemeValue, colSchemeName) + "&nbsp<br>";
-	strIso += createButton('up', 'Update map', 'setIsoColorRange()', '');
-	// + createButton('reverseColor', 'Reverse colour', 'setIsoColorReverse()',
+	str += createButton('up', 'Update map', '_surface.setIsoColorRange()', '');
+	// + createButton('reverseColor', 'Reverse colour', '_surface.setIsoColorReverse()',
 	// '');
-	strIso += createLine('blue', '');
-	strIso += "<td><tr>\n";
-	// strIso+="Volume isoSurface<br>"
-	// strIso+=createButton('volIso', 'calculate', 'runJmolScriptWait('isosurface
+	str += createLine('blue', '');
+	str += "<td><tr>\n";
+	// str+="Volume isoSurface<br>"
+	// str+=createButton('volIso', 'calculate', 'runJmolScriptWait('isosurface
 	// VOLUME')', '') + " \n";
-	// strIso+=createText3('isoVol','','','',"");
-	// strIso+=createLine('blue' , '');
-	// strIso+="</td></tr>\n";
-	strIso += "<tr><td colspan='2'>\n";
-	strIso += "Expand isoSurface periodically <br>";
-	strIso += "<i>a: </i>";
-	strIso += "<input type='text'  name='iso_a' id='iso_a' size='1' class='text'>";
-	strIso += "<i> b: </i>";
-	strIso += "<input type='text'  name='iso_b' id='iso_b' size='1' class='text'>";
-	strIso += "<i> c: </i>";
-	strIso += "<input type='text'  name='iso_c' id='iso_c' size='1' class='text'>";
-	strIso += createButton('set_Isopack', 'packIso', 'setIsoPack()', '')
+	// str+=createText3('isoVol','','','',"");
+	// str+=createLine('blue' , '');
+	// str+="</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "Expand isoSurface periodically <br>";
+	str += "<i>a: </i>";
+	str += "<input type='text'  name='iso_a' id='iso_a' size='1' class='text'>";
+	str += "<i> b: </i>";
+	str += "<input type='text'  name='iso_b' id='iso_b' size='1' class='text'>";
+	str += "<i> c: </i>";
+	str += "<input type='text'  name='iso_c' id='iso_c' size='1' class='text'>";
+	str += createButton('set_Isopack', 'packIso', '_surface.setIsoPack()', '')
 	+ " \n";
-	strIso += createLine('blue', '');
-	strIso += "</td></tr>\n";
-	strIso += "<tr><td colspan='2'>\n";
-	strIso += "Style isoSurface:<br>";
-	strIso += "</td></tr>\n";
-	strIso += "<tr><td colspan='2'>\n";
-	strIso += createRadio("isofashion", "opaque",
+	str += createLine('blue', '');
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += "Style isoSurface:<br>";
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += createRadio("isofashion", "opaque",
 			'runJmolScriptWait("color isosurface opaque") ', 0, 1, "", "");
-	strIso += createRadio("isofashion", "translucent",
+	str += createRadio("isofashion", "translucent",
 			'runJmolScriptWait("color isosurface translucent") ', 0, 0, "", "")
 			+ "<br>";
-	strIso += createRadio("isofashion", "dots", 'runJmolScriptWait("isosurface  dots;") ',
+	str += createRadio("isofashion", "dots", 'runJmolScriptWait("isosurface  dots;") ',
 			0, 0, "", "");
-	strIso += createRadio("isofashion", "no-fill mesh",
+	str += createRadio("isofashion", "no-fill mesh",
 			'runJmolScriptWait("isosurface nofill mesh") ', 0, 0, "", "");
-	strIso += "</td></tr>\n";
-	strIso += "<tr><td>\n";
-	strIso += "Color Isosurface:\n";
-	strIso += "</td><td><script>\n";
-	strIso += "jmolColorPickerBox([setColorWhat,'isosurface'], '','surfaceColorPicker');";
-	strIso += "</script>";
-	strIso += "</td></tr>";
-	strIso += "<tr><td>\n";
-	strIso += createLine('blue', '');
-	strIso += createCheck("measureIso", "Measure value", "pickIsoValue()", 0,
+	str += "</td></tr>\n";
+	str += "<tr><td>\n";
+	str += "Color Isosurface:\n";
+	str += "</td><td><script>\n";
+	str += "jmolColorPickerBox([setColorWhat,'isosurface'], '','surfaceColorPicker');";
+	str += "</script>";
+	str += "</td></tr>";
+	str += "<tr><td>\n";
+	str += createLine('blue', '');
+	str += createCheck("measureIso", "Measure value", "_surface.pickIsoValue()", 0,
 			0, "measureIso")
 			+ "\n";
-	// strIso += "<input type='text' name='isoMeasure' id='isoMeasure' size='5'
+	// str += "<input type='text' name='isoMeasure' id='isoMeasure' size='5'
 	// class='text'> a.u.\n";
-	strIso += "</td></tr>\n";
-	strIso += "<tr><td colspan='2'>\n";
-	strIso += createCheck("removeStr", "Show structure beneath",
-			"removeStructure()", 0, 1, "")
+	str += "</td></tr>\n";
+	str += "<tr><td colspan='2'>\n";
+	str += createCheck("removeStr", "Show structure beneath",
+			"_surface.removeStructure()", 0, 1, "")
 			+ " \n";
-	strIso += createCheck("removeCellI", "Show cell", "removeCellIso()", 0, 1,
+	str += createCheck("removeCellI", "Show cell", "_surface.removeCellIso()", 0, 1,
 	"")
 	+ " \n";
-	strIso += createLine('blue', '');
-	strIso += "</td></tr>\n";
-	strIso += "</table>\n";
-	strIso += "</FORM>\n";
-	return strIso;
+	str += createLine('blue', '');
+	str += "</td></tr>\n";
+	str += "</table>\n";
+	str += "</FORM>\n";
+	return str;
 }
-
-

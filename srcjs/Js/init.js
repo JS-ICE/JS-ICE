@@ -1,25 +1,29 @@
 // note that JmolColorPicker is customized -- BH 2018
 
-function doClickSaveCurrentState() {
+var doClickSaveCurrentState = function() {
 	warningMsg("This option only saves the state temporarily. To save your work, use File...Export...image+state(PNGJ). The image created can be dragged back into Jmol or JSmol or sent to a colleague to reproduce the current state exactly as it appears in the image.");
 	runJmolScriptWait('save ORIENTATION orask; save STATE stask; save BOND bask');
 }
 
-function doClickReloadCurrentState() {
+var doClickReloadCurrentState = function() {
 	runJmolScriptWait('restore ORIENTATION orask; restore STATE stask; restore BOND bask;');
 }
 
-runJmolScript = function(script) {
+var runJmolScript = function(script) {
 	debugSay(script);
 	jmolScript(script);	
 }
 
-runJmolScriptWait = function(script) {
+var runJmolScriptWait = function(script) {
 	debugSay(script);
 	jmolScriptWait(script);	
 }
 
-createApplet = function() {
+var getJmolValue = function(expression) {
+	return Jmol.evaluateVar(jmolApplet0, expression);
+}
+
+var createApplet = function() {
 	Jmol.Info || (Jmol.Info = {});
 	Jmol.Info.serverUrl = "https://chemapps.stolaf.edu/jmol/jsmol/php/jmol.php"
 	jmolSetAppletColor("white");
@@ -32,22 +36,22 @@ createApplet = function() {
 			);
 }
 
-setAntialias = function(isON) {
+var setAntialias = function(isOn) {
 	runJmolScriptWait(isOn? 
 			"antialiasDisplay = true;set hermiteLevel 5"
 			: "antialiasDisplay = false;set hermiteLevel 0"
 	);
 }
 
-function setStatus(status) {
+var setStatus = function(status) {
 	setTextboxValue("statusLine", status); 
 }
 		
-function warningMsg(msg) {
+var warningMsg = function(msg) {
 	alert("WARNING: " + msg);
 }
 
-function errorMsg(msg) {
+var errorMsg = function(msg) {
 	if (msg.indexOf("#CANCELED#") < 0) {
 		alert("ERROR: " + msg);
 	} else {
@@ -56,15 +60,15 @@ function errorMsg(msg) {
 	return false;
 }
 
-function messageMsg(msg) {
+var messageMsg = function(msg) {
 	alert(msg);
 }
 
-function docWriteTabs() {
+var docWriteTabs = function() {
 	document.write(createTabMenu());
 }
 
-function docWriteBottomFrame() {
+var docWriteBottomFrame = function() {
 	document.write("<br> ");	
 	document.write(createText5('statusLine', '', '108', '', '', "disab"));
 	document.write("<br>");
@@ -84,12 +88,12 @@ function docWriteBottomFrame() {
 	document.write(createButton("Feedback", 'Feedback', 'newAppletWindowFeed()', 0));
 }
 
-function docWriteRightFrame() {
+var docWriteRightFrame = function() {
 	document.write(createAllMenus());
 }
 
 
-function docWriteSpectrumHeader() {
+var docWriteSpectrumHeader = function() {
 	// for spectrum.html
 //	var s = 
 	//"Min Freq. " + createTextSpectrum("minValue", "", "5", "")

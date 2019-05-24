@@ -57,8 +57,8 @@ function setMotion(axis) {
 		return false;
 	}
 
-	// /(_orient.motion == "translate" )? (makeDisable("-z") + makeDisable("z")) :
-	// (makeEnable("-z") + makeEnable("z"))
+	// /(_orient.motion == "translate" )? (disableElement("-z") + disableElement("z")) :
+	// (enableElement("-z") + enableElement("z"))
 
 	if (magnitudeMotion == "") {
 		errorMsg("Please, check value entered in the textbox");

@@ -164,10 +164,10 @@ function plotEnergies(){
 			var modelnumber = _file.energy.length - 1;		
 			if(i > 0 && i < _file.info.length)
 				var previous = i - 1;
-			var e = fromHartreetokJ(name);
+			var e = fromHartreeToKJ(name);
 			var e1;
 //			if(i == 0 || (e1 = energyGauss[i - 1]) == null) {
-				energy = Math.abs(e - fromHartreetokJ(_file.energy[last]));
+				energy = Math.abs(e - fromHartreeToKJ(_file.energy[last]));
 //			} else if (previous > 0) {
 //				if (e != e1)
 //					energy = Math.abs(e - e1);

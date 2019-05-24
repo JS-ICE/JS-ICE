@@ -25,115 +25,215 @@
 
 
 
-var ENERGY_EV      = 0;
-var ENERGY_HARTREE = 1;
-var ENERGY_RYDBERG = 2;
+_constant.ENERGY_EV      = 0;
+_constant.ENERGY_HARTREE = 1;
+_constant.ENERGY_RYDBERG = 2;
 
-
-var eleSymb = [];
-eleSymb[0] = "select";
-eleSymb[1] = "H";
-eleSymb[2] = "He";
-eleSymb[3] = "Li";
-eleSymb[4] = "Be";
-eleSymb[5] = "B";
-eleSymb[6] = "C";
-eleSymb[7] = "N";
-eleSymb[8] = "O";
-eleSymb[9] = "F";
-eleSymb[10] = "Ne";
-eleSymb[11] = "Na";
-eleSymb[12] = "Mg";
-eleSymb[13] = "Al";
-eleSymb[14] = "Si";
-eleSymb[15] = "P";
-eleSymb[16] = "S";
-eleSymb[17] = "Cl";
-eleSymb[18] = "Ar";
-eleSymb[19] = "K";
-eleSymb[20] = "Ca";
-eleSymb[21] = "Sc";
-eleSymb[22] = "Ti";
-eleSymb[23] = "V";
-eleSymb[24] = "Cr";
-eleSymb[25] = "Mn";
-eleSymb[26] = "Fe";
-eleSymb[27] = "Co";
-eleSymb[28] = "Ni";
-eleSymb[29] = "Cu";
-eleSymb[30] = "Zn";
-eleSymb[31] = "Ga";
-eleSymb[32] = "Ge";
-eleSymb[33] = "As";
-eleSymb[34] = "Se";
-eleSymb[35] = "Br";
-eleSymb[36] = "No";
-eleSymb[37] = "Rb";
-eleSymb[38] = "Sr";
-eleSymb[39] = "Y";
-eleSymb[40] = "Zr";
-eleSymb[41] = "Nb";
-eleSymb[42] = "Mo";
-eleSymb[43] = "Tc";
-eleSymb[44] = "Ru";
-eleSymb[45] = "Rh";
-eleSymb[46] = "Pd";
-eleSymb[47] = "Ag";
-eleSymb[48] = "Cd";
-eleSymb[49] = "In";
-eleSymb[50] = "Sn";
-eleSymb[51] = "Sb";
-eleSymb[52] = "Te";
-eleSymb[53] = "I";
-eleSymb[54] = "Xe";
-eleSymb[55] = "Cs";
-eleSymb[56] = "Ba";
-eleSymb[57] = "La";
-eleSymb[58] = "Ce";
-eleSymb[59] = "Lr";
-eleSymb[60] = "Md";
-eleSymb[61] = "Pr";
-eleSymb[62] = "Sm";
-eleSymb[63] = "Eu";
-eleSymb[64] = "Gd";
-eleSymb[65] = "Tb";
-eleSymb[66] = "Dy";
-eleSymb[67] = "Ho";
-eleSymb[68] = "Er";
-eleSymb[69] = "Tm";
-eleSymb[70] = "Yb";
-eleSymb[71] = "Lu";
-eleSymb[72] = "Hf";
-eleSymb[73] = "Ta";
-eleSymb[74] = "W";
-eleSymb[75] = "Re";
-eleSymb[76] = "Os";
-eleSymb[77] = "Ir";
-eleSymb[78] = "Pt";
-eleSymb[79] = "Au";
-eleSymb[80] = "Hg";
-eleSymb[81] = "Tl";
-eleSymb[82] = "Pb";
-eleSymb[83] = "Bi";
-eleSymb[84] = "Po";
-eleSymb[85] = "At";
-eleSymb[86] = "Rd";
-eleSymb[87] = "Fr";
-eleSymb[88] = "Rn";
-eleSymb[89] = "Ac";
-eleSymb[90] = "Th";
-eleSymb[91] = "Pa";
-eleSymb[92] = "Sg";
-eleSymb[93] = "Np";
-eleSymb[94] = "Pu";
-eleSymb[95] = "Am";
-eleSymb[96] = "Cm";
-eleSymb[97] = "Bk";
-eleSymb[98] = "Cf";
-eleSymb[99] = "Es";
+_constant.ELEM_SYM = [
+	//0
+	 "select",
+	//1
+	 "H",
+	//2
+	 "He",
+	//3
+	 "Li",
+	//4
+	 "Be",
+	//5
+	 "B",
+	//6
+	 "C",
+	//7
+	 "N",
+	//8
+	 "O",
+	//9
+	 "F",
+	//10
+	 "Ne",
+	//11
+	 "Na",
+	//12
+	 "Mg",
+	//13
+	 "Al",
+	//14
+	 "Si",
+	//15
+	 "P",
+	//16
+	 "S",
+	//17
+	 "Cl",
+	//18
+	 "Ar",
+	//19
+	 "K",
+	//20
+	 "Ca",
+	//21
+	 "Sc",
+	//22
+	 "Ti",
+	//23
+	 "V",
+	//24
+	 "Cr",
+	//25
+	 "Mn",
+	//26
+	 "Fe",
+	//27
+	 "Co",
+	//28
+	 "Ni",
+	//29
+	 "Cu",
+	//30
+	 "Zn",
+	//31
+	 "Ga",
+	//32
+	 "Ge",
+	//33
+	 "As",
+	//34
+	 "Se",
+	//35
+	 "Br",
+	//36
+	 "No",
+	//37
+	 "Rb",
+	//38
+	 "Sr",
+	//39
+	 "Y",
+	//40
+	 "Zr",
+	//41
+	 "Nb",
+	//42
+	 "Mo",
+	//43
+	 "Tc",
+	//44
+	 "Ru",
+	//45
+	 "Rh",
+	//46
+	 "Pd",
+	//47
+	 "Ag",
+	//48
+	 "Cd",
+	//49
+	 "In",
+	//50
+	 "Sn",
+	//51
+	 "Sb",
+	//52
+	 "Te",
+	//53
+	 "I",
+	//54
+	 "Xe",
+	//55
+	 "Cs",
+	//56
+	 "Ba",
+	//57
+	 "La",
+	//58
+	 "Ce",
+	//59
+	 "Lr",
+	//60
+	 "Md",
+	//61
+	 "Pr",
+	//62
+	 "Sm",
+	//63
+	 "Eu",
+	//64
+	 "Gd",
+	//65
+	 "Tb",
+	//66
+	 "Dy",
+	//67
+	 "Ho",
+	//68
+	 "Er",
+	//69
+	 "Tm",
+	//70
+	 "Yb",
+	//71
+	 "Lu",
+	//72
+	 "Hf",
+	//73
+	 "Ta",
+	//74
+	 "W",
+	//75
+	 "Re",
+	//76
+	 "Os",
+	//77
+	 "Ir",
+	//78
+	 "Pt",
+	//79
+	 "Au",
+	//80
+	 "Hg",
+	//81
+	 "Tl",
+	//82
+	 "Pb",
+	//83
+	 "Bi",
+	//84
+	 "Po",
+	//85
+	 "At",
+	//86
+	 "Rd",
+	//87
+	 "Fr",
+	//88
+	 "Rn",
+	//89
+	 "Ac",
+	//90
+	 "Th",
+	//91
+	 "Pa",
+	//92
+	 "Sg",
+	//93
+	 "Np",
+	//94
+	 "Pu",
+	//95
+	 "Am",
+	//96
+	 "Cm",
+	//97
+	 "Bk",
+	//98
+	 "Cf",
+	//99
+	 "Es"
+	 ];
 
 ////Arrays elements : 594
-var spaceGroupName = new Array("select", "1, P1", "2, P-1", "3:b, P121",
+_constant.SPACE_GROUP_NAME = ["select", "1, P1", "2, P-1", "3:b, P121",
 		"3:b, P2", "3:c, P112", "3:a, P211", "4:b, P1211", "4:b, P21",
 		"4:b*, P1211*", "4:c, P1121", "4:c*, P1121*", "4:a, P2111",
 		"4:a*, P2111*", "5:b1, C121", "5:b1, C2", "5:b2, A121", "5:b3, I121",
@@ -274,9 +374,10 @@ var spaceGroupName = new Array("select", "1, P1", "2, P-1", "3:b, P121",
 		"222:02:00, Pn-3n", "223, Pm-3n", "224:01:00, Pn-3m",
 		"224:02:00, Pn-3m", "225, Fm-3m", "226, Fm-3c", "227:01:00, Fd-3m",
 		"227:02:00, Fd-3m", "228:01:00, Fd-3c", "228:02:00, Fd-3c",
-		"229, Im-3m", "230, Ia-3d");
+		"229, Im-3m", "230, Ia-3d"
+		];
 
-var spaceGroupValue = new Array("select", "1", "2", "3:b", "3:b", "3:c", "3:a",
+_constant.SPACE_GROUP_VALUE = ["select", "1", "2", "3:b", "3:b", "3:c", "3:a",
 		"4:b", "4:b", "4:b*", "4:c", "4:c*", "4:a", "4:a*", "5:b1", "5:b1",
 		"5:b2", "5:b3", "5:c1", "5:c2", "5:c3", "5:a1", "5:a2", "5:a3", "6:b",
 		"6:b", "6:c", "6:a", "7:b1", "7:b1", "7:b2", "7:b2", "7:b3", "7:b3",
@@ -352,106 +453,209 @@ var spaceGroupValue = new Array("select", "1", "2", "3:b", "3:b", "3:c", "3:a",
 		"208", "209", "210", "211", "212", "213", "214", "215", "216", "217",
 		"218", "219", "220", "221", "222:01:0", "222:02:0", "223", "224:01:0",
 		"224:02:0", "225", "226", "227:01:0", "227:02:0", "228:01:0",
-		"228:02:0", "229", "230");
+		"228:02:0", "229", "230"
+		];
 
-var eleSymbMass = [];
-eleSymbMass[0] = "select";
-eleSymbMass[1] = 1.00;
-eleSymbMass[2] = 4.00;
-eleSymbMass[3] = 6.94;
-eleSymbMass[4] = 9.01;
-eleSymbMass[5] = 10.81;
-eleSymbMass[6] = 12.01;
-eleSymbMass[7] = 14.01;
-eleSymbMass[8] = 16.00;
-eleSymbMass[9] = 19.00;
-eleSymbMass[10] = 20.18;
-eleSymbMass[11] = 22.99;
-eleSymbMass[12] = 24.31;
-eleSymbMass[13] = 26.98;
-eleSymbMass[14] = 28.09;
-eleSymbMass[15] = 30.97;
-eleSymbMass[16] = 32.06;
-eleSymbMass[17] = 35.45;
-eleSymbMass[18] = 39.95;
-eleSymbMass[19] = 39.10;
-eleSymbMass[20] = 40.08;
-eleSymbMass[21] = 44.96;
-eleSymbMass[22] = 47.88;
-eleSymbMass[23] = 50.94;
-eleSymbMass[24] = 52.00;
-eleSymbMass[25] = 54.94;
-eleSymbMass[26] = 55.85;
-eleSymbMass[27] = 58.93;
-eleSymbMass[28] = 58.69;
-eleSymbMass[29] = 63.55;
-eleSymbMass[30] = 65.38;
-eleSymbMass[31] = 69.72;
-eleSymbMass[32] = 72.59;
-eleSymbMass[33] = 74.92;
-eleSymbMass[34] = 78.96;
-eleSymbMass[35] = 79.90;
-eleSymbMass[36] = 83.80;
-eleSymbMass[37] = 85.47;
-eleSymbMass[38] = 87.62;
-eleSymbMass[39] = 88.91;
-eleSymbMass[40] = 91.22;
-eleSymbMass[41] = 92.91;
-eleSymbMass[42] = 95.94;
-eleSymbMass[43] = 98.00;
-eleSymbMass[44] = 101.07;
-eleSymbMass[45] = 102.91;
-eleSymbMass[46] = 106.42;
-eleSymbMass[47] = 107.87;
-eleSymbMass[48] = 112.41;
-eleSymbMass[49] = 114.82;
-eleSymbMass[50] = 118.69;
-eleSymbMass[51] = 121.75;
-eleSymbMass[52] = 127.60;
-eleSymbMass[53] = 126.90;
-eleSymbMass[54] = 131.29;
-eleSymbMass[55] = 132.91;
-eleSymbMass[56] = 137.34;
-eleSymbMass[57] = 138.91;
-eleSymbMass[58] = 140.12;
-eleSymbMass[59] = 140.91;
-eleSymbMass[60] = 144.24;
-eleSymbMass[61] = 145.00;
-eleSymbMass[62] = 150.36;
-eleSymbMass[63] = 151.96;
-eleSymbMass[64] = 157.25;
-eleSymbMass[65] = 158.93;
-eleSymbMass[66] = 162.50;
-eleSymbMass[67] = 164.93;
-eleSymbMass[68] = 167.26;
-eleSymbMass[69] = 168.93;
-eleSymbMass[70] = 173.04;
-eleSymbMass[71] = 174.97;
-eleSymbMass[72] = 178.49;
-eleSymbMass[73] = 180.95;
-eleSymbMass[74] = 183.85;
-eleSymbMass[75] = 186.21;
-eleSymbMass[76] = 190.20;
-eleSymbMass[77] = 192.22;
-eleSymbMass[78] = 195.09;
-eleSymbMass[79] = 196.97;
-eleSymbMass[80] = 200.59;
-eleSymbMass[81] = 204.38;
-eleSymbMass[82] = 207.19;
-eleSymbMass[83] = 208.98;
-eleSymbMass[84] = 209.00;
-eleSymbMass[85] = 210.00;
-eleSymbMass[86] = 222.00;
-eleSymbMass[87] = 223.00;
-eleSymbMass[88] = 226.00;
-eleSymbMass[89] = 227.00;
-eleSymbMass[90] = 232.04;
-eleSymbMass[91] = 231.04;
-eleSymbMass[92] = 238.04;
-eleSymbMass[93] = 237.05;
-eleSymbMass[94] = 244.00;
-eleSymbMass[95] = 243.00;
-eleSymbMass[96] = 247.00;
-eleSymbMass[97] = 247.00;
-eleSymbMass[98] = 251.00;
-eleSymbMass[99] = 252.00;
+_constant.ELEM_MASS = [
+	
+	//0
+	 "select",
+	//1
+	 1.00,
+	//2
+	 4.00,
+	//3
+	 6.94,
+	//4
+	 9.01,
+	//5
+	 10.81,
+	//6
+	 12.01,
+	//7
+	 14.01,
+	//8
+	 16.00,
+	//9
+	 19.00,
+	//10
+	 20.18,
+	//11
+	 22.99,
+	//12
+	 24.31,
+	//13
+	 26.98,
+	//14
+	 28.09,
+	//15
+	 30.97,
+	//16
+	 32.06,
+	//17
+	 35.45,
+	//18
+	 39.95,
+	//19
+	 39.10,
+	//20
+	 40.08,
+	//21
+	 44.96,
+	//22
+	 47.88,
+	//23
+	 50.94,
+	//24
+	 52.00,
+	//25
+	 54.94,
+	//26
+	 55.85,
+	//27
+	 58.93,
+	//28
+	 58.69,
+	//29
+	 63.55,
+	//30
+	 65.38,
+	//31
+	 69.72,
+	//32
+	 72.59,
+	//33
+	 74.92,
+	//34
+	 78.96,
+	//35
+	 79.90,
+	//36
+	 83.80,
+	//37
+	 85.47,
+	//38
+	 87.62,
+	//39
+	 88.91,
+	//40
+	 91.22,
+	//41
+	 92.91,
+	//42
+	 95.94,
+	//43
+	 98.00,
+	//44
+	 101.07,
+	//45
+	 102.91,
+	//46
+	 106.42,
+	//47
+	 107.87,
+	//48
+	 112.41,
+	//49
+	 114.82,
+	//50
+	 118.69,
+	//51
+	 121.75,
+	//52
+	 127.60,
+	//53
+	 126.90,
+	//54
+	 131.29,
+	//55
+	 132.91,
+	//56
+	 137.34,
+	//57
+	 138.91,
+	//58
+	 140.12,
+	//59
+	 140.91,
+	//60
+	 144.24,
+	//61
+	 145.00,
+	//62
+	 150.36,
+	//63
+	 151.96,
+	//64
+	 157.25,
+	//65
+	 158.93,
+	//66
+	 162.50,
+	//67
+	 164.93,
+	//68
+	 167.26,
+	//69
+	 168.93,
+	//70
+	 173.04,
+	//71
+	 174.97,
+	//72
+	 178.49,
+	//73
+	 180.95,
+	//74
+	 183.85,
+	//75
+	 186.21,
+	//76
+	 190.20,
+	//77
+	 192.22,
+	//78
+	 195.09,
+	//79
+	 196.97,
+	//80
+	 200.59,
+	//81
+	 204.38,
+	//82
+	 207.19,
+	//83
+	 208.98,
+	//84
+	 209.00,
+	//85
+	 210.00,
+	//86
+	 222.00,
+	//87
+	 223.00,
+	//88
+	 226.00,
+	//89
+	 227.00,
+	//90
+	 232.04,
+	//91
+	 231.04,
+	//92
+	 238.04,
+	//93
+	 237.05,
+	//94
+	 244.00,
+	//95
+	 243.00,
+	//96
+	 247.00,
+	//97
+	 247.00,
+	//98
+	 251.00,
+	//99
+	 252.00
+];

@@ -13,7 +13,7 @@ var sampleOptionArr = ["Load a Sample File",
 	"urea VASP test"
 ]
 
-function onChangeLoadSample(value) {
+var onChangeLoadSample = function(value) {
 	var fname = null;
 	switch(value) {
 	case "urea VASP test":
@@ -65,16 +65,16 @@ function enterFile() {
 function exitFile() {
 }
 
-file_method = function(methodName, defaultMethod, params) {
+var file_method = function(methodName, defaultMethod, params) {
 	// Execute a method specific to a given file type, for example:
-	// loadDone_crystal
+	// var loadDone_crystal
 	params || (params = []);
 	methodName += "_" + _file.fileType;
 	var f = self[methodName] || defaultMethod;
 	return (f && f.apply(null, params));
 }
 
-reload = function(packing, filter, more) {	
+var reload = function(packing, filter, more) {	
 	// no ZAP here
 	runJmolScriptWait("set echo top left; echo reloading...;");
 	loadFile("", packing, filter, more);
@@ -84,11 +84,11 @@ reload = function(packing, filter, more) {
 //	getUnitcell(1);
 }
 
-loadUser = function(packing, filter) {
+var loadUser = function(packing, filter) {
 	loadFile("?", packing, filter);
 }
 
-loadFile = function(fileName, packing, filter, more) {
+var loadFile = function(fileName, packing, filter, more) {
 	packing || (packing = "");
 	filter = (filter ? " FILTER '" + filter + "'" : "");
 	more || (more = "");
@@ -100,7 +100,7 @@ loadFile = function(fileName, packing, filter, more) {
 	runJmolScript("load '" + fileName + "' " + packing + filter + ";" + more);
 }
 
-function setDefaultJmolSettings() {
+var setDefaultJmolSettings = function() {
 	runJmolScriptWait('select all; wireframe 0.15; spacefill 20% ;cartoon off; backbone off;');
 	_slider.radii.setValue(20);
 	_slider.bond.setValue(15);
@@ -127,7 +127,7 @@ function setDefaultJmolSettings() {
 	// getbyID('Perspective').innerHTML = 3;
 }
 
-function onChangeLoad(load) {
+var onChangeLoad = function(load) {
 //	formResetAll();
 	switch (load) {
 	case "loadC":
@@ -174,7 +174,7 @@ function file_loadedCallback(filePath) {
 	_file = {
 			cell        : {},
 			fileType    : jmolEvaluate("_fileType").toLowerCase(), 
-			energyUnits : ENERGY_EV,
+			energyUnits : _constant.ENERGY_EV,
 			strUnitEnergy : "e",
 			hasInputModel : false,
 			symmetry    : null,
@@ -208,11 +208,11 @@ function file_loadedCallback(filePath) {
 	file_method("loadDone", loadDone);
 }
 
-loadDone = function() {
+var loadDone = function() {
 	setTitleEcho();
 }
 
-function cleanAndReloadForm() {
+var cleanAndReloadForm = function() {
 	// this method was called for castep, dmol, molden, quantumespresso, vasp loading	
 	setDefaultJmolSettings();
 	document.fileGroup.reset();
@@ -227,7 +227,7 @@ function cleanAndReloadForm() {
 	setTitleEcho();
 }
 
-setFlags = function() {
+var setFlags = function() {
 	// BH TODO: missing xmlvasp?
 	switch (_file.fileType) {
 	default:
@@ -295,17 +295,17 @@ setFlags = function() {
 	}
 }
 
-function onChangeSave(save) {
+var onChangeSave = function(save) {
 	// see menu.js
 	switch (save) {
 	case "savePNG":
 		runJmolScript('write PNG "jice.png"');
 		break;
 	case "savePNGJ":
-		runJmoLScript('write PNGJ "jice.png"');
+		runJmolScript('write PNGJ "jice.png"');
 		break;
 	case "saveXYZ":
-		runJmoLScript('write COORDS XYZ jice.xyz');
+		runJmolScript('write COORDS XYZ jice.xyz');
 		break;
 	case "saveFrac":
 		saveFractionalCoordinate();
@@ -329,13 +329,13 @@ function onChangeSave(save) {
 		exportGULP();
 		break;
 	case "savePOV":
-		runJmoLScript('write POVRAY jice.pov');
+		runJmolScript('write POVRAY jice.pov');
 		break;
 	case "savepdb":
-		runJmoLScript('write PDB jice.pdb');
+		runJmolScript('write PDB jice.pdb');
 		break;
 	case "saveState":
-		runJmoLScript('write STATE jice.spt');
+		runJmolScript('write STATE jice.spt');
 		break;
 	case "savefreqHtml":
 		newAppletWindowFreq();
@@ -345,33 +345,33 @@ function onChangeSave(save) {
 }
 
 
-function printFileContent() {
+var printFileContent = function() {
 	runJmolScript("console; getProperty fileContents;");
 }
 
 
-function setTitleEcho() {
+var setTitleEcho = function() {
 // BH this is not a generally useful thing to do. Crystal only?
 	var titleFile = extractInfoJmolString("fileHeader").split("\n")[0];
 	runJmolScriptWait('set echo top right; echo "' + titleFile + ' ";');
 }
 
 
-function setFileName() {
+var setFileName = function() {
 	setStatus(jmolEvaluate("_modelFile"));
 }
 
-function saveStateAndOrientation_a() {
+var saveStateAndOrientation_a = function() {
 	// used in castep, gulp, and vasp output methods, and in symmetry#figureOutSpacegroup
 	runJmolScriptWait("save ORIENTATION orienta; save STATE status;");
 }
 
-function restoreStateAndOrientation_a() {
+var restoreStateAndOrientation_a = function() {
 	runJmolScriptWait("restore ORIENTATION orienta; restore STATE status;");
 }
 
 
-function createFileGrp() { // Here the order is crucial
+var createFileGrp = function() { // Here the order is crucial
 	var elOptionArr = new Array("default", "loadC", "reload", "loadcif",
 			"loadxyz", "loadOutcastep", "loadcrystal", "loadDmol",
 			"loadaimsfhi", "loadgauss", "loadgromacs", "loadGulp",
@@ -387,19 +387,19 @@ function createFileGrp() { // Here the order is crucial
 			"ShelX (*.*)", "VASP (OUTCAR, POSCAR)", "VASP (*.xml)",
 			"WIEN2k (*.struct)", "Xcrysden (*.xtal)", "Jmol state (*.spt,*.png)");
 
-	var strFile = "<form autocomplete='nope'  id='fileGroup' name='fileGroup' style='display:inline' class='contents'>\n";
-	strFile += "<h2>File manager</h2>\n";
-	strFile += "<table><tr><td>Drag-drop a file into JSmol or use the menu below.<br>\n";
-	strFile += createSelectmenu('Load File', 'onChangeLoad(value)', 0, 1,
+	var str = "<form autocomplete='nope'  id='fileGroup' name='fileGroup' style='display:inline' class='contents'>\n";
+	str += "<h2>File manager</h2>\n";
+	str += "<table><tr><td>Drag-drop a file into JSmol or use the menu below.<br>\n";
+	str += createSelectmenu('Load File', 'onChangeLoad(value)', 0, 1,
 			elOptionArr, elOptionText);
-	strFile += "</td><td><div style=display:none>model #" +
+	str += "</td><td><div style=display:none>model #" +
 		createText2("modelNo", "", 7, "")
 		+ "</div></td></tr><tr><td>\n";
-	strFile += "Sample Files<BR>\n";
-	strFile += createSelectmenu('Sample Files', 'onChangeLoadSample(value)', 0, 1,
+	str += "Sample Files<BR>\n";
+	str += createSelectmenu('Sample Files', 'onChangeLoadSample(value)', 0, 1,
 			sampleOptionArr);
-	strFile += "</td></tr></table><BR><BR>\n";
-	strFile += "Export/Save File<BR>\n";
+	str += "</td></tr></table><BR><BR>\n";
+	str += "Export/Save File<BR>\n";
 	// Save section
 	var elSOptionArr = new Array("default", "saveCASTEP", "saveCRYSTAL",
 			"saveGULP", "saveGROMACS", "saveQuantum", "saveVASP", "saveXYZ",
@@ -412,31 +412,30 @@ function createFileGrp() { // Here the order is crucial
 			// "save Frequencies HTML (*.HTML)",
 			"image PNG (*.png)", "coordinates PDB (*.PDB)",
 			"image POV-ray (*.pov)", "current state (*.spt)", "image+state (PNGJ)");
-	strFile += createSelectmenu('Export File', 'onChangeSave(value)', 0, 1,
+	str += createSelectmenu('Export File', 'onChangeSave(value)', 0, 1,
 			elSOptionArr, elSOptionText);
-	strFile += "<p ><img src='images/j-ice.png' alt='logo'/></p>";
-	strFile += "<div style='margin-top:50px;width:350px'><p style='color:#000'> <b style='color:#f00'>Please DO CITE:</b>";
-	strFile += createCitations();
-	strFile += "</p></div>";
-	strFile += "</form>\n";
-	return strFile;
+	str += "<p ><img src='images/j-ice.png' alt='logo'/></p>";
+	str += "<div style='margin-top:50px;width:350px'><p style='color:#000'> <b style='color:#f00'>Please DO CITE:</b>";
+	str += createCitations();
+	str += "</p></div>";
+	str += "</form>\n";
+	return str;
 }
 
- 	createCitations = function() {
-		var citations = _global.citations; 
-		var s = "";
-		for (var i = 0; i < citations.length; i++) {
-			var cite = citations[i];
-			s += "<blockquote><b>";
-			s += cite.title;
-			s += "</b><br>";
-			s += cite.authors.join(", ");
-			s += " <br>";  
-			s+= cite.journal;
-			s += " <a href='" + cite.link + "' target='_blank'>[doi]</a>";
-			s += "</blockquote>"; 
-		};
-		return s
-	}
-
+var createCitations = function() {
+	var citations = _global.citations; 
+	var s = "";
+	for (var i = 0; i < citations.length; i++) {
+		var cite = citations[i];
+		s += "<blockquote><b>";
+		s += cite.title;
+		s += "</b><br>";
+		s += cite.authors.join(", ");
+		s += " <br>";  
+		s+= cite.journal;
+		s += " <a href='" + cite.link + "' target='_blank'>[doi]</a>";
+		s += "</blockquote>"; 
+	};
+	return s
+}
 

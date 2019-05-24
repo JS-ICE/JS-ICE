@@ -24,7 +24,7 @@ function setVacuum() {
 		newCell_c = (zMaxCoord * 2) + vacuum;
 		var factor = roundNumber(zMaxCoord + vacuum);
 		if (_file._exportFractionalCoord) { // from VASP only?
-			scaleModelCoordinates("z", "add", factor, "div", newcell_c);
+			scaleModelCoordinates("z", "add", factor, "div", newCell_c);
 		} else {
 			scaleModelCoordinates("z", "add", factor);
 		}
@@ -141,7 +141,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 		stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.b) + ", "
 				+ roundNumber(_file.cell.c) + ", " + roundNumber(_file.cell.alpha) + ", "
 				+ roundNumber(_file.cell.beta) + ", " + roundNumber(_file.cell.gamma);
-		cellDimString = " celdm(1) =  " + fromAngstromtoBohr(_file.cell.a)
+		cellDimString = " celdm(1) =  " + fromAngstromToBohr(_file.cell.a)
 				+ " \n celdm(2) =  " + roundNumber(_file.cell.b / _file.cell.a)
 				+ " \n celdm(3) =  " + roundNumber(_file.cell.c / _file.cell.a)
 				+ " \n celdm(4) =  " + cosRounded(_file.cell.alpha) + " \n celdm(5) =  "
@@ -154,7 +154,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 		stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.b) + ", "
 				+ roundNumber(_file.cell.c) + ", " + roundNumber(_file.cell.alpha);
 		if (quantumEspresso) {
-			cellDimString = " celdm(1) =  " + fromAngstromtoBohr(_file.cell.a)
+			cellDimString = " celdm(1) =  " + fromAngstromToBohr(_file.cell.a)
 					+ " \n celdm(2) =  " + roundNumber(_file.cell.b / _file.cell.a)
 					+ " \n celdm(3) =  " + roundNumber(_file.cell.c / _file.cell.a)
 					+ " \n celdm(4) =  " + (cosRounded(_file.cell.alpha))
@@ -171,7 +171,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 		stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.b) + ", "
 				+ roundNumber(_file.cell.c);
 		if (quantumEspresso) {
-			cellDimString = " celdm(1) = " + fromAngstromtoBohr(_file.cell.a)
+			cellDimString = " celdm(1) = " + fromAngstromToBohr(_file.cell.a)
 					+ " \n celdm(2) =  " + roundNumber(_file.cell.b / _file.cell.a)
 					+ " \n celdm(3) =  " + roundNumber(_file.cell.c / _file.cell.a) + " \n\n";
 			ibravQ = "8";
@@ -195,7 +195,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 
 		stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.c);
 		if (quantumEspresso) {
-			cellDimString = " celdm(1) = " + fromAngstromtoBohr(_file.cell.a)
+			cellDimString = " celdm(1) = " + fromAngstromToBohr(_file.cell.a)
 					+ " \n celdm(3) =  " + roundNumber(_file.cell.c / _file.cell.a) + " \n\n";
 			ibravQ = "6";
 			var question = confirm("Is this a Tetragonal I body centered (bct) lattice?");
@@ -207,7 +207,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 	case ((interNumber > 142) && (interNumber <= 167)): // Trigonal lattices
 		stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.alpha) + ", "
 				+ roundNumber(_file.cell.beta) + ", " + roundNumber(_file.cell.gamma);
-		cellDimString = " celdm(1) = " + fromAngstromtoBohr(_file.cell.a)
+		cellDimString = " celdm(1) = " + fromAngstromToBohr(_file.cell.a)
 				+ " \n celdm(4) =  " + (cosRounded(_file.cell.alpha))
 				+ " \n celdm(5) = " + (cosRounded(_file.cell.beta))
 				+ " \n celdm(6) =  " + (cosRounded(_file.cell.gamma));
@@ -215,7 +215,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 		var question = confirm("Is a romboheadral lattice?")
 		if (question) {
 			stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.c);
-			cellDimString = " celdm(1) = " + fromAngstromtoBohr(_file.cell.a)
+			cellDimString = " celdm(1) = " + fromAngstromToBohr(_file.cell.a)
 					+ " \n celdm(4) =  " + (cosRounded(_file.cell.alpha))
 					+ " \n celdm(5) = " + (cosRounded(_file.cell.beta))
 					+ " \n celdm(6) =  " + (cosRounded(_file.cell.gamma))
@@ -226,7 +226,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 	case ((interNumber > 167) && (interNumber <= 194)): // Hexagonal lattices
 		stringCellParam = roundNumber(_file.cell.a) + ", " + roundNumber(_file.cell.c);
 		if (quantumEspresso) {
-			cellDimString = " celdm(1) = " + fromAngstromtoBohr(_file.cell.a)
+			cellDimString = " celdm(1) = " + fromAngstromToBohr(_file.cell.a)
 					+ " \n celdm(3) = " + roundNumber(_file.cell.c / _file.cell.a) + " \n\n";
 			ibravQ = "4";
 		}
@@ -234,7 +234,7 @@ function figureOutSpaceGroup(doReload, isConv, quantumEspresso) {
 	case ((interNumber > 194) && (interNumber <= 230)): // Cubic lattices
 		stringCellParam = roundNumber(_file.cell.a);
 		if (quantumEspresso) {
-			cellDimString = " celdm(1) = " + fromAngstromtoBohr(_file.cell.a);
+			cellDimString = " celdm(1) = " + fromAngstromToBohr(_file.cell.a);
 			// alert("I am here");
 			ibravQ = "1";
 			var question = confirm("Is a face centered cubic lattice?")

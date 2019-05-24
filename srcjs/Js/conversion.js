@@ -24,7 +24,7 @@
 
 //////////////////////////////////////VALUE conversion AND ROUNDOFF
 
-function substringEnergyToFloat(value) {
+var substringEnergyToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(
 				value.substring(value.indexOf('=') + 1, value.indexOf('H') - 1))
@@ -35,7 +35,7 @@ function substringEnergyToFloat(value) {
 	return grab;
 }
 
-function substringEnergyGulpToFloat(value) {
+var substringEnergyGulpToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(
 				value.substring(value.indexOf('=') + 1, value.indexOf('e') - 1))
@@ -47,7 +47,7 @@ function substringEnergyGulpToFloat(value) {
 	return grab;
 }
 
-function substringEnergyVaspToFloat(value) {
+var substringEnergyVaspToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(
 				value.substring(value.indexOf('=') + 1, value.indexOf('e') - 1))
@@ -60,7 +60,7 @@ function substringEnergyVaspToFloat(value) {
 }
 
 
-function substringEnergyCastepToFloat(value) {
+var substringEnergyCastepToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(
 				value.substring(value.indexOf('=') + 1, value.indexOf('e') - 1))
@@ -73,7 +73,7 @@ function substringEnergyCastepToFloat(value) {
 	return grab;
 }
 
-function substringEnergyQuantumToFloat(value) {
+var substringEnergyQuantumToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(
 				value.substring(value.indexOf('=') + 1, value.indexOf('R') - 1))
@@ -85,7 +85,7 @@ function substringEnergyQuantumToFloat(value) {
 	return grab;
 }
 
-function substringFreqToFloat(value) {
+var substringFreqToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value.substring(0, value.indexOf('c') - 1));
 		// BH 2018 looking out for "F 300.2" in frequencies
@@ -99,7 +99,7 @@ function substringFreqToFloat(value) {
 	return grab;
 }
 
-function substringIntGaussToFloat(value) {
+var substringIntGaussToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value.substring(0, value.indexOf('K') - 1))
 		.toPrecision(8);
@@ -108,7 +108,7 @@ function substringIntGaussToFloat(value) {
 	return grab;
 }
 
-function substringIntFreqToFloat(value) {
+var substringIntFreqToFloat = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value.substring(0, value.indexOf('k') - 1))
 		.toPrecision(5);
@@ -117,50 +117,40 @@ function substringIntFreqToFloat(value) {
 	return grab;
 }
 
-function cosRounded(value) {
+var cosRounded = function(value) {
 	if (value != null) {
 		var angle = parseFloat(value).toPrecision(7);
-		angle = cos(value * Math.PI/180);
-		angle = Math.round(angle * 10000000) / 10000000;
+		angle = Math.round(cosDeg(value) * 10000000) / 10000000;
 	}
 	return angle;
 }
 
-function cosDeg(angle) {
+var cosDeg = function(angle) {
 	return Math.cos(angle * Math.PI/180);
 }
 
-function sinDeg(angle) {
+var sinDeg = function(angle) {
 	return Math.sin(angle * Math.PI/180);
 }
 
-roundNumber = function(v) { //BH 2018 was 10000000
+var roundNumber = function(v) { //BH 2018 was 10000000
 	return Math.round(v * 10000) / 10000;
 }
 
-function roundoff(value, precision) {
+var roundoff = function(value, precision) {
 	value = "" + value
 	precision = parseInt(precision)
 
-	var whole = "" + Math.round(value * Math.pow(10, precision))
-	var decPoint = whole.length - precision;
-
-	if (decPoint != 0) {
-		result = whole.substring(0, decPoint);
-		result += "."
-			result += whole.substring(decPoint, whole.length);
-	} else {
-		result = whole;
-	}
-
-	return result;
+	var result = "" + Math.round(value * Math.pow(10, precision))
+	var decPoint = result.length - precision;
+	return (decPoint == 0 ? result : result.substring(0, decPoint) + "." + result.substring(decPoint, result.length));
 }
 
 
 ////////////////////////////////ENERGY CONV
 
 ///Hartree
-function fromHartreetoEv(value) { // 1 Hartree = 27.211396132eV
+var fromHartreeToEV = function(value) { // 1 Hartree = 27.211396132eV
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = grab * 27.211396132;
@@ -169,7 +159,7 @@ function fromHartreetoEv(value) { // 1 Hartree = 27.211396132eV
 	return grab;
 }
 
-function fromHartreetoHartree(value) {
+var fromHartreeToHartree = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = Math.round(grab * 1000000000000) / 1000000000000;
@@ -177,7 +167,7 @@ function fromHartreetoHartree(value) {
 	return grab;
 }
 
-function fromHartreetokJ(value) { // From hartree to kJmol-1
+var fromHartreeToKJ = function(value) { // From hartree to kJmol-1
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = grab * 2625.50;
@@ -186,7 +176,7 @@ function fromHartreetokJ(value) { // From hartree to kJmol-1
 	return grab;
 }
 
-function fromHartreetoRydberg(value) {
+var fromHartreeToRydberg = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = grab * 2;
@@ -195,7 +185,7 @@ function fromHartreetoRydberg(value) {
 	return grab;
 }
 
-function fromHartreetokcalmol(value) { // 1Hartree == 627.509 kcal*mol-1
+var fromHartreeToKcalmol = function(value) { // 1Hartree == 627.509 kcal*mol-1
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = grab * 627.509;
@@ -208,26 +198,26 @@ function fromHartreetokcalmol(value) { // 1Hartree == 627.509 kcal*mol-1
 
 ////ev
 
-function fromevTokJ(value) {
+var fromEVToKJ = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromevToHartree(grab);
-		grab = fromHartreetokJ(grab)
+		grab = fromEVToHartree(grab);
+		grab = fromHartreeToKJ(grab)
 		grab = Math.round(grab * 1000) / 1000;
 	}
 	return grab;
 }
 
-function fromevToHartree(value) {
+var fromEVToHartree = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromHartreetoEv(1 / grab);
+		grab = fromHartreeToEV(1 / grab);
 		grab = Math.round(grab * 1000000000000) / 1000000000000;
 	}
 	return grab;
 }
 
-function fromevTorydberg(value) {
+var fromEVToRydberg = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = grab * 0.073498618;
@@ -236,7 +226,7 @@ function fromevTorydberg(value) {
 	return grab;
 }
 
-function fromevtoev(value) {
+var fromEVToEV = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = Math.round(grab * 1000000000000) / 1000000000000;
@@ -244,11 +234,11 @@ function fromevtoev(value) {
 	return grab;
 }
 
-function fromevtokcalmol(value) {
+var fromEVToKcalmol = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromevToHartree(grab);
-		grab = fromHartreetokcalmol(grab);
+		grab = fromEVToHartree(grab);
+		grab = fromHartreeToKcalmol(grab);
 		grab = Math.round(grab * 1000) / 1000;
 	}
 	return grab;
@@ -258,45 +248,45 @@ function fromevtokcalmol(value) {
 
 //rydberg
 
-function fromRydbergtohartree(value) {
+var fromRydbergToHartree = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromHartreetoRydberg(1 / grab);
+		grab = fromHartreeToRydberg(1 / grab);
 		grab = Math.round(grab * 1000000000000) / 1000000000000;
 	}
 	return grab;
 }
 
-function fromRydbergtoEv(value) {
+var fromRydbergToEV = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromevTorydberg(1 / grab);
+		grab = fromEVToRydberg(1 / grab);
 		grab = Math.round(grab * 1000000000000) / 1000000000000;
 	}
 	return grab;
 
 }
 
-function fromRydbergToKj(value) {
+var fromRydbergToKJ = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromHartreetokJ(grab / 2);
+		grab = fromHartreeToKJ(grab / 2);
 		grab = Math.round(grab * 1000) / 1000;
 	}
 	return grab;
 }
 
-function fromRytokcalmol(value) {
+var fromRydbergToKcalmol = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
-		grab = fromRydbergtohartree(grab);
-		grab = fromHartreetokcalmol(grab);
+		grab = fromRydbergToHartree(grab);
+		grab = fromHartreeToKcalmol(grab);
 		grab = Math.round(grab * 1000) / 1000;
 	}
 	return grab;
 }
 
-function fromRydbergTorydberg(value) {
+var fromRydbergToRydberg = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(12);
 		grab = Math.round(grab * 1000000000000) / 1000000000000;
@@ -305,7 +295,7 @@ function fromRydbergTorydberg(value) {
 }
 
 //1 Angstrom = 1.889725989 Bohr
-function fromAngstromtoBohr(value) {
+var fromAngstromToBohr = function(value) {
 	if (value != null) {
 		var grab = parseFloat(value).toPrecision(7);
 		grab = grab * 1.889725989;

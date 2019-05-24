@@ -9,5 +9,3 @@ spin off;
 set perspectiveDepth OFF;
 script "scripts/functions.spt"
 
-// don't know what this was -- BH
-//javascript(makeDisable("filename"));

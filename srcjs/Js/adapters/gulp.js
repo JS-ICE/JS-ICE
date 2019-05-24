@@ -23,8 +23,8 @@
 
 // ////////////GULP READER
 
-loadDone_gulp = function() {
-	_file.energyUnits = ENERGY_EV;
+var loadDone_gulp = function() {
+	_file.energyUnits = _constant.ENERGY_EV;
 	_file.StrUnitEnergy = "e";
 	_file.counterFreq = 0;
 	for (var i = 0; i < _file.info.length; i++) {
@@ -40,7 +40,7 @@ loadDone_gulp = function() {
 	runJmolScriptWait("script scripts/gulp_name.spt"); 
 	getUnitcell("1");
 	setFrameValues("1");
-	getSymInfo();
+	//getSymInfo();
 	loadDone();
 }
 
@@ -172,7 +172,7 @@ function exportGULP() {
 				+ 'final = final.replace("\n\n","\n");'
 				+ 'WRITE VAR final "?.gin" ';
 	}
-	run(finalInputGulp);
+	runJmolScriptWait(finalInputGulp);
 	restoreStateAndOrientation_a();
 
 }
