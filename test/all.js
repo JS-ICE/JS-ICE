@@ -3887,12 +3887,14 @@ function createOtherGrp() {
 //A. Salij 5.23.2018 (andrewsalij@gmail.com) 
 
 var _symmetry = {
-		CLICK_ENABLE : "Enable Editing",		  
-		CLICK_DISABLE : "Disable Editing", 
-		DEFAULT_ATOM_TIP : "Click on atom to fill",
-		CENTER_TIP : "Click on a ref. atom",
-	    CLICK_POINT_TIP : "Click on the sphere to add a point",
-	    SYM_NONE : "clear",
+		CLICK_ENABLE :      "Enable Editing",		  
+		CLICK_DISABLE :     "Disable Editing", 
+		ATOM_TIP :  "Click on atom to fill",
+		CENTER_TIP :        "Click on a ref. atom",
+	    CLICK_POINT_TIP :   "Click on the sphere to add a point",
+		UPDATE_VIEW :       "updateView",
+		UPDATE_EDIT :       "updateEdit",
+	    SYM_NONE :          "clear",
 		intervalID : ""
 };
 
@@ -3919,6 +3921,7 @@ function enterSymmetry() {
 
 function exitSymmetry() {
 	runJmolScriptWait("select none;set picking select atom; selectionhalos off");
+	_symmetry.onHoverEnd();
 }
 
 //_symmetry.resetPage = function(){
@@ -3948,10 +3951,15 @@ _symmetry.addJmolEvents = function() {
 }
 
 _symmetry.doSymBtnClick = function(btn) {
-	var text = btn.value;
+	var text = (btn.value || btn);
 	switch(text) {
 	case _symmetry.SYM_NONE:
 		_symmetry.doSelectNone();
+		break;
+	case _symmetry.UPDATE_VIEW:
+		_symmetry.updateFields();
+		break;
+	case _symmetry.UPDATE_EDIT:
 		break;
 	case _symmetry.CLICK_ENABLE:
 		_symmetry.doEnableVoidClicking();
@@ -3989,24 +3997,12 @@ _symmetry.updateFields = function() {
 
 _symmetry.onHover = function(){
 	console.log("hov check");
-	var clickedPoint = getJmolValue("clickedPoint");
 	var symClickStatus = getJmolValue("symClickStatus");
 	switch(symClickStatus){
-		case "corePointDragging":
-			var cP = getValue("centerPoint");
-			if (!cP)
-				return; // BH cP can be null if no selection has been made
-				var rA = getValue("radiusAngstroms");
-				if(!rA){
-					rA = 1; //default value 
-				} 
-			runJmolScriptWait("clickedPoint = bindToSphereConstraint("+cP+","+rA+",clickedPoint)");
-			runJmolScriptWait("appendNewAtomPoint('corepoint',"+_file.symmetry.chosenSymElement+", clickedPoint)");
-			clickedPoint = getJmolValue("clickedPoint");
-			_symmetry.doActivate(clickedPoint);
-			break;
-		default:
-			break;
+	case "corePointDragging":
+		return _symmetry.dragPoint();
+	default:
+		break;
 	}
 } 
 
@@ -4017,7 +4013,7 @@ _symmetry.onHoverStart = function(){
 }
 
 _symmetry.onHoverEnd = function(){
-	window.clearInterval(_symmetry.intervalID);
+	_symmetry.intervalID && window.clearInterval(_symmetry.intervalID);
 	_symmetry.intervalID = "";
 }
 
@@ -4027,39 +4023,38 @@ _symmetry.onClick = function(){
 	var symClickStatus = getJmolValue("symClickStatus");
 	var clickedPoint = getJmolValue("clickedPoint");
 	switch(symClickStatus){
-		case "radiusBindAdd":
-			_symmetry.doActivate(getValue("voidClickPoint")); 
-			break;
-		case "radiusBindAddAll":
-			_symmetry.doActivateAll(); 
-			break;
-		//case "vectorBindAdd": //to test 
-			//var newClickedPoint = bindToVectorConstraint("sym_axis1",
-			//											clickedPoint,
-			//											_file.symmetry.errorDistance);
-			//clickedPoint = newClickedPoint;
-			//doActivate(getValue("voidClickPoint"));
-			//break; 
-		case "corePointDragging":
-			var cP = getValue("centerPoint");
-				var rA = getValue("radiusAngstroms");
-				if(!rA){
-					rA = 1; //default value 
-				} 
-			runJmolScriptWait("clickedPoint = bindToSphereConstraint({"+cP+"},"+rA+",clickedPoint)");
-			runJmolScriptWait("appendNewAtomPoint('corepoint',"+_file.symmetry.chosenSymElement+", clickedPoint)");
-			_symmetry.doActivate(getJmolValue("clickedPoint"));
-			break;
-		case "showAllInvariantSymops":
-			var centerPoint = getValue("initPoint");
-			if (centerPoint[0] != "{"){
-				centerPoint = "{"+centerPoint+"}";
-			}
-			runJmolScript("drawAllSymops(symopInvariantListJmol,"+centerPoint+")")
-			break;
-		default: 
-			break;
+	case "corePointDragging":
+		return _symmetry.dragPoint();
+	case "radiusBindAdd":
+		_symmetry.doActivate(_symmetry.getJmolPoint("voidClickPoint", false)); 
+		break;
+	case "radiusBindAddAll":
+		_symmetry.doActivateAll(); 
+		break;
+	//case "vectorBindAdd": //to test 
+		//var newClickedPoint = bindToVectorConstraint("sym_axis1",
+		//											clickedPoint,
+		//											_file.symmetry.errorDistance);
+		//clickedPoint = newClickedPoint;
+		//doActivate(getValue("voidClickPoint"));
+		//break; 
+	case "showAllInvariantSymops":
+		runJmolScript("drawAllSymops(symopInvariantListJmol,"+ _symmetry.getJmolPoint("initPoint", false)+")")
+		break;
+	default: 
+		break;
 	}
+}
+
+_symmetry.dragPoint = function() {
+	var symop = _file.symmetry.chosenSymElement;
+	var cP = _symmetry.getJmolPoint("centerPoint");
+	if (!symop || cP == "{}")
+		return; // BH cP can be null if no selection has been made
+	var rA = getValue("radiusAngstroms") || 1;
+	runJmolScriptWait("clickedPoint = bindToSphereConstraint("+cP+","+rA+",clickedPoint)");
+	runJmolScriptWait("appendNewAtomPoint('corepoint',"+symop+", clickedPoint)");
+	_symmetry.doActivate(getJmolValue("clickedPoint"));
 }
 
 //Updates global sym invariant list with current  symops of selection 
@@ -4114,36 +4109,28 @@ _symmetry.doActivate = function(clickedPoint){
 		clickedPoint = "{"+clickedPoint+"}";
 	}
 	if (_file.symmetry){
-		_symmetry.appendSymmetricAtoms(_file.symmetry.chosenSymElement,clickedPoint,_file.symmetry.chosenSymop,getValue("symIterations"));
+		var niter = 1;//TODO getValue("symIterations");
+		_symmetry.appendSymmetricAtoms(_file.symmetry.chosenSymElement,clickedPoint,_file.symmetry.chosenSymop,niter);
 	}
 }
 
 //this only shows every point for a given point for all symops 
 _symmetry.doActivateAll = function(){
-	var clickedPoint =  getValue("voidClickPoint");
-	if (clickedPoint[0] != "{"){
-		clickedPoint = "{"+clickedPoint+"}";
-	}
-	_symmetry.drawAllSymmetricPoints(clickedPoint);
+	_symmetry.drawAllSymmetricPoints(_symmetry.getJmolPoint("voidClickPoint"));
 }
 
 
 _symmetry.doSymopSelection = function(symop){
 	_symmetry.setSymop(symop);
-	_symmetry.displayDrawObjects(symop,getValue("initPoint"));
+	_symmetry.displayDrawObjects(symop,_symmetry.getJmolPoint("initPoint", false));
 }
 
 //Enables clicking upon blank space in java applet 
 _symmetry.doEnableVoidClicking = function(){
-	var cP = getValue("centerPoint");
-	if (cP[0] != "{"){
-		cP = "{"+cP+"}";
-	}
-	if(!cP){
-		cP = getJmolValue("{selected}.xyz");// BH needed quotes
-	}
-	if (!cP || cP == "{}"){
+	var cP = _symmetry.getJmolPoint("centerPoint", true);
+	if (cP == "{}"){
 		alert("No center point selected");
+		return;
 	}
 	var rA = getValue("radiusAngstroms");
 	if(!rA){
@@ -4151,9 +4138,15 @@ _symmetry.doEnableVoidClicking = function(){
 	}
 	runJmolScriptWait("unbind"); //resets jmol to default mouse config
 	runJmolScriptWait("bind 'LEFT+click' 'clickedPoint = clickToPoint("+cP+","+rA+",_X,_Y)'");
-	if (cP != "{}"){
-		runJmolScriptWait("sphereClickShow = 'sphereClickShow'; draw ID @sphereClickShow radius "+rA+" "+cP+" translucent"); 
+	runJmolScriptWait("sphereClickShow = 'sphereClickShow'; draw ID @sphereClickShow radius "+rA+" "+cP+" translucent"); 
+}
+
+_symmetry.getJmolPoint = function(id, orSelected) {	
+	var cP = getValue(id);
+	if(!cP && orSelected){
+		cP = getJmolValue("{selected}.xyz");// BH needed quotes
 	}
+	return (cP[0] == "{" ? cP : "{"+cP+"}");
 }
 
 _symmetry.doDisableVoidClicking = function(){
@@ -4171,7 +4164,7 @@ _symmetry.doEnableVoidDragging = function(){
 _symmetry.doDisableVoidDragging = function(){
 	runJmolScriptWait("unbind");
 	runJmolScriptWait("set picking identify");
-	runJmolScriptWait("symClickStatus = 'corePointDragging'");
+	runJmolScriptWait("symClickStatus = 'default'");
 }
 
 _symmetry.setSymClickStatus = function(status){
@@ -4227,17 +4220,14 @@ _symmetry.updateSymOffset = function(dimension,offset){
 		zValue = offset+"/1";
 	}
 	_file.symmetry.symOffset = "{"+xValue+","+yValue+","+zValue+"}"; 
-	_symmetry.displayDrawObjects(_file.symmetry.chosenSymop,getValue("initPoint"));
+	_symmetry.displayDrawObjects(_file.symmetry.chosenSymop,_symmetry.getJmolPoint("initPoint", false));
 }
 
 // draws the axis lines for rotation axes and mirror planes for mirror symops
 _symmetry.displayDrawObjects = function(symop,pointt){
-	if (pointt == ""){
-		var pointt = "";
-	}
-	else{
-		var pointt = "{"+pointt+"}";
-	}
+	if (pointt == "{}"){
+	   pointt = "";
+	} 
 	var symOffsetString = _file.symmetry.symOffset;
 	symOffsetString = symOffsetString.substring(1);
 	var symOffsetArray = symOffsetString.split(",");
@@ -4322,9 +4312,7 @@ var createSymmetryGrp = function() {
 	
 	var topleft =  "<table><tr><td valign='top'><h2>Symmtry Visualization</h2>" 
 		  + "</td></tr><tr><td>1) Select an atom:"
-		  + "<br><input type='text' name='initPoint' placeholder='"+ _symmetry.DEFAULT_ATOM_TIP + "' id='initPoint' size='20' class='text'/>"
-		  
-		  
+		  + "<br>" + createText2('initPoint',"", 20, "", "_symmetry.doSymBtnClick('"+_symmetry.UPDATE_VIEW+"')",_symmetry.ATOM_TIP)
 		  + createButton("none", _symmetry.SYM_NONE, '_symmetry.doSymBtnClick(this)', 0) 
 		  + "</td></tr><tr><td>2) Choose an operation"
 		  + "</td></tr><tr><td>3) Set an offset:<br>"
@@ -4354,18 +4342,23 @@ var createSymmetryGrp = function() {
 
 	var bottomleft =  "<table><tr><td valign='top'><h2>Symmetry-Based Editing</h2>" 
 	  + "</td></tr><tr><td>1) Select a center point: "
-	  + "<input type='text'  name='centerPoint'  placeholder='" +  _symmetry.CENTER_TIP + "' id='centerPoint'   size='20' class='text'>"
-	  + "</td></tr></tr><td>2) Enter a radius constraint (Angstroms):"
-	  + "<input type='text'  name='radiusAngstroms' id='radiusAngstroms' size='3' class='text' value='1.0'>"
-	  + "</td></tr></tr><td>3) Select an element:"
+	  + "<br>" + createText2('centerPoint',"", 20, "", "_symmetry.doSymBtnClick('"+_symmetry.UPDATE_EDIT+"')",_symmetry.CENTER_TIP)
+	  + "</td></tr><tr><td>2) Enter a radius constraint (Angstroms):"
+	  + createText2('radiusAngstroms',"1.0", 3, "", "_symmetry.doSymBtnClick('"+_symmetry.UPDATE_EDIT+"')")
+	  + "</td></tr><tr><td>3) Select an element:"
 	  + createSelect('addSymEle', '_symmetry.setSymElement(value)', 0, 1, _constant.ELEM_SYM)
-	  + "</td></tr></tr><td>" + createButton("enableVoidClickingButton", _symmetry.CLICK_ENABLE, '_symmetry.doSymBtnClick(this)', 0)
-	  + "</td></tr></tr><td>4) Select a center atom invariant operation"		
-	  + "</td></tr></tr><td>5) Click and drag on the sphere:"
-	  + "</td></tr></tr><td><input type='text'  name='voidClickPoint'  placeholder='" + _symmetry.CLICK_POINT_TIP +"' id='voidClickPoint'   size='40' class='text'>"
+	  + "</td></tr><tr><td>" + createButton("enableVoidClickingButton", _symmetry.CLICK_ENABLE, '_symmetry.doSymBtnClick(this)', 0)
+	  + "</td></tr><tr><td>4) Select a center atom invariant operation"		
+	  + "</td></tr><tr><td>5) Click and drag on the sphere:"
+	  + "</td></tr><tr><td>" + createText2('voidClickPoint',"", 40, "", "_symmetry.doSymBtnClick('"+_symmetry.UPDATE_EDIT+"')",_symmetry.CLICK_POINT_TIP)
+	  + "</td></tr></table>";	
+//	  + "</td></tr></tr><td>Symmetry Iterations:" 
+//	  + "</td></tr></tr><td><input style='display:none' type='text'  name='symIterations' id='symIterations'  value = '1' size='2' class='text'>"
+//	  + "</td></tr></tr><td><div id='activateSymmetryDiv'></div>"
+//	  + "</td></tr></tr><td><div id='activateAllSymmetryDiv'></div>"
+//	  + "</td></tr></tr><td>" + createButton("resetSymmetryButton", "Reset Symmetry Page	", '_symmetry.resetPage()', 0) 
 
-	  
-//		var activateSymmetry = createButton("activateSymmetryButton", "Activate applied symmetry:", 'setSymClickStatus("radiusBindAdd")', 0);
+	//		var activateSymmetry = createButton("activateSymmetryButton", "Activate applied symmetry:", 'setSymClickStatus("radiusBindAdd")', 0);
 //		getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
 //		var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'setSymClickStatus("radiusBindAddAll")', 0); 
 //		getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
@@ -4390,13 +4383,6 @@ var createSymmetryGrp = function() {
 //	+ "<div id='corePointDraggingDiv'></div>"
 //	+ "</td></tr>\n"
 //		+ "<tr><td>\n"
-	+ "</td></tr></tr><td>Symmetry Iterations:" 
-	+ "</td></tr></tr><td><input style='display:none' type='text'  name='symIterations' id='symIterations'  value = '1' size='2' class='text'>"
-	+ "</td></tr></tr><td><div id='activateSymmetryDiv'></div>"
-	+ "</td></tr></tr><td><div id='activateAllSymmetryDiv'></div>"
-//	+ "</td></tr></tr><td>" + createButton("resetSymmetryButton", "Reset Symmetry Page	", '_symmetry.resetPage()', 0) 
-	+ "</td></tr></table>"
-	;	
 	
 	var str = "<form autocomplete='nope'  id='symmetryGroup' name='symmetryGroup' style='display:none'>\n";
 	str += "<table class='contents'>";
@@ -5899,16 +5885,16 @@ var createButton1 = function(name, text, onclick, disab, myclass, style) {
 }
 
 
-var createText = function(name, text, onclick, disab) {
+var createText = function(id, text, onchange, disab) {
 	var s = "<INPUT TYPE='TEXT'";
-	s += "NAME='" + name + "' ";
+	s += "ID='" + id + "' ";
+	s += "NAME='" + id+ "' ";
 	s += "VALUE='" + text + "' ";
-	s += "ID='" + name + "' ";
 	s += "CLASS='text'";
-	if (disab) {
+	if (disab)
 		s += "DISABLED "
-	}
-	s += "OnChange='" + onclick + "'> ";
+	s += "onchange='" + onchange + "'";
+	s += "> ";
 	return s;
 }
 
@@ -6030,14 +6016,19 @@ var createTextArea = function(name, text, rows, cols, disab) {
 	return s;
 }
 
-var createText2 = function(name, text, size, disab) {
-	var s = "<INPUT TYPE='TEXT'";
-	s += "NAME='" + name + "' ";
-	s += "VALUE='" + text + "' ";
+var createText2 = function(name, text, size, disab, onEnter, placeholder) {
+	var s = "<INPUT TYPE='TEXT' ";
 	s += "ID='" + name + "' ";
-	s += "CLASS='text'";
+	s += "NAME='" + name + "' ";
+	s += "VALUE='" + (text||"") + "' ";
+	s += "CLASS='text' ";
 	if (disab) {
-		s += "readonly "
+		s += "readonly ";
+	} else if (onEnter) {
+		s += "onkeyup=\"function(e){if (e.keyCode==13)" + onEnter + "}\" ";	
+	}
+	if (placeholder) {
+		s += "placeholder='" + placeholder + "' ";
 	}
 	s += "SIZE=" + size + "> ";
 	return s;
@@ -6160,7 +6151,8 @@ var disableElement = function(element) {
 	else {
 		d.disabled = true;
 		if (d.tagName == "OPTION") {
-			d.style.background = d.style.color = "grey";
+			d.style.background = "lightgrey";
+			d.style.color = "grey";
 		}
 	}
 }

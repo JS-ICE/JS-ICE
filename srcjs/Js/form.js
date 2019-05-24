@@ -145,16 +145,16 @@ var createButton1 = function(name, text, onclick, disab, myclass, style) {
 }
 
 
-var createText = function(name, text, onclick, disab) {
+var createText = function(id, text, onchange, disab) {
 	var s = "<INPUT TYPE='TEXT'";
-	s += "NAME='" + name + "' ";
+	s += "ID='" + id + "' ";
+	s += "NAME='" + id+ "' ";
 	s += "VALUE='" + text + "' ";
-	s += "ID='" + name + "' ";
 	s += "CLASS='text'";
-	if (disab) {
+	if (disab)
 		s += "DISABLED "
-	}
-	s += "OnChange='" + onclick + "'> ";
+	s += "onchange='" + onchange + "'";
+	s += "> ";
 	return s;
 }
 
@@ -276,14 +276,19 @@ var createTextArea = function(name, text, rows, cols, disab) {
 	return s;
 }
 
-var createText2 = function(name, text, size, disab) {
-	var s = "<INPUT TYPE='TEXT'";
-	s += "NAME='" + name + "' ";
-	s += "VALUE='" + text + "' ";
+var createText2 = function(name, text, size, disab, onEnter, placeholder) {
+	var s = "<INPUT TYPE='TEXT' ";
 	s += "ID='" + name + "' ";
-	s += "CLASS='text'";
+	s += "NAME='" + name + "' ";
+	s += "VALUE='" + (text||"") + "' ";
+	s += "CLASS='text' ";
 	if (disab) {
-		s += "readonly "
+		s += "readonly ";
+	} else if (onEnter) {
+		s += "onkeyup=\"function(e){if (e.keyCode==13)" + onEnter + "}\" ";	
+	}
+	if (placeholder) {
+		s += "placeholder='" + placeholder + "' ";
 	}
 	s += "SIZE=" + size + "> ";
 	return s;
@@ -406,7 +411,8 @@ var disableElement = function(element) {
 	else {
 		d.disabled = true;
 		if (d.tagName == "OPTION") {
-			d.style.background = d.style.color = "grey";
+			d.style.background = "lightgrey";
+			d.style.color = "grey";
 		}
 	}
 }
