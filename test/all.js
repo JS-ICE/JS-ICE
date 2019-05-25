@@ -3887,6 +3887,7 @@ function createOtherGrp() {
 //A. Salij 5.23.2018 (andrewsalij@gmail.com) 
 
 var _symmetry = {
+		OP_LIST_MAX : 32,
 		CLICK_ENABLE :      "Enable Editing",		  
 		CLICK_DISABLE :     "Disable Editing", 
 		ATOM_TIP :  "Click on atom to fill",
@@ -3894,6 +3895,8 @@ var _symmetry = {
 	    CLICK_POINT_TIP :   "Click on the sphere to add a point",
 		UPDATE_VIEW :       "updateView",
 		UPDATE_EDIT :       "updateEdit",
+		ENABLE_EDIT_SYMMETRY : "Enable Edit Symmetry",
+		DISABLE_EDIT_SYMMETRY : "Disable Edit Symmetry",
 	    SYM_NONE :          "clear",
 		intervalID : ""
 };
@@ -3932,6 +3935,10 @@ _symmetry.addJmolEvents = function() {
 	if (_symmetry.hasEvents)
 		return;
 	_symmetry.hasEvents = true;
+	
+//	runJmolScriptWait("unbind");
+//	runJmolScriptWait("bind 'left+down' 'print ");
+	
 	$('.japplet').on('click', function( event ) {
 		  console.log('Applet Clicked');
 			  _symmetry.onClick();
@@ -3953,32 +3960,37 @@ _symmetry.addJmolEvents = function() {
 _symmetry.doSymBtnClick = function(btn) {
 	var text = (btn.value || btn);
 	switch(text) {
+	case _symmetry.ENABLE_EDIT_SYMMETRY : 
+		_symmetry.setSymClickStatus("radiusBindAdd");
+		_symmetry.addLocalPoints(); 
+		getbyID("activateSymmetryButton").value = _symmetry.DISABLE_EDIT_SYMMETRY;
+		return;
 	case _symmetry.SYM_NONE:
-		_symmetry.doSelectNone();
-		break;
+		return _symmetry.doSelectNone();
 	case _symmetry.UPDATE_VIEW:
-		_symmetry.updateFields();
-		break;
+		return _symmetry.updateFields();
 	case _symmetry.UPDATE_EDIT:
-		break;
+		//testing return;
 	case _symmetry.CLICK_ENABLE:
 		_symmetry.doEnableVoidClicking();
 		_symmetry.doEnableVoidDragging();
 		btn.value = _symmetry.CLICK_DISABLE;
-		break;
+		return;
 	case _symmetry.CLICK_DISABLE:
 		_symmetry.doDisableVoidClicking();
 		_symmetry.doDisableVoidDragging();
 		btn.value = _symmetry.CLICK_ENABLE;
-		break;
+		return;
 	}	
+}
+
+_symmetry.addLocalPoints = function() {
+	_symmetry.doActivate(_symmetry.getPointForJmol("voidClickPoint", false));
 }
 
 _symmetry.updateFields = function() {
 	_symmetry.updateSymInvariantSelect();
 	_symmetry.setOpacity();
-//	var activateSymmetry = createButton("activateSymmetryButton", "Activate applied symmetry:", 'setSymClickStatus("radiusBindAdd")', 0);
-//	getbyID("activateSymmetryDiv").innerHTML = activateSymmetry;
 //	var activateAllSymmetry = createButton("activateAllSymmetryButton", "Activate all symmetry:", 'setSymClickStatus("radiusBindAddAll")', 0); 
 //	getbyID("activateAllSymmetryDiv").innerHTML = activateAllSymmetry;
 	//var symInvariantsSelect = createSelect('addSymInvariantsSymop', '_symmetry.doSymopSelection(value)', 0, _file.symmetry.symopInvariantList.length , _file.symmetry.symopInvariantList);
@@ -4021,17 +4033,17 @@ _symmetry.onHoverEnd = function(){
 _symmetry.onClick = function(){
 	_symmetry.updateSymInvariantSelect();
 	var symClickStatus = getJmolValue("symClickStatus");
-	var clickedPoint = getJmolValue("clickedPoint");
 	switch(symClickStatus){
 	case "corePointDragging":
 		return _symmetry.dragPoint();
 	case "radiusBindAdd":
-		_symmetry.doActivate(_symmetry.getJmolPoint("voidClickPoint", false)); 
-		break;
+		return _symmetry.addLocalPoints();
 	case "radiusBindAddAll":
 		_symmetry.doActivateAll(); 
 		break;
 	//case "vectorBindAdd": //to test 
+		// 	var clickedPoint = getJmolValue("clickedPoint");
+
 		//var newClickedPoint = bindToVectorConstraint("sym_axis1",
 		//											clickedPoint,
 		//											_file.symmetry.errorDistance);
@@ -4039,21 +4051,37 @@ _symmetry.onClick = function(){
 		//doActivate(getValue("voidClickPoint"));
 		//break; 
 	case "showAllInvariantSymops":
-		runJmolScript("drawAllSymops(symopInvariantListJmol,"+ _symmetry.getJmolPoint("initPoint", false)+")")
+		runJmolScript("drawAllSymops(symopInvariantListJmol,"+ _symmetry.getPointForJmol("initPoint", false)+")")
 		break;
 	default: 
 		break;
 	}
 }
 
+_symmetry.getP3Vertex = function(id) {
+	// get the raw vertex javajs.util.P3 object that can be set directly using .x, .y, and .z
+	// just here for reference -- Andrew's solution is more elegant! -BH
+	try {
+		// raw: jmolApplet0._applet.viewer.getProperty(null,"shapeinfo.draw[where ID='" + id + "']").get(0).get("vertices")	
+		var list = Jmol.getPropertyAsJavaObject(jmolApplet0, "shapeinfo.draw[where ID='" + id + "'].vertices[0]");
+		return (list.get ? list.get(0) : list.get$O(0));
+	} catch (e) {
+		return null;
+	}
+}
+
 _symmetry.dragPoint = function() {
+	
+	//xx=jmolApplet0._applet.viewer.getProperty(null,"shapeinfo.draw[where ID='s2']").get(0).get("vertices").get(0).set(1,2,3)
+	//jmolApplet0._applet.viewer.updateJS()
+	
 	var symop = _file.symmetry.chosenSymElement;
-	var cP = _symmetry.getJmolPoint("centerPoint");
+	var cP = _symmetry.getPointForJmol("centerPoint");
 	if (!symop || cP == "{}")
 		return; // BH cP can be null if no selection has been made
 	var rA = getValue("radiusAngstroms") || 1;
 	runJmolScriptWait("clickedPoint = bindToSphereConstraint("+cP+","+rA+",clickedPoint)");
-	runJmolScriptWait("appendNewAtomPoint('corepoint',"+symop+", clickedPoint)");
+	runJmolScriptWait("appendNewAtomPoint('corepoint','"+symop+"', clickedPoint)");
 	_symmetry.doActivate(getJmolValue("clickedPoint"));
 }
 
@@ -4116,18 +4144,18 @@ _symmetry.doActivate = function(clickedPoint){
 
 //this only shows every point for a given point for all symops 
 _symmetry.doActivateAll = function(){
-	_symmetry.drawAllSymmetricPoints(_symmetry.getJmolPoint("voidClickPoint"));
+	_symmetry.drawAllSymmetricPoints(_symmetry.getPointForJmol("voidClickPoint"));
 }
 
 
 _symmetry.doSymopSelection = function(symop){
 	_symmetry.setSymop(symop);
-	_symmetry.displayDrawObjects(symop,_symmetry.getJmolPoint("initPoint", false));
+	_symmetry.displayDrawObjects(symop,_symmetry.getPointForJmol("initPoint", false));
 }
 
 //Enables clicking upon blank space in java applet 
 _symmetry.doEnableVoidClicking = function(){
-	var cP = _symmetry.getJmolPoint("centerPoint", true);
+	var cP = _symmetry.getPointForJmol("centerPoint", true);
 	if (cP == "{}"){
 		alert("No center point selected");
 		return;
@@ -4141,7 +4169,7 @@ _symmetry.doEnableVoidClicking = function(){
 	runJmolScriptWait("sphereClickShow = 'sphereClickShow'; draw ID @sphereClickShow radius "+rA+" "+cP+" translucent"); 
 }
 
-_symmetry.getJmolPoint = function(id, orSelected) {	
+_symmetry.getPointForJmol = function(id, orSelected) {	
 	var cP = getValue(id);
 	if(!cP && orSelected){
 		cP = getJmolValue("{selected}.xyz");// BH needed quotes
@@ -4186,7 +4214,7 @@ _symmetry.createSymopSet = function(){
 	runJmolScriptWait("symVectors = readSymmetryVectors()");
 	_file.symmetry.operationList = list = getJmolValue("symVectors"); 
 	var d = getbyID("symmetryOperationSet");
-	d.innerHTML = createSelect('addSymSymop', '_symmetry.doSymopSelection(value)', 0, Math.min(20, list.length), list);
+	d.innerHTML = createSelect('addSymSymop', '_symmetry.doSymopSelection(value)', 0, Math.min(_symmetry.OP_LIST_MAX, list.length), list);
 	var options = d.firstChild.options;
 	for (var i = list.length; --i >= 0;)
 		_file.symmetry.xyz2optionMap[list[i]] = options[i];		
@@ -4220,7 +4248,7 @@ _symmetry.updateSymOffset = function(dimension,offset){
 		zValue = offset+"/1";
 	}
 	_file.symmetry.symOffset = "{"+xValue+","+yValue+","+zValue+"}"; 
-	_symmetry.displayDrawObjects(_file.symmetry.chosenSymop,_symmetry.getJmolPoint("initPoint", false));
+	_symmetry.displayDrawObjects(_file.symmetry.chosenSymop,_symmetry.getPointForJmol("initPoint", false));
 }
 
 // draws the axis lines for rotation axes and mirror planes for mirror symops
@@ -4258,20 +4286,20 @@ _symmetry.displayDrawObjects = function(symop,pointt){
 _symmetry.appendSymmetricAtoms = function(elementName,point,symopSelected,iterations){
 	if (elementName == ""){
 		console.log("ERROR: empty element name");
+		return;
 	}
 	if (symopSelected == ""){
 		console.log("ERROR: empty symmetry operation");
+		return;
 	}
 	if (point[0] != "{"){
 		point = "{"+point+"}";
 	}
-	else {
-		runJmolScriptWait("appendNewAtomPoint('corePoint','"+elementName+"',"+point+")");
-		var newAtomArray = getJmolValue("getSymmetricAtomArray('"+symopSelected+"', "+point+","+iterations+")") ;
-		var numberOfNewAtoms = newAtomArray.length; 
-		for (i = 1; i <= numberOfNewAtoms; i++){
-			runJmolScriptWait("appendNewAtomPoint('"+elementName+i+"','"+elementName+"', {"+newAtomArray[i-1]+"})"); //this is a jmol script in functions.spt
-		}
+	runJmolScriptWait("appendNewAtomPoint('corePoint','"+elementName+"',"+point+")");
+	var newAtomArray = getJmolValue("getSymmetricAtomArray('"+symopSelected+"', "+point+","+iterations+")") ;
+	var numberOfNewAtoms = newAtomArray.length; 
+	for (i = 1; i <= numberOfNewAtoms; i++){
+		runJmolScriptWait("appendNewAtomPoint('"+elementName+i+"','"+elementName+"', {"+newAtomArray[i-1]+"})"); //this is a jmol script in functions.spt
 	}
 }
 
@@ -4312,7 +4340,7 @@ var createSymmetryGrp = function() {
 	
 	var topleft =  "<table><tr><td valign='top'><h2>Symmtry Visualization</h2>" 
 		  + "</td></tr><tr><td>1) Select an atom:"
-		  + "<br>" + createText2('initPoint',"", 20, "", "_symmetry.doSymBtnClick('"+_symmetry.UPDATE_VIEW+"')",_symmetry.ATOM_TIP)
+		  + "<br>" + createText2('initPoint',"", 30, "", "_symmetry.doSymBtnClick('"+_symmetry.UPDATE_VIEW+"')",_symmetry.ATOM_TIP)
 		  + createButton("none", _symmetry.SYM_NONE, '_symmetry.doSymBtnClick(this)', 0) 
 		  + "</td></tr><tr><td>2) Choose an operation"
 		  + "</td></tr><tr><td>3) Set an offset:<br>"
@@ -4340,17 +4368,18 @@ var createSymmetryGrp = function() {
 
 	var right = "<div id='symmetryOperationSet'></div>";
 
-	var bottomleft =  "<table><tr><td valign='top'><h2>Symmetry-Based Editing</h2>" 
-	  + "</td></tr><tr><td>1) Select a center point: "
-	  + "<br>" + createText2('centerPoint',"", 20, "", "_symmetry.doSymBtnClick('"+_symmetry.UPDATE_EDIT+"')",_symmetry.CENTER_TIP)
-	  + "</td></tr><tr><td>2) Enter a radius constraint (Angstroms):"
-	  + createText2('radiusAngstroms',"1.0", 3, "", "_symmetry.doSymBtnClick('"+_symmetry.UPDATE_EDIT+"')")
-	  + "</td></tr><tr><td>3) Select an element:"
-	  + createSelect('addSymEle', '_symmetry.setSymElement(value)', 0, 1, _constant.ELEM_SYM)
+	var bottomleft =  "<table><tr><td valign=top width=230><h2>Symmetry-Based Editing</h2>" 
+		  + "<tr><td>1) Select an element to add:"
+		  + createSelect('addSymEle', '_symmetry.setSymElement(value)', 0, 1, _constant.ELEM_SYM)
 	  + "</td></tr><tr><td>" + createButton("enableVoidClickingButton", _symmetry.CLICK_ENABLE, '_symmetry.doSymBtnClick(this)', 0)
-	  + "</td></tr><tr><td>4) Select a center atom invariant operation"		
-	  + "</td></tr><tr><td>5) Click and drag on the sphere:"
+	  + "</td></tr><tr><td>2) Select a center point: "
+	  + "<br>" + createText2('centerPoint',"", 30, "", "_symmetry.doSymBtnClick('"+_symmetry.UPDATE_EDIT+"')",_symmetry.CENTER_TIP)
+	  + "</td></tr><tr><td>3) Enter a radius constraint (Angstroms):"
+	  + createText2('radiusAngstroms',"1.0", 3, "", "_symmetry.doSymBtnClick('"+_symmetry.UPDATE_EDIT+"')")
+	  + "</td></tr><tr><td>4) Left-Shift-Drag on the sphere"
 	  + "</td></tr><tr><td>" + createText2('voidClickPoint',"", 40, "", "_symmetry.doSymBtnClick('"+_symmetry.UPDATE_EDIT+"')",_symmetry.CLICK_POINT_TIP)
+	  + "</td></tr><tr><td>5) Optionally, select an operation and enable symmetry:"
+	  + "<br>" + createButton("activateSymmetryButton", _symmetry.ENABLE_EDIT_SYMMETRY, "_symmetry.doSymBtnClick(this)", 0) 
 	  + "</td></tr></table>";	
 //	  + "</td></tr></tr><td>Symmetry Iterations:" 
 //	  + "</td></tr></tr><td><input style='display:none' type='text'  name='symIterations' id='symIterations'  value = '1' size='2' class='text'>"

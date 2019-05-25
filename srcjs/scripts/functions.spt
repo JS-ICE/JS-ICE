@@ -91,13 +91,31 @@ function getSymmetricAtomArray(symopSelected,pointt,iterations){
 		return []
 	}
 	var symAtomArray = [];
+
+
+print "testing getSymmetricAtomArray " + [symopSelected, pointt, iterations]
+
 	for (var i = 1; i<= iterations;i++) {
 		if (i=1){
-			var output = all.symop(symopSelected,pointt)
+
+			var output = {visible}.symop(symopSelected,pointt)
+
+print "" + i + " " + output
+
 			symAtomArray[i] = output; 
 			}
 		if (i>= 2) {
-			var output = all.symop(symopSelected,symAtomArray[i-1])
+
+
+
+print "all " + all.symop(symopSelected,symAtomArray[i-1])
+print "visible " + {visible}.symop(symopSelected,symAtomArray[i-1])
+
+			var output = {visible}.symop(symopSelected,symAtomArray[i-1])
+
+
+print "" + i + " " + output
+
 			symAtomArray[i] = output;
 		}	
 
