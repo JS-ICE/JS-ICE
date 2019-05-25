@@ -162,7 +162,23 @@ _symmetry.onClick = function(){
 	}
 }
 
+_symmetry.getP3Vertex = function(id) {
+	// get the raw vertex javajs.util.P3 object that can be set directly using .x, .y, and .z
+	// just here for reference -- Andrew's solution is more elegant! -BH
+	try {
+		// raw: jmolApplet0._applet.viewer.getProperty(null,"shapeinfo.draw[where ID='" + id + "']").get(0).get("vertices")	
+		var list = Jmol.getPropertyAsJavaObject(jmolApplet0, "shapeinfo.draw[where ID='" + id + "'].vertices[0]");
+		return (list.get ? list.get(0) : list.get$O(0));
+	} catch (e) {
+		return null;
+	}
+}
+
 _symmetry.dragPoint = function() {
+	
+	//xx=jmolApplet0._applet.viewer.getProperty(null,"shapeinfo.draw[where ID='s2']").get(0).get("vertices").get(0).set(1,2,3)
+	//jmolApplet0._applet.viewer.updateJS()
+	
 	var symop = _file.symmetry.chosenSymElement;
 	var cP = _symmetry.getJmolPoint("centerPoint");
 	if (!symop || cP == "{}")
