@@ -79,11 +79,27 @@ function readSymmetryVectors() {
 	return symopVectorArray
 }
 
-
+// returns the number of elements in the subgroup
+function getSubgroupCount(symop) {
+	var p0 = {1.414,3.1415,2.718}
+	var p = p0;
+	var n = 1;
+	for (n = 1; n < 7; n++) {
+		var p1 = all.symop(symop, p);
+		if (p1.distance(p0) < 0.001)
+			return n;
+		p = p1;
+	}
+	return 0;
+}
  
 
 // returns the points given after performing a symmetry operation a chosen number of times (one point per operation)
 function getSymmetricAtomArray(symopSelected,pointt,iterations){
+
+	if (iterations < 0)
+  		iterations = getSubgroupCount(symopSelected) - 1;
+
 	if (!pointt){
 		return []
 	}
@@ -92,34 +108,20 @@ function getSymmetricAtomArray(symopSelected,pointt,iterations){
 	}
 	var symAtomArray = [];
 
-
-print "testing getSymmetricAtomArray " + [symopSelected, pointt, iterations]
-
 	for (var i = 1; i<= iterations;i++) {
 		if (i=1){
 
 			var output = {visible}.symop(symopSelected,pointt)
 
-print "" + i + " " + output
-
-			symAtomArray[i] = output; 
 			}
 		if (i>= 2) {
 
-
-
-print "all " + all.symop(symopSelected,symAtomArray[i-1])
-print "visible " + {visible}.symop(symopSelected,symAtomArray[i-1])
-
 			var output = {visible}.symop(symopSelected,symAtomArray[i-1])
 
-
-print "" + i + " " + output
-
-			symAtomArray[i] = output;
 		}	
 
 	}
+	symAtomArray[i] = output; 
 	return symAtomArray 
 }
 
@@ -349,6 +351,8 @@ function drawAllSymops(symopArray,centerPoint){
 		draw ID @symopID symop @currentSymop @centerPoint
 	}
 }
+
+
 
 
 

@@ -112,7 +112,7 @@
   	<copy todir="${site.dir}">
       <fileset dir="srcjs">
       	<include name="Js/**"/>
-      	<include name="spt/**"/>
+      	<include name="scripts/**"/>
   	</fileset>
     </copy>
 

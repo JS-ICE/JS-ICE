@@ -3888,15 +3888,15 @@ function createOtherGrp() {
 
 var _symmetry = {
 		OP_LIST_MAX : 32,
-		CLICK_ENABLE :      "Enable Editing",		  
-		CLICK_DISABLE :     "Disable Editing", 
-		ATOM_TIP :  "Click on atom to fill",
-		CENTER_TIP :        "Click on a ref. atom",
+		ENABLE_EDIT :      "Enable Editing",		  
+		DISABLE_EDIT :     "Disable Editing", 
+		ATOM_TIP :  "Click on an atom",
+		CENTER_TIP :        "Click on a reference atom",
 	    CLICK_POINT_TIP :   "Click on the sphere to add a point",
 		UPDATE_VIEW :       "updateView",
 		UPDATE_EDIT :       "updateEdit",
-		ENABLE_EDIT_SYMMETRY : "Enable Edit Symmetry",
-		DISABLE_EDIT_SYMMETRY : "Disable Edit Symmetry",
+		ENABLE_EDIT_SYMMETRY : "Enable Symmetry Edit",
+		DISABLE_EDIT_SYMMETRY : "Disable Symmetry Edit",
 	    SYM_NONE :          "clear",
 		intervalID : ""
 };
@@ -3909,8 +3909,9 @@ function enterSymmetry() {
 			xyz2optionMap      : {},
 			symInvariantCache : {},
 			symopInvariantList  : [],
-			chosenSymElement  : "", 
+			chosenElement  : "", 
 			chosenSymop       : "",
+			subgroupCount     : 0,
 			symOffset         : "{0/1,0/1,0/1}",
 			errorDistance     : 0.1 
 		}; 
@@ -3943,18 +3944,18 @@ _symmetry.addJmolEvents = function() {
 		  console.log('Applet Clicked');
 			  _symmetry.onClick();
 	});
-	$('.japplet').on('mouseenter', function( event ) {
-		  console.log('Applet Entered');
-		  _symmetry.onHoverStart();
-	});
-	$('.japplet').on('mouseleave', function( event ) {
-		  console.log('Applet Left');
-		  _symmetry.onHoverEnd();
-	});
-	$('.rightframe').on('mouseenter', function( event ) {
-		  console.log('Right Frame Entered');
-		  _symmetry.onHoverEnd();
-	});
+//	$('.japplet').on('mouseenter', function( event ) {
+//		  console.log('Applet Entered');
+//		  _symmetry.onHoverStart();
+//	});
+//	$('.japplet').on('mouseleave', function( event ) {
+//		  console.log('Applet Left');
+//		  _symmetry.onHoverEnd();
+//	});
+//	$('.rightframe').on('mouseenter', function( event ) {
+//		  console.log('Right Frame Entered');
+//		  _symmetry.onHoverEnd();
+//	});
 }
 
 _symmetry.doSymBtnClick = function(btn) {
@@ -3971,15 +3972,15 @@ _symmetry.doSymBtnClick = function(btn) {
 		return _symmetry.updateFields();
 	case _symmetry.UPDATE_EDIT:
 		//testing return;
-	case _symmetry.CLICK_ENABLE:
+	case _symmetry.ENABLE_EDIT:
 		_symmetry.doEnableVoidClicking();
 		_symmetry.doEnableVoidDragging();
-		btn.value = _symmetry.CLICK_DISABLE;
+		btn.value = _symmetry.DISABLE_EDIT;
 		return;
-	case _symmetry.CLICK_DISABLE:
+	case _symmetry.DISABLE_EDIT:
 		_symmetry.doDisableVoidClicking();
 		_symmetry.doDisableVoidDragging();
-		btn.value = _symmetry.CLICK_ENABLE;
+		btn.value = _symmetry.ENABLE_EDIT;
 		return;
 	}	
 }
@@ -4075,7 +4076,7 @@ _symmetry.dragPoint = function() {
 	//xx=jmolApplet0._applet.viewer.getProperty(null,"shapeinfo.draw[where ID='s2']").get(0).get("vertices").get(0).set(1,2,3)
 	//jmolApplet0._applet.viewer.updateJS()
 	
-	var symop = _file.symmetry.chosenSymElement;
+	var symop = _file.symmetry.chosenElement;
 	var cP = _symmetry.getPointForJmol("centerPoint");
 	if (!symop || cP == "{}")
 		return; // BH cP can be null if no selection has been made
@@ -4137,8 +4138,12 @@ _symmetry.doActivate = function(clickedPoint){
 		clickedPoint = "{"+clickedPoint+"}";
 	}
 	if (_file.symmetry){
-		var niter = 1;//TODO getValue("symIterations");
-		_symmetry.appendSymmetricAtoms(_file.symmetry.chosenSymElement,clickedPoint,_file.symmetry.chosenSymop,niter);
+		var op = _file.symmetry.chosenSymop
+		var niter = 0;
+		if (getValue("activateSymmetryButton") == _symmetry.DISABLE_EDIT_SYMMETRY) {
+			niter = _file.symmetry.subgroupCount - 1;
+		}
+		_symmetry.appendSymmetricAtoms(_file.symmetry.chosenElement,clickedPoint,op,niter);
 	}
 }
 
@@ -4150,7 +4155,11 @@ _symmetry.doActivateAll = function(){
 
 _symmetry.doSymopSelection = function(symop){
 	_symmetry.setSymop(symop);
-	_symmetry.displayDrawObjects(symop,_symmetry.getPointForJmol("initPoint", false));
+	if (getValue("enableVoidClickingButton") == _symmetry.DISABLE_EDIT) { // meaning it is enabled now
+		_symmetry.onClick();
+	} else {
+		_symmetry.displayDrawObjects(symop,_symmetry.getPointForJmol("initPoint", false));
+	}
 }
 
 //Enables clicking upon blank space in java applet 
@@ -4200,11 +4209,12 @@ _symmetry.setSymClickStatus = function(status){
 }
 
 _symmetry.setSymElement = function(elementName){
-	_file.symmetry.chosenSymElement = elementName;
+	_file.symmetry.chosenElement = elementName;
 }
 
 _symmetry.setSymop = function(symop){
 	_file.symmetry.chosenSymop = symop;
+	_file.symmetry.subgroupCount = Math.max(1, getJmolValue("getSubgroupCount('"+symop+"')"));
 }
 
 //figures out from file data all of the symmetry operations as Jones faithful representations 
@@ -4369,9 +4379,9 @@ var createSymmetryGrp = function() {
 	var right = "<div id='symmetryOperationSet'></div>";
 
 	var bottomleft =  "<table><tr><td valign=top width=230><h2>Symmetry-Based Editing</h2>" 
-		  + "<tr><td>1) Select an element to add:"
+		  + "<tr><td>" + createButton("enableVoidClickingButton", _symmetry.ENABLE_EDIT, '_symmetry.doSymBtnClick(this)', 0)
+	  + "</td></tr><tr><td>1) Select an element to add:"
 		  + createSelect('addSymEle', '_symmetry.setSymElement(value)', 0, 1, _constant.ELEM_SYM)
-	  + "</td></tr><tr><td>" + createButton("enableVoidClickingButton", _symmetry.CLICK_ENABLE, '_symmetry.doSymBtnClick(this)', 0)
 	  + "</td></tr><tr><td>2) Select a center point: "
 	  + "<br>" + createText2('centerPoint',"", 30, "", "_symmetry.doSymBtnClick('"+_symmetry.UPDATE_EDIT+"')",_symmetry.CENTER_TIP)
 	  + "</td></tr><tr><td>3) Enter a radius constraint (Angstroms):"
