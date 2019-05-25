@@ -107,21 +107,11 @@ function getSymmetricAtomArray(symopSelected,pointt,iterations){
 		return []
 	}
 	var symAtomArray = [];
-
+	var output = pointt;
 	for (var i = 1; i<= iterations;i++) {
-		if (i=1){
-
-			var output = {visible}.symop(symopSelected,pointt)
-
-			}
-		if (i>= 2) {
-
-			var output = {visible}.symop(symopSelected,symAtomArray[i-1])
-
-		}	
-
+		output = {visible}.symop(symopSelected, output); 
+		symAtomArray[i] = output; 
 	}
-	symAtomArray[i] = output; 
 	return symAtomArray 
 }
 

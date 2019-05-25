@@ -82,6 +82,11 @@ _symmetry.doSymBtnClick = function(btn) {
 		_symmetry.addLocalPoints(); 
 		getbyID("activateSymmetryButton").value = _symmetry.DISABLE_EDIT_SYMMETRY;
 		return;
+	case _symmetry.DISABLE_EDIT_SYMMETRY : 
+		// TODO remove all but that one draw object and the core
+		_symmetry.setSymClickStatus("corePointDragging");
+		getbyID("activateSymmetryButton").value = _symmetry.ENABLE_EDIT_SYMMETRY;
+		return;
 	case _symmetry.SYM_NONE:
 		return _symmetry.doSelectNone();
 	case _symmetry.UPDATE_VIEW:
@@ -124,23 +129,23 @@ _symmetry.updateFields = function() {
 
 }
 
-_symmetry.onHover = function(){
-	console.log("hov check");
-	var symClickStatus = getJmolValue("symClickStatus");
-	switch(symClickStatus){
-	case "corePointDragging":
-		return _symmetry.dragPoint();
-	default:
-		break;
-	}
-} 
-
-_symmetry.onHoverStart = function(){
-	if (! _symmetry.intervalID){
-		_symmetry.intervalID = window.setInterval(_symmetry.onHover,200);
-	}
-}
-
+//_symmetry.onHover = function(){
+//	console.log("hov check");
+//	var symClickStatus = getJmolValue("symClickStatus");
+//	switch(symClickStatus){
+//	case "corePointDragging":
+//		return _symmetry.dragPoint();
+//	default:
+//		break;
+//	}
+//} 
+//
+//_symmetry.onHoverStart = function(){
+//	if (! _symmetry.intervalID){
+//		_symmetry.intervalID = window.setInterval(_symmetry.onHover,200);
+//	}
+//}
+//
 _symmetry.onHoverEnd = function(){
 	_symmetry.intervalID && window.clearInterval(_symmetry.intervalID);
 	_symmetry.intervalID = "";
@@ -154,10 +159,11 @@ _symmetry.onClick = function(){
 	case "corePointDragging":
 		return _symmetry.dragPoint();
 	case "radiusBindAdd":
+		_symmetry.dragPoint();
 		return _symmetry.addLocalPoints();
 	case "radiusBindAddAll":
-		_symmetry.doActivateAll(); 
-		break;
+		_symmetry.dragPoint();
+		return _symmetry.doActivateAll(); 
 	//case "vectorBindAdd": //to test 
 		// 	var clickedPoint = getJmolValue("clickedPoint");
 
@@ -168,10 +174,7 @@ _symmetry.onClick = function(){
 		//doActivate(getValue("voidClickPoint"));
 		//break; 
 	case "showAllInvariantSymops":
-		runJmolScript("drawAllSymops(symopInvariantListJmol,"+ _symmetry.getPointForJmol("initPoint", false)+")")
-		break;
-	default: 
-		break;
+		return runJmolScript("drawAllSymops(symopInvariantListJmol,"+ _symmetry.getPointForJmol("initPoint", false)+")")
 	}
 }
 
@@ -199,6 +202,7 @@ _symmetry.dragPoint = function() {
 	var rA = getValue("radiusAngstroms") || 1;
 	runJmolScriptWait("clickedPoint = bindToSphereConstraint("+cP+","+rA+",clickedPoint)");
 	runJmolScriptWait("appendNewAtomPoint('corepoint','"+symop+"', clickedPoint)");
+	_symmetry.retrieveClickedPoint();
 	_symmetry.doActivate(getJmolValue("clickedPoint"));
 }
 
@@ -241,10 +245,14 @@ _symmetry.updateSymInvariantSelect = function(){
 			setValue("initPoint", pointStringToFixed(selectionPoint,4));
 			setValue("centerPoint", pointStringToFixed(selectionPoint,4));
 		}
-		var clickedPointString = getJmolValue("clickedPoint");
-		if (clickedPointString){
-			setValue("voidClickPoint", pointStringToFixed(clickedPointString,4));
-		}
+		_symmetry.retrieveClickedPoint();
+	}
+}
+
+_symmetry.retrieveClickedPoint = function() {
+	var clickedPointString = getJmolValue("clickedPoint");
+	if (clickedPointString){
+		setValue("voidClickPoint", pointStringToFixed(clickedPointString,4));
 	}
 }
 
@@ -265,7 +273,7 @@ _symmetry.doActivate = function(clickedPoint){
 
 //this only shows every point for a given point for all symops 
 _symmetry.doActivateAll = function(){
-	_symmetry.drawAllSymmetricPoints(_symmetry.getPointForJmol("voidClickPoint"));
+	_symmetry.drawAllSymmetricPoints(_symmetry.getPointForJmol("voidClickPoint", false));
 }
 
 
@@ -280,6 +288,7 @@ _symmetry.doSymopSelection = function(symop){
 
 //Enables clicking upon blank space in java applet 
 _symmetry.doEnableVoidClicking = function(){
+	runJmolScriptWait("draw 'sym*' delete");
 	var cP = _symmetry.getPointForJmol("centerPoint", true);
 	if (cP == "{}"){
 		alert("No center point selected");
@@ -305,7 +314,7 @@ _symmetry.getPointForJmol = function(id, orSelected) {
 _symmetry.doDisableVoidClicking = function(){
 	runJmolScriptWait("unbind");
 	runJmolScriptWait("symClickStatus = 'default'");
-	runJmolScriptWait("draw 'symClickShow' delete");
+//	runJmolScriptWait("draw 'symClickShow' delete");
 }
 
 _symmetry.doEnableVoidDragging = function(){
