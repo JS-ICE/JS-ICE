@@ -4,9 +4,11 @@
 var version = "3.0.0"; // BH 2018
 
 
+
 // _m_file.js
 
 var _global = {
+    startupFile: "output/hematite.out",
 	citations : [
 	   { title:				
 		'J-ICE: a new Jmol interface for handling and visualizing crystallographic and electronic properties' 
@@ -17,6 +19,14 @@ var _global = {
 	   
 	 ]  
 };
+
+
+;(function() {
+	var uri = "&" + document.location.search.substring(1) + "&file=";
+	var file = uri.split("&file=")[1].split("&")[0];
+	if (file)
+		_global.startupFile = file;	
+})();
 
 var _file = {
 		specData: null,

@@ -23,9 +23,9 @@
   	<!-- location of ant-contrib.jar -->
   	<property name="tools.dir" value = "tools" />
 
- 	<!-- SwingjS_site zip file (could be varied if versioning is needed) -->
+ 	<!-- SwingjS_site zip file (could be varied if versioning is needed) 
   	<property name="swingjs.zip" value="swingjs/SwingJS-site.zip" />
-
+-->
   	<!-- location of third-party jar contents as precompiled zipped .js files to copy to site/ -->
   	<property name="libjs.dir" value="libjs" />
  
@@ -36,7 +36,9 @@
 	<!-- output directories -->
 
   	<property name="site.dir" value="site" />
+  	<!-- future  
   	<property name="j2s.dir" value="${site.dir}/swingjs/j2s" />
+  	-->
   	 
     <!-- <for  ...> construct needs ant-contrib.jar -->
     <taskdef resource="net/sf/antcontrib/antlib.xml">

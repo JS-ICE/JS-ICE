@@ -64,32 +64,41 @@ var messageMsg = function(msg) {
 	alert(msg);
 }
 
+var writeDivs = function() {
+	docWriteTabs();
+	docWriteRightFrame();
+	docWriteBottomFrame();
+	loadSliders();
+}
+
 var docWriteTabs = function() {
-	document.write(createTabMenu());
+	$("#tabs").html(createTabMenu());
 }
 
 var docWriteBottomFrame = function() {
-	document.write("<br> ");	
-	document.write(createText5('statusLine', '', '108', '', '', "disab"));
-	document.write("<br>");
-	document.write(createButton1("reload", "Reload",
+	var s = "";
+	s += ("<br> ");	
+	s += (createText5('statusLine', '', '108', '', '', "disab"));
+	s += ("<br>");
+	s += (createButton1("reload", "Reload",
 			'onChangeLoad("reload")', 0,
 			"specialbutton"));
-	document.write(createButton1("reset", "Reset",
+	s += (createButton1("reset", "Reset",
 			'runJmolScriptWait("script ./scripts/reset.spt")', 0, "specialbutton"));
-//	document.write(createButton1("Console", "Console", 'runJmolScriptWait("console")', 0,
+//	s += (createButton1("Console", "Console", 'runJmolScriptWait("console")', 0,
 //			"specialbutton"));
-	document.write(createButton("NewWindow", "New window", "newAppletWindow()", 0));
-	document.write(createButton("viewfile", "File content", "printFileContent()", 0));
-	document.write(createButton1("saveState", 'Save state', 'doClickSaveCurrentState()',
+	s += (createButton("NewWindow", "New window", "newAppletWindow()", 0));
+	s += (createButton("viewfile", "File content", "printFileContent()", 0));
+	s += (createButton1("saveState", 'Save state', 'doClickSaveCurrentState()',
 			0, "savebutton"));
-	document.write(createButton1("restoreState", 'Restore state',
+	s += (createButton1("restoreState", 'Restore state',
 			'doClickReloadCurrentState()', 0, "restorebutton"));
-	document.write(createButton("Feedback", 'Feedback', 'newAppletWindowFeed()', 0));
+	s += (createButton("Feedback", 'Feedback', 'newAppletWindowFeed()', 0));
+	$("#bottom").html(s);
 }
 
 var docWriteRightFrame = function() {
-	document.write(createAllMenus());
+	$("#right").html(createAllMenus());
 }
 
 

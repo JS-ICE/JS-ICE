@@ -1,1 +1,1 @@
-load output/hematite.out PACKED; 
+load @{javascript("_global.startupFile || 'output/hematite.out'")} PACKED; 

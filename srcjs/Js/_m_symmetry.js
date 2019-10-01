@@ -3,33 +3,51 @@
 //A. Salij 5.23.2018 (andrewsalij@gmail.com) 
 
 var _symmetry = {
-		OP_LIST_MAX : 32,
-		ENABLE_EDIT :      "Enable Editing",		  
-		DISABLE_EDIT :     "Disable Editing", 
-		ATOM_TIP :  "Click on an atom",
-		CENTER_TIP :        "Click on a reference atom",
-	    CLICK_POINT_TIP :   "Click on the sphere to add a point",
-		UPDATE_VIEW :       "updateView",
-		UPDATE_EDIT :       "updateEdit",
-		ENABLE_EDIT_SYMMETRY : "Enable Symmetry Edit",
+		OP_LIST_MAX           : 32,
+		ENABLE_EDIT           : "Enable Editing",		  
+		DISABLE_EDIT          : "Disable Editing", 
+		ATOM_TIP              : "Click on an atom",
+		CENTER_TIP            : "Click on a reference atom",
+	    CLICK_POINT_TIP       : "Click on the sphere to add a point",
+		UPDATE_VIEW           : "updateView",
+		UPDATE_EDIT           : "updateEdit",
+		ENABLE_EDIT_SYMMETRY  : "Enable Symmetry Edit",
 		DISABLE_EDIT_SYMMETRY : "Disable Symmetry Edit",
-	    SYM_NONE :          "clear",
-		intervalID : ""
+	    SYM_NONE              : "clear",
+	    STATE_BITS_SYM        : 0b0011,
+	    STATE_SYM_ALL         : 0b0001,
+	    STATE_SYM_INV         : 0b0011,  
+	    STATE_BIT_UNITIZE     : 0b0100,
+	    STATE_BIT_EDIT        : 0b1000,
+		intervalID            : ""
 };
+
+var checkVal = function(id, text) {
+	return getbyID(id).vlaue == text;
+}
+
+_symmetry.setState = function() {
+//	_file.symmetry.state = 
+//		(checkVal("activateSymmetryButton",_symmetry.DISABLE_EDIT_SYMMETRY) ? 
+//				_symmetry.STATE_BIT_EDIT | 
+//				
+//	
+}
 
 //initialization upon entry into symmetry tab 
 function enterSymmetry() {
 	if (!_file.symmetry){
 		_file.symmetry = {
-			operationList     : [],
-			xyz2optionMap      : {},
-			symInvariantCache : {},
+			state               : 0,
+			operationList       : [],
+			xyz2optionMap       : {},
+			symInvariantCache   : {},
 			symopInvariantList  : [],
-			chosenElement  : "", 
-			chosenSymop       : "",
-			subgroupCount     : 0,
-			symOffset         : "{0/1,0/1,0/1}",
-			errorDistance     : 0.1 
+			chosenElement       : "", 
+			chosenSymop         : "",
+			subgroupCount       : 0,
+			symOffset           : "{0/1,0/1,0/1}",
+			errorDistance       : 0.1 
 		}; 
 		getbyID('symmetryGroup').reset();
 		_symmetry.createSymopSet();

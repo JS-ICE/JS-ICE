@@ -73,10 +73,11 @@
       		<script src=Js/adapters/quantumespresso.js></script>      		
       		<script src=Js/adapters/siesta.js></script>      		
       		<script src=Js/adapters/vasp.js></script>
+			<script src=Js/testing.js></script>
 
 <link rel="stylesheet" href="css/style.css" type="text/css">
 <link rel="stylesheet" href="css/luna/luna.css" type="text/css">
-<link rel="stylesheet" href="libraries/toltip/jquery.tooltip.css" />
+<!-- link rel="stylesheet" href="libraries/toltip/jquery.tooltip.css" /  -->
 
 <link rel="shortcut icon" href="images/favicon.ico" >
 <link rel="icon" type="image/gif" href="images/animated_favicon1.gif" >
@@ -106,21 +107,19 @@ defineMenu();
 		by P. Canepa and R. Hanson - Updated Tue 11 Sep 2018 07:33:23 +08- powered by <a href='https://sourceforge.net/projects/jsmol/' target='blank'>JSmol</a></p>
 		<p class="paright"><a href='http://js-ice.sourceforge.net/?page_id=6' target='_blank'>Help</a> | <a href='http://js-ice.sourceforge.net/#ack' target='_blank'>Acknowledgments</a></p>
 	</div>
-	<div class="menubar">
-		<script>docWriteTabs()</script>
+	<div id="tabs" class="menubar">
 	</div>
 	<div id="middle">
 		<div class="japplet">
-			<script>createApplet()</script>
-			<div class="bottomframe">
-				<script>docWriteBottomFrame()</script>
+			<div id="applet">
+			<script>createApplet()</script></div>
+			<div id="bottom" class="bottomframe">
 			</div>
 		</div>
-		<div class="rightframe">
-			<script>docWriteRightFrame()</script>
+		<div id="right" class="rightframe">
 		</div>
 	</div>
 </div>
-<script>loadSliders()</script>
+<script>writeDivs()</script>
 </body>
 </html>
